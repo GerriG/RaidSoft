@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-11-2025 a las 23:07:45
+-- Tiempo de generación: 20-11-2025 a las 00:02:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -171,15 +171,16 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `username`, `password`, `rol`, `estado`, `created_at`) VALUES
-(1, 'Juan', 'Pérez', 'admin', '$2a$10$FvT4pO8HMbZX3ravxa8pEOVAenB/oXAUXEckEckEmHaHSuB8oNlvsLzR', 'ADMINISTRADOR', 1, '2025-11-19 22:01:15'),
-(2, 'Ana', 'López', 'vendedor', '$2a$10$FvT4pO8HMbZX3ravxa8pEOVAenB/oXAUXEckEckEmHaHSuB8oNlvsLzR', 'VENDEDOR', 1, '2025-11-19 22:01:15');
+(5, 'Test', 'Test', 'Test', '$2a$10$SANBbxD/uHeIaZMvL40GSe.MeAgj8No.mxax1V5CTcWFdEDBDAcLm', 'VENDEDOR', 1, '2025-11-19 22:45:12'),
+(6, 'Administrador', 'Administrador', 'admin', '$2a$10$mu17XyvvbwY4LTMXrZVDXu5vj4/udIxEeUpDq8u/WYzNKvL8JdEQW', 'ADMINISTRADOR', 1, '2025-11-19 22:47:32'),
+(7, 'Vendedor', 'Vendedor', 'vendedor', '$2a$10$wOFc263FTx.Rbrd5hrDHLOcrP/PcMpwTGGtf5UnV528j0nVRfTKqu', 'VENDEDOR', 1, '2025-11-19 22:47:54');
 
 -- --------------------------------------------------------
 

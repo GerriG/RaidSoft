@@ -2,34 +2,98 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a RaidSoft</title>
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Nuestro CSS animado -->
     <link rel="stylesheet" th:href="@{/css/Styles.css}">
-    
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-    <form th:action="@{/login}" method="post">
+    <!-- Contenedor Principal -->
+    <div class="container" id="container">
         
-        <h2 class="titulo-login">🔐 Iniciar sesión</h2>
-        
-        <div th:if="${param.error}" style="color: red; margin-bottom: 10px;">
-            Usuario o contraseña incorrectos.
+        <!-- Formulario de Registro (Sign Up) -->
+        <div class="form-container sign-up-container">
+            <form th:action="@{/register}" method="post">
+                <h1>Crear Cuenta</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>o usa tu correo para registrarte</span>
+                
+                <input type="text" name="nombre" placeholder="Nombre" required />
+                <input type="text" name="apellido" placeholder="Apellido" required />
+                <input type="text" name="username" placeholder="Usuario" required />
+                <input type="password" name="password" placeholder="Contraseña" required />
+                
+                <!-- Selector de Rol simple para la demo -->
+                <select name="rol" required>
+                    <option value="VENDEDOR">Vendedor</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+
+                <button type="submit">Registrarse</button>
+            </form>
         </div>
-        
-        <div th:if="${param.logout}" style="color: green; margin-bottom: 10px;">
-            Has cerrado sesión correctamente.
+
+        <!-- Formulario de Login (Sign In) -->
+        <div class="form-container sign-in-container">
+            <form th:action="@{/login}" method="post">
+                <h1>Iniciar Sesión</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>o usa tu cuenta</span>
+                
+                <!-- Mensajes de Alerta -->
+                <div th:if="${param.error}" class="alert error">
+                    Credenciales incorrectas o usuario ya existe.
+                </div>
+                <div th:if="${success}" class="alert success" th:text="${success}"></div>
+                <div th:if="${param.logout}" class="alert success">Sesión cerrada.</div>
+
+                <input type="text" name="username" placeholder="Usuario" required />
+                <input type="password" name="password" placeholder="Contraseña" required />
+                <a href="#">¿Olvidaste tu contraseña?</a>
+                <button type="submit">Ingresar</button>
+            </form>
         </div>
-        
-        <label>Usuario</label>
-        <input type="text" name="username" required placeholder="Ingrese su usuario">
 
-        <label>Contraseña</label>
-        <input type="password" name="password" required placeholder="Ingrese su contraseña">
+        <!-- Panel de Superposición (Overlay) para la animación -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Para mantenerte conectado con nosotros, inicia sesión con tu información personal</p>
+                    <button class="ghost" id="signIn">Iniciar Sesión</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>¡Hola, Amigo!</h1>
+                    <p>Ingresa tus datos personales y comienza tu viaje con RaidSoft</p>
+                    <button class="ghost" id="signUp">Registrarse</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="g-recaptcha" data-sitekey="6Lcu1t0rAAAAACp4SWn-3KRYbhSZ23Z0TJXopPxY"></div>
+    <!-- Script simple para alternar la clase -->
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
 
-        <input type="submit" value="Ingresar">
-    </form>
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+    </script>
 </body>
 </html>

@@ -14,20 +14,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 1. Buscamos por el nuevo campo 'username' definido en la Entidad
+        // 1. Buscar usuario en la Base de Datos
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
-        // 2. Convertimos el Enum Rol a una autoridad de Spring
-        // Ejemplo: Si el Enum es ADMINISTRADOR, Spring recibirá "ROLE_ADMINISTRADOR"
+        // 2. Convertir Rol (Enum -> Spring Authority)
+        // Ejemplo: Si en BD es "ADMINISTRADOR", Spring necesita "ROLE_ADMINISTRADOR"
         String rolSpring = "ROLE_" + usuario.getRol().name();
 
-        // 3. Construimos el objeto User de Spring Security
+        // 3. Retornar objeto User de Spring Security
+        // NOTA CRÍTICA: Pasamos usuario.getPassword() DIRECTAMENTE.
+        // No agregamos {noop} ni {bcrypt}. El PasswordEncoder en SecurityConfig
+        // se encargará de verificar este hash contra la contraseña plana que ingresa el usuario.
         return User.builder()
                 .username(usuario.getUsername())
-                .password(usuario.getPassword()) // Pasamos el hash directo de la BD (BCrypt)
+                .password(usuario.getPassword()) 
                 .authorities(rolSpring)
-                .disabled(!usuario.getEstado()) // Bloquea el login si estado es false (0)
+                .disabled(!usuario.getEstado()) // Bloquea el acceso si estado es false (0)
                 .build();
     }
 }

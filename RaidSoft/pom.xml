@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.raidsoft</groupId>
     <artifactId>raidsoft</artifactId>
-    <version>0.1</version>
+    <version>0.5</version>
     <name>RaidSoft</name>
     <description>Sistema de Gestion de Stock RaidSoft</description>
     <url/>

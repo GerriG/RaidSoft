@@ -3,6 +3,8 @@ package com.raidsoft.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -12,18 +14,38 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // Recursos estáticos
+                // Recursos estáticos públicos (CSS, JS, Imágenes)
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                
+                // IMPORTANTE: Permitir acceso público al Login y al Registro
+                .requestMatchers("/login", "/register").permitAll()
+                
+                // Rutas protegidas por Rol
                 .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                 .requestMatchers("/vendedor/**").hasRole("VENDEDOR")
+                
+                // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login
-                .loginPage("/login") // Usaremos tu diseño personalizado
+                .loginPage("/login")
                 .permitAll()
-                .defaultSuccessUrl("/redirectByRole", true) // Redirección inteligente
+                .defaultSuccessUrl("/redirectByRole", true) // Redirige aquí si el login es correcto
+                .failureUrl("/login?error") // Redirige aquí si la contraseña falla
             )
-            .logout(logout -> logout.permitAll());
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            );
         
         return http.build();
+    }
+
+    // --- BEAN OBLIGATORIO PARA BCRYPT ---
+    // Este componente se encarga de encriptar en el registro y verificar en el login.
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
