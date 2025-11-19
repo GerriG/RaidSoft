@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    
+    <link rel="stylesheet" th:href="@{/css/Styles.css}">
+    
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+    <form th:action="@{/login}" method="post">
+        
+        <h2 class="titulo-login">🔐 Iniciar sesión</h2>
+        
+        <div th:if="${param.error}" style="color: red; margin-bottom: 10px;">
+            Usuario o contraseña incorrectos.
+        </div>
+        
+        <div th:if="${param.logout}" style="color: green; margin-bottom: 10px;">
+            Has cerrado sesión correctamente.
+        </div>
+        
+        <label>Usuario</label>
+        <input type="text" name="username" required placeholder="Ingrese su usuario">
+
+        <label>Contraseña</label>
+        <input type="password" name="password" required placeholder="Ingrese su contraseña">
+
+        <div class="g-recaptcha" data-sitekey="6Lcu1t0rAAAAACp4SWn-3KRYbhSZ23Z0TJXopPxY"></div>
+
+        <input type="submit" value="Ingresar">
+    </form>
+</body>
+</html>

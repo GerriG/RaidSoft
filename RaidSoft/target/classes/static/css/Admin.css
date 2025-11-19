@@ -1,0 +1,86 @@
+/* ======== Estilo general ======== */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: "Segoe UI", "Segoe UI Emoji", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #7eb4ff, #a674ff, #5dc8ff, #8d7aff);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+/* ======== Tarjeta principal admin ======== */
+.admin-card {
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 50px 60px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 380px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+}
+
+/* ======== Títulos ======== */
+.admin-card h2 {
+    color: #fff;
+    margin-bottom: 30px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    font-size: 1.5em;
+}
+
+/* ======== Botón Cerrar sesión ======== */
+.logout-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #4f9aff, #a36bff);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #6fb4ff, #b88cff);
+    transform: scale(1.05);
+}
+
+/* ======== Animación del fondo ======== */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ======== Responsividad ======== */
+@media (max-width: 480px) {
+    .admin-card {
+        width: 85%;
+        padding: 35px 25px;
+        border-radius: 20px;
+    }
+
+    .admin-card h2 {
+        font-size: 1.2em;
+    }
+
+    .logout-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
