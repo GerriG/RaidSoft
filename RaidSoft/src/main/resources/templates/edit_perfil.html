@@ -1,78 +1,127 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Editar Perfil - RaidSoft</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/Perfil.css}">
-</head>
-<body>
+    <head>
+        <title>Editar Perfil - RaidSoft</title>
+        <meta charset="UTF-8">
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                
-                <div class="profile-glass-card">
-                    
-                    <div class="text-center mb-4">
-                        <h3 class="fw-bold text-dark"><i class="fas fa-user-edit text-primary"></i> Editar Información</h3>
-                        <p class="text-muted">Actualiza tus datos personales y seguridad.</p>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <link rel="stylesheet" th:href="@{/css/Admin.css}">
+        <link rel="stylesheet" th:href="@{/css/EditPerfil.css}">
+    </head>
+    <body>
+
+        <div class="admin-container">
+            <nav class="sidebar">
+                <div class="sidebar-header"> <h3>RaidSoft Admin</h3> </div>
+                <ul class="sidebar-menu">
+                    <li><a th:href="${usuario.rol.name() == 'ADMINISTRADOR' ? '/admin/dashboard' : '/vendedor/dashboard'}"><i class="fas fa-home"></i> Inicio</a></li>
+
+                    <th:block th:if="${usuario.rol.name() == 'ADMINISTRADOR'}">
+                        <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                        <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
+                        <li>
+                            <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
+                                <i class="fas fa-chart-line"></i> Reportes
+                            </a>
+                        </li>
+                    </th:block>
+
+                    <li><a th:href="@{/perfil}" class="active"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+
+                    <li class="logout-item">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <header>
+                    <div class="user-welcome">
+                        <h1>Editar Perfil</h1>
+                        <p class="text-muted">Actualiza tu información personal</p>
                     </div>
+                </header>
 
-                    <div th:if="${error}" class="alert alert-danger rounded-pill text-center">
-                        <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${error}">Error</span>
-                    </div>
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
 
-                    <form th:action="@{/perfil/guardar}" method="post" enctype="multipart/form-data" th:object="${usuario}">
-                        
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-secondary">Nombre</label>
-                                <input type="text" th:field="*{nombre}" class="form-control rounded-pill px-3" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-secondary">Apellido</label>
-                                <input type="text" th:field="*{apellido}" class="form-control rounded-pill px-3" required>
-                            </div>
+                            <div class="profile-edit-card">
 
-                            <div class="col-12">
-                                <hr class="my-4 opacity-25">
-                            </div>
-
-                            <div class="col-md-6">
-                                <h5 class="text-primary mb-3"><i class="fas fa-camera"></i> Foto de Perfil</h5>
-                                
-                                <div class="img-preview-box" th:if="${usuario.imagenUrl != null}">
-                                    <img th:src="@{${usuario.imagenUrl}}" class="rounded-circle me-3" width="40" height="40" style="object-fit:cover;">
-                                    <small class="text-success fw-bold">Imagen actual cargada</small>
+                                <div th:if="${error}" class="alert alert-danger rounded-pill text-center mb-4">
+                                    <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
                                 </div>
 
-                                <input type="file" name="file" class="form-control" accept="image/*">
-                                <div class="form-text">Formatos permitidos: JPG, PNG.</div>
-                            </div>
+                                <form th:action="@{/perfil/guardar}" method="post" enctype="multipart/form-data" th:object="${perfil}">
 
-                            <div class="col-md-6">
-                                <h5 class="text-primary mb-3"><i class="fas fa-key"></i> Seguridad</h5>
-                                <label class="form-label fw-bold text-secondary">Nueva Contraseña</label>
-                                <input type="password" name="newPassword" class="form-control rounded-pill px-3" placeholder="Déjalo vacío para no cambiar">
-                                <div class="form-text text-danger"><i class="fas fa-info-circle"></i> Solo llena esto si quieres cambiar tu clave.</div>
+                                    <div class="section-title"><i class="fas fa-id-card me-2"></i> Datos Personales</div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" th:field="*{nombre}" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Apellido</label>
+                                            <input type="text" th:field="*{apellido}" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Correo Electrónico</label>
+                                            <input type="email" th:field="*{email}" class="form-control">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Fecha de Nacimiento</label>
+                                            <input type="date" th:field="*{fechaNacimiento}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="section-title"><i class="fas fa-camera me-2"></i> Imagen de Perfil</div>
+
+                                    <div class="row mb-4 align-items-center">
+                                        <div class="col-auto">
+                                            <img th:if="${perfil.avatarUrl != null}" 
+                                                 th:src="@{${perfil.avatarUrl}}" 
+                                                 class="avatar-preview">
+
+                                            <img th:if="${perfil == null or perfil.avatarUrl == null}" 
+                                                 th:src="|https://ui-avatars.com/api/?background=4e73df&color=fff&size=128&name=${perfil != null ? perfil.nombre + '+' + perfil.apellido : usuario.username}|" 
+                                                 class="avatar-preview" 
+                                                 alt="Avatar Generado">
+                                        </div>
+                                        <div class="col">
+                                            <label class="form-label">Subir nueva imagen</label>
+                                            <input type="file" name="file" class="form-control" accept="image/*">
+                                            <div class="form-text text-muted">Formatos permitidos: JPG, PNG. Máx 15MB.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-title"><i class="fas fa-shield-alt me-2"></i> Seguridad</div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label text-danger">Nueva Contraseña</label>
+                                            <input type="password" name="newPassword" class="form-control" placeholder="Dejar en blanco para mantener la actual">
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-3 mt-5">
+                                        <a th:href="@{/perfil}" class="btn btn-secondary rounded-pill px-4">Cancelar</a>
+                                        <button type="submit" class="btn btn-save shadow">
+                                            <i class="fas fa-save me-2"></i> Guardar Cambios
+                                        </button>
+                                    </div>
+
+                                </form>
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-between align-items-center mt-5">
-                            <a th:href="@{/perfil}" class="btn btn-light rounded-pill px-4 fw-bold border">
-                                Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-theme px-5">
-                                Guardar Cambios <i class="fas fa-save ms-2"></i>
-                            </button>
-                        </div>
-
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </main>
         </div>
-    </div>
-
-</body>
+    </body>
 </html>

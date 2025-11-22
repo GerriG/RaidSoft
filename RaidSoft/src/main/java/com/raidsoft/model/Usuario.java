@@ -9,19 +9,8 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario") // Mapea a la columna SQL 'id_usuario'
+    @Column(name = "id_usuario")
     private Long idUsuario;
-
-    @Column(nullable = false, length = 100)
-    private String nombre;
-
-    @Column(nullable = false, length = 100)
-    private String apellido;
-
-    // --- NUEVO CAMPO AGREGADO ---
-    @Column(name = "imagen_url")
-    private String imagenUrl;
-    // ----------------------------
 
     @Column(unique = true, nullable = false, length = 50)
     private String username;
@@ -31,107 +20,51 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Rol rol; // Se guardará como texto: "ADMINISTRADOR" o "VENDEDOR"
+    private Rol rol;
 
     @Column(nullable = false)
-    private Boolean estado = true; // Por defecto activo (true)
+    private Boolean estado = true;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // --- Constructor Vacío (Obligatorio para JPA) ---
+    // Relación inversa: Un usuario tiene un perfil
+    // cascade = ALL permite que si borras el usuario, se borre su perfil automáticamente
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Perfil perfil;
+
     public Usuario() {
     }
 
-    // --- Constructor con datos (Opcional, para facilitar pruebas) ---
-    public Usuario(String nombre, String apellido, String username, String password, Rol rol) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.username = username;
-        this.password = password;
-        this.rol = rol;
-        this.estado = true;
-    }
-
-    // --- Ciclo de vida: Asigna fecha antes de guardar ---
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
     // --- Getters y Setters ---
+    public Long getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(Long idUsuario) { this.idUsuario = idUsuario; }
 
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public Boolean getEstado() { return estado; }
+    public void setEstado(Boolean estado) { this.estado = estado; }
 
-    public String getApellido() {
-        return apellido;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    // --- NUEVOS GETTER Y SETTER PARA LA IMAGEN ---
-    public String getImagenUrl() {
-        return imagenUrl;
-    }
-
-    public void setImagenUrl(String imagenUrl) {
-        this.imagenUrl = imagenUrl;
-    }
-    // ---------------------------------------------
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
-    }
-
-    public Boolean getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public Perfil getPerfil() { return perfil; }
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
+        if (perfil != null) {
+            perfil.setUsuario(this); // Vinculación bidireccional necesaria
+        }
     }
 }

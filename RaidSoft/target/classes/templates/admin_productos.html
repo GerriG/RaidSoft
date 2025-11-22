@@ -1,306 +1,316 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de Productos - RaidSoft</title>
-    <link rel="stylesheet" th:href="@{/css/Admin.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <head>
+        <meta charset="UTF-8">
+        <title>Gestión de Productos - RaidSoft</title>
+        <link rel="stylesheet" th:href="@{/css/Admin.css}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style>
-        /* Definición de la Animación de Borde Sutil (Movimiento) */
-        @keyframes subtle-neon-glow {
-            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.4); }
-            50% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.4); }
-        }
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-        /* ESTILOS GAMER PARA LA TABLA */
-        .table-container {
-            background: linear-gradient(145deg, #1a1a2e, #10192e); /* Fondo oscuro con degradado */
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Sombra neón cian */
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid #00ffff; /* Borde cian */
-        }
-        
-        .product-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .product-table th {
-            background-color: #16213e; /* Fondo de cabecera más oscuro */
-            color: #00ffff; /* Texto cian neón */
-            font-weight: 700;
-            padding: 15px 15px;
-            text-align: left;
-            border-bottom: 2px solid #00aaff; /* Borde inferior azul brillante */
-            text-transform: uppercase;
-        }
-        
-        .product-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #2a3c5d; /* Línea divisoria sutil */
-            color: #e0f2f7; /* Texto blanco brillante */
-        }
-        
-        /* Efecto de movimiento en la fila al pasar el mouse */
-        .product-table tr:hover {
-            background-color: #1e2a4a; /* Fondo más claro al pasar el mouse */
-            cursor: pointer;
-            /* Añadir animación de brillo sutil */
-            animation: subtle-neon-glow 1.5s infinite alternate;
-        }
-
-        /* Botones de Stock Gamer */
-        .badge-stock {
-            background-color: #00e676; /* Verde neón */
-            color: #1a1a2e;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            box-shadow: 0 0 5px #00e676;
-        }
-        
-        .badge-low {
-            background-color: #ff3366; /* Rosa/Rojo neón */
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            box-shadow: 0 0 5px #ff3366;
-        }
-
-        /* Botones de Acción Gamer */
-        .btn-action {
-            padding: 8px 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.8rem;
-            margin-right: 5px;
-            display: inline-block;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-edit { 
-            background-color: #ffc400; /* Amarillo neón */
-            color: #1a1a2e; 
-            box-shadow: 0 0 5px #ffc400;
-        }
-        .btn-delete { 
-            background-color: #ff3366; /* Rojo neón */
-            color: white; 
-            box-shadow: 0 0 5px #ff3366;
-        }
-        .btn-action:hover {
-            transform: translateY(-2px);
-            opacity: 0.8;
-        }
-
-        /* Estilos de Encabezado y Botón Nuevo Producto Gamer */
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        h1, h2 {
-            color: #00ffff; /* Cian neón */
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
-        }
-        p.text-muted {
-            color: #a0ffff;
-        }
-        .btn-new { 
-            background: linear-gradient(90deg, #00ffff, #00aaff); /* Degradado cian/azul */
-            color: #1a1a2e; 
-            padding: 10px 20px; 
-            border-radius: 25px; 
-            text-decoration: none; 
-            font-weight: bold; 
-            text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-            transition: all 0.3s ease;
-        }
-        .btn-new:hover {
-            box-shadow: 0 0 15px rgba(0, 255, 255, 1);
-            transform: scale(1.05);
-        }
-        
-        /* ESTILOS GAMER PARA SWEETALERT */
-        .swal-gamer-popup {
-            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
-            border: 2px solid #00ffff !important;
-            color: #e0f2f7 !important;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7) !important;
-        }
-        .swal-title {
-            color: #00ffff !important;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.7) !important;
-        }
-        .swal-html-container {
-            color: #a0ffff !important;
-        }
-        .swal-confirm-button-gamer {
-            background: linear-gradient(90deg, #1eff80, #00e676) !important;
-            color: #1a1a2e !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: bold !important;
-            padding: 10px 20px !important;
-            margin: 5px !important;
-            box-shadow: 0 5px 15px rgba(30, 255, 128, 0.4) !important;
-        }
-        .swal-cancel-button-gamer {
-            background: linear-gradient(90deg, #ff3366, #c44036) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: bold !important;
-            padding: 10px 20px !important;
-            margin: 5px !important;
-        }
-    </style>
-</head>
-<body>
-    <div class="admin-container">
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h3>RaidSoft Admin</h3>
-            </div>
-            <ul class="sidebar-menu">
-                <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
-                <li><a th:href="@{/admin/productos}" class="active"><i class="fas fa-box"></i> Productos</a></li>
-                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
-                <li><a th:href="@{/admin/reportes}"><i class="fas fa-chart-line"></i> Reportes</a></li>
-                <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                <li class="logout-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
-
-        <main class="main-content">
-            <header>
-                <div class="user-welcome">
-                    <h1>Gestión de Inventario</h1>
-                    <p class="text-muted">Administra el catálogo de productos</p>
-                </div>
-            </header>
-            
-            <div class="header-actions">
-                <h2 style="color: #5a5c69;">Lista de Productos</h2>
-                <a th:href="@{/admin/productos/nuevo}" class="btn-new"><i class="fas fa-plus"></i> Nuevo Producto</a>
-            </div>
-
-            <div class="table-container">
-                <table class="product-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Precio Venta</th>
-                            <th>Stock</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="prod : ${listaProductos}">
-                            <td th:text="${prod.idProducto}">#1</td>
-                            <td>
-                                <div style="font-weight: bold;" th:text="${prod.nombre}">Laptop HP</div>
-                                <small th:text="${prod.codigoBarras}" style="color: #a0ffff;">CODE123</small>
-                            </td>
-                            <td th:text="'$' + ${prod.precioVenta}" style="color: #1eff80;">$0.00</td>
-                            <td>
-                                <span th:class="${prod.stock <= prod.stockMinimo ? 'badge-low' : 'badge-stock'}"
-                                      th:text="${prod.stock}">
-                                    10
-                                </span>
-                            </td>
-                            <td>
-                                <span th:if="${prod.estado}" style="color: #00e676;"><i class="fas fa-check-circle"></i> Activo</span>
-                                <span th:unless="${prod.estado}" style="color: #ff3366;"><i class="fas fa-times-circle"></i> Inactivo</span>
-                            </td>
-                            <td>
-                                <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" class="btn-action btn-edit"><i class="fas fa-pen"></i></a>
-                                
-                                <a href="javascript:void(0);" 
-                                   th:onclick="|confirmDelete(${prod.idProducto})|" 
-                                   class="btn-action btn-delete">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${listaProductos.empty}">
-                            <td colspan="6" style="text-align: center; padding: 30px; color: #a0ffff;">
-                                <i class="fas fa-box-open" style="font-size: 2rem; color: #00ffff;"></i>
-                                <p>No hay productos registrados aún.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
-
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        
-        // La URL base de eliminación (corregida previamente)
-        const deleteUrlTemplate = /*[[@{/admin/productos/eliminar/}]]*/ '/admin/productos/eliminar/';
-
-        // FUNCIÓN PARA MANEJAR LA ELIMINACIÓN CON SWEETALERT
-        function confirmDelete(id) {
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡No podrás revertir esto!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar",
-                
-                customClass: {
-                    popup: 'swal-gamer-popup',
-                    confirmButton: 'swal-confirm-button-gamer',
-                    cancelButton: 'swal-cancel-button-gamer'
-                },
-                buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = deleteUrlTemplate + id;
+        <style>
+            /* Definición de la Animación de Borde Sutil (Movimiento) */
+            @keyframes subtle-neon-glow {
+                0% {
+                    box-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
                 }
-            });
-        }
-        
-        // BLOQUE PARA MOSTRAR EL MENSAJE DE ÉXITO 
-        const successMessage = /*[[${success}]]*/ null;
-        if (successMessage) {
-            Swal.fire({
-                title: "¡Operación Exitosa!",
-                text: successMessage,
-                icon: "success",
-                draggable: true,
-                customClass: {
-                    popup: 'swal-gamer-popup',
-                    confirmButton: 'swal-confirm-button-gamer'
-                },
-                buttonsStyling: false
-            });
-        }
-        
-        /*]]>*/
-    </script>
-</body>
+                50% {
+                    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+                }
+                100% {
+                    box-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
+                }
+            }
+
+            /* ESTILOS GAMER PARA LA TABLA */
+            .table-container {
+                background: linear-gradient(145deg, #1a1a2e, #10192e); /* Fondo oscuro con degradado */
+                border-radius: 15px;
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Sombra neón cian */
+                padding: 20px;
+                margin-top: 20px;
+                border: 1px solid #00ffff; /* Borde cian */
+            }
+
+            .product-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .product-table th {
+                background-color: #16213e; /* Fondo de cabecera más oscuro */
+                color: #00ffff; /* Texto cian neón */
+                font-weight: 700;
+                padding: 15px 15px;
+                text-align: left;
+                border-bottom: 2px solid #00aaff; /* Borde inferior azul brillante */
+                text-transform: uppercase;
+            }
+
+            .product-table td {
+                padding: 12px 15px;
+                border-bottom: 1px solid #2a3c5d; /* Línea divisoria sutil */
+                color: #e0f2f7; /* Texto blanco brillante */
+            }
+
+            /* Efecto de movimiento en la fila al pasar el mouse */
+            .product-table tr:hover {
+                background-color: #1e2a4a; /* Fondo más claro al pasar el mouse */
+                cursor: pointer;
+                /* Añadir animación de brillo sutil */
+                animation: subtle-neon-glow 1.5s infinite alternate;
+            }
+
+            /* Botones de Stock Gamer */
+            .badge-stock {
+                background-color: #00e676; /* Verde neón */
+                color: #1a1a2e;
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 0.85rem;
+                font-weight: bold;
+                box-shadow: 0 0 5px #00e676;
+            }
+
+            .badge-low {
+                background-color: #ff3366; /* Rosa/Rojo neón */
+                color: white;
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 0.85rem;
+                font-weight: bold;
+                box-shadow: 0 0 5px #ff3366;
+            }
+
+            /* Botones de Acción Gamer */
+            .btn-action {
+                padding: 8px 12px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: 0.8rem;
+                margin-right: 5px;
+                display: inline-block;
+                transition: all 0.2s ease;
+            }
+
+            .btn-edit {
+                background-color: #ffc400; /* Amarillo neón */
+                color: #1a1a2e;
+                box-shadow: 0 0 5px #ffc400;
+            }
+            .btn-delete {
+                background-color: #ff3366; /* Rojo neón */
+                color: white;
+                box-shadow: 0 0 5px #ff3366;
+            }
+            .btn-action:hover {
+                transform: translateY(-2px);
+                opacity: 0.8;
+            }
+
+            /* Estilos de Encabezado y Botón Nuevo Producto Gamer */
+            .header-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            h1, h2 {
+                color: #00ffff; /* Cian neón */
+                text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+            }
+            p.text-muted {
+                color: #a0ffff;
+            }
+            .btn-new {
+                background: linear-gradient(90deg, #00ffff, #00aaff); /* Degradado cian/azul */
+                color: #1a1a2e;
+                padding: 10px 20px;
+                border-radius: 25px;
+                text-decoration: none;
+                font-weight: bold;
+                text-transform: uppercase;
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+                transition: all 0.3s ease;
+            }
+            .btn-new:hover {
+                box-shadow: 0 0 15px rgba(0, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+            /* ESTILOS GAMER PARA SWEETALERT */
+            .swal-gamer-popup {
+                background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+                border: 2px solid #00ffff !important;
+                color: #e0f2f7 !important;
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.7) !important;
+            }
+            .swal-title {
+                color: #00ffff !important;
+                text-shadow: 0 0 8px rgba(0, 255, 255, 0.7) !important;
+            }
+            .swal-html-container {
+                color: #a0ffff !important;
+            }
+            .swal-confirm-button-gamer {
+                background: linear-gradient(90deg, #1eff80, #00e676) !important;
+                color: #1a1a2e !important;
+                border: none !important;
+                border-radius: 8px !important;
+                font-weight: bold !important;
+                padding: 10px 20px !important;
+                margin: 5px !important;
+                box-shadow: 0 5px 15px rgba(30, 255, 128, 0.4) !important;
+            }
+            .swal-cancel-button-gamer {
+                background: linear-gradient(90deg, #ff3366, #c44036) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 8px !important;
+                font-weight: bold !important;
+                padding: 10px 20px !important;
+                margin: 5px !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="admin-container">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h3>RaidSoft Admin</h3>
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                    <li><a th:href="@{/admin/productos}" class="active"><i class="fas fa-box"></i> Productos</a></li>
+                    <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
+                    <li>
+                        <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
+                            <i class="fas fa-chart-line"></i> Reportes
+                        </a>
+                    </li>
+                    <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                    <li class="logout-item">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <header>
+                    <div class="user-welcome">
+                        <h1>Gestión de Inventario</h1>
+                        <p class="text-muted">Administra el catálogo de productos</p>
+                    </div>
+                </header>
+
+                <div class="header-actions">
+                    <h2 style="color: #5a5c69;">Lista de Productos</h2>
+                    <a th:href="@{/admin/productos/nuevo}" class="btn-new"><i class="fas fa-plus"></i> Nuevo Producto</a>
+                </div>
+
+                <div class="table-container">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Precio Venta</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="prod : ${listaProductos}">
+                                <td th:text="${prod.idProducto}">#1</td>
+                                <td>
+                                    <div style="font-weight: bold;" th:text="${prod.nombre}">Laptop HP</div>
+                                    <small th:text="${prod.codigoBarras}" style="color: #a0ffff;">CODE123</small>
+                                </td>
+                                <td th:text="'$' + ${prod.precioVenta}" style="color: #1eff80;">$0.00</td>
+                                <td>
+                                    <span th:class="${prod.stock <= prod.stockMinimo ? 'badge-low' : 'badge-stock'}"
+                                          th:text="${prod.stock}">
+                                        10
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${prod.estado}" style="color: #00e676;"><i class="fas fa-check-circle"></i> Activo</span>
+                                    <span th:unless="${prod.estado}" style="color: #ff3366;"><i class="fas fa-times-circle"></i> Inactivo</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" class="btn-action btn-edit"><i class="fas fa-pen"></i></a>
+
+                                    <a href="javascript:void(0);" 
+                                       th:onclick="|confirmDelete(${prod.idProducto})|" 
+                                       class="btn-action btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${listaProductos.empty}">
+                                <td colspan="6" style="text-align: center; padding: 30px; color: #a0ffff;">
+                                    <i class="fas fa-box-open" style="font-size: 2rem; color: #00ffff;"></i>
+                                    <p>No hay productos registrados aún.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+
+        <script th:inline="javascript">
+                            /*<![CDATA[*/
+
+                            // La URL base de eliminación (corregida previamente)
+                            const deleteUrlTemplate = /*[[@{/admin/productos/eliminar/}]]*/ '/admin/productos/eliminar/';
+
+                            // FUNCIÓN PARA MANEJAR LA ELIMINACIÓN CON SWEETALERT
+                            function confirmDelete(id) {
+                                Swal.fire({
+                                    title: "¿Estás seguro?",
+                                    text: "¡No podrás revertir esto!",
+                                    icon: "warning",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Sí, ¡elimínalo!",
+                                    cancelButtonText: "Cancelar",
+
+                                    customClass: {
+                                        popup: 'swal-gamer-popup',
+                                        confirmButton: 'swal-confirm-button-gamer',
+                                        cancelButton: 'swal-cancel-button-gamer'
+                                    },
+                                    buttonsStyling: false
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = deleteUrlTemplate + id;
+                                    }
+                                });
+                            }
+
+                            // BLOQUE PARA MOSTRAR EL MENSAJE DE ÉXITO 
+                            const successMessage = /*[[${success}]]*/ null;
+                            if (successMessage) {
+                                Swal.fire({
+                                    title: "¡Operación Exitosa!",
+                                    text: successMessage,
+                                    icon: "success",
+                                    draggable: true,
+                                    customClass: {
+                                        popup: 'swal-gamer-popup',
+                                        confirmButton: 'swal-confirm-button-gamer'
+                                    },
+                                    buttonsStyling: false
+                                });
+                            }
+
+                            /*]]>*/
+        </script>
+    </body>
 </html>

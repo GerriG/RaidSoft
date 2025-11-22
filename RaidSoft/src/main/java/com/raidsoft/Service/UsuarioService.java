@@ -1,5 +1,6 @@
 package com.raidsoft.service;
 
+import com.raidsoft.model.Perfil;
 import com.raidsoft.model.Usuario;
 import com.raidsoft.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,55 +24,66 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Usamos la ruta absoluta para evitar errores de "archivo no encontrado" en Windows
+    // Ruta absoluta para evitar errores de "archivo no encontrado" en Windows
     private final String UPLOAD_DIR = System.getProperty("user.dir") + "/src/main/resources/static/Profiles/";
 
-    public void actualizarPerfil(Usuario usuario, Usuario datosFormulario, MultipartFile archivo, String nuevaPassword) throws IOException {
+    public void actualizarPerfil(Usuario usuario, Perfil datosFormulario, MultipartFile archivo, String nuevaPassword) throws IOException {
         
-        // 1. Actualizar datos básicos
-        if (datosFormulario.getNombre() != null && !datosFormulario.getNombre().isEmpty()) {
-            usuario.setNombre(datosFormulario.getNombre());
-        }
-        if (datosFormulario.getApellido() != null && !datosFormulario.getApellido().isEmpty()) {
-            usuario.setApellido(datosFormulario.getApellido());
+        // 1. Obtener el perfil actual de la base de datos
+        Perfil perfilActual = usuario.getPerfil();
+        
+        // Validación de seguridad por si el usuario no tuviera perfil creado (casos raros)
+        if (perfilActual == null) {
+            perfilActual = new Perfil();
+            perfilActual.setUsuario(usuario);
+            usuario.setPerfil(perfilActual);
         }
 
-        // 2. Actualizar Contraseña (solo si se envía)
+        // 2. Actualizar datos básicos en el objeto PERFIL
+        if (datosFormulario.getNombre() != null && !datosFormulario.getNombre().isEmpty()) {
+            perfilActual.setNombre(datosFormulario.getNombre());
+        }
+        if (datosFormulario.getApellido() != null && !datosFormulario.getApellido().isEmpty()) {
+            perfilActual.setApellido(datosFormulario.getApellido());
+        }
+        if (datosFormulario.getEmail() != null && !datosFormulario.getEmail().isEmpty()) {
+            perfilActual.setEmail(datosFormulario.getEmail());
+        }
+        if (datosFormulario.getFechaNacimiento() != null) {
+            perfilActual.setFechaNacimiento(datosFormulario.getFechaNacimiento());
+        }
+
+        // 3. Actualizar Contraseña en el objeto USUARIO (solo si se envía)
         if (nuevaPassword != null && !nuevaPassword.isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(nuevaPassword));
         }
 
-        // 3. Manejo de la Imagen
+        // 4. Manejo de la Imagen (Lógica de borrado + subida)
         if (archivo != null && !archivo.isEmpty()) {
             
-            // --- LÓGICA DE BORRADO (Adaptada de tu proyecto anterior) ---
-            String imagenAnteriorUrl = usuario.getImagenUrl();
+            // A) Intentar borrar la imagen anterior del disco
+            String imagenAnteriorUrl = perfilActual.getAvatarUrl(); // Ahora obtenemos la URL del Perfil
             
-            // Solo borramos si hay URL, no está vacía y NO es la imagen por defecto (si la tuvieras)
-            if (imagenAnteriorUrl != null && !imagenAnteriorUrl.isEmpty()) {
+            if (imagenAnteriorUrl != null && !imagenAnteriorUrl.isEmpty() && !imagenAnteriorUrl.contains("default")) {
                 try {
-                    // La URL en BD es "/Profiles/foto.jpg". Quitamos "/Profiles/" para obtener el nombre real
+                    // Limpiar URL: "/Profiles/foto.jpg" -> "foto.jpg"
                     String nombreArchivoAnterior = imagenAnteriorUrl.replace("/Profiles/", "");
                     
-                    // Construimos la ruta al archivo físico
+                    // Construir ruta absoluta
                     Path rutaArchivoAnterior = Paths.get(UPLOAD_DIR, nombreArchivoAnterior);
                     
-                    // Intentamos borrar. deleteIfExists devuelve true si borró, false si no existía
+                    // Borrar si existe
                     boolean borrado = Files.deleteIfExists(rutaArchivoAnterior);
                     
                     if(borrado) {
                         System.out.println("✅ Imagen anterior eliminada: " + nombreArchivoAnterior);
-                    } else {
-                        System.out.println("⚠️ No se encontró el archivo anterior para borrar: " + rutaArchivoAnterior);
                     }
-                    
                 } catch (IOException e) {
-                    System.err.println("❌ Error al intentar borrar imagen anterior: " + e.getMessage());
-                    // No lanzamos throw para permitir que se guarde la nueva aunque falle el borrado de la vieja
+                    System.err.println("❌ Error no crítico al borrar imagen anterior: " + e.getMessage());
                 }
             }
 
-            // --- LÓGICA DE GUARDADO DE LA NUEVA IMAGEN ---
+            // B) Guardar la nueva imagen
             Path rutaDirectorio = Paths.get(UPLOAD_DIR);
             if (!Files.exists(rutaDirectorio)) {
                 Files.createDirectories(rutaDirectorio);
@@ -82,12 +94,12 @@ public class UsuarioService {
             
             Files.copy(archivo.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
             
-            // Guardamos la nueva URL en el usuario
-            usuario.setImagenUrl("/Profiles/" + nombreArchivo);
+            // Actualizar la URL en el Perfil
+            perfilActual.setAvatarUrl("/Profiles/" + nombreArchivo);
             System.out.println("✅ Nueva imagen guardada: " + nombreArchivo);
         }
 
-        // 4. Guardar cambios en Base de Datos
+        // 5. Guardar cambios (Al guardar Usuario, JPA actualiza Perfil por la cascada)
         usuarioRepository.save(usuario);
     }
 }

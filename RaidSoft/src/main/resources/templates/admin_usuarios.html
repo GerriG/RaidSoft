@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Gestión de Usuarios - RaidSoft</title>
+        <link rel="stylesheet" th:href="@{/css/Admin.css}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <style>
+            /* Estilos de tabla y badges igual que en Productos */
+            .table-container {
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+                padding: 20px;
+                margin-top: 20px;
+            }
+            .user-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .user-table th {
+                background-color: #f8f9fa;
+                color: #4e73df;
+                font-weight: 600;
+                padding: 12px;
+                text-align: left;
+                border-bottom: 2px solid #e3e6f0;
+            }
+            .user-table td {
+                padding: 12px;
+                border-bottom: 1px solid #e3e6f0;
+                color: #5a5c69;
+                vertical-align: middle;
+            }
+
+            .avatar-cell {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-right: 10px;
+                border: 2px solid #eaecf4;
+            }
+
+            .role-badge {
+                padding: 5px 12px;
+                border-radius: 50px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .role-admin {
+                background-color: #4e73df;
+                color: white;
+            }
+            .role-vendedor {
+                background-color: #1cc88a;
+                color: white;
+            }
+
+            .btn-action {
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 1.1rem;
+                margin: 0 5px;
+                transition: 0.2s;
+            }
+            .btn-action:hover {
+                transform: scale(1.2);
+            }
+            .text-success {
+                color: #1cc88a;
+            }
+            .text-danger {
+                color: #e74a3b;
+            }
+            .text-muted {
+                color: #858796;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="admin-container">
+            <nav class="sidebar">
+                <div class="sidebar-header"> <h3>RaidSoft Admin</h3> </div>
+                <ul class="sidebar-menu">
+                    <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a th:href="@{/admin/usuarios}" class="active"><i class="fas fa-users"></i>Usuarios</a></li>
+                    <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                    <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
+                    <li>
+                        <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
+                            <i class="fas fa-chart-line"></i> Reportes
+                        </a>
+                    </li>
+                    <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                    <li class="logout-item">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <header>
+                    <div class="user-welcome">
+                        <h1>Equipo de Trabajo</h1>
+                        <p class="text-muted">Administra los accesos y roles del personal</p>
+                    </div>
+                </header>
+
+                <div th:if="${success}" class="alert-data" th:data-msg="${success}" th:data-type="success"></div>
+                <div th:if="${error}" class="alert-data" th:data-msg="${error}" th:data-type="error"></div>
+
+                <div class="table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Colaborador</th>
+                                <th>Contacto</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="u : ${listaUsuarios}">
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <img th:if="${u.perfil != null and u.perfil.avatarUrl != null}" 
+                                             th:src="@{${u.perfil.avatarUrl}}" class="avatar-cell">
+
+                                        <img th:if="${u.perfil == null or u.perfil.avatarUrl == null}" 
+                                             src="https://ui-avatars.com/api/?background=random&color=fff&name=User" class="avatar-cell">
+
+                                        <div>
+                                            <div style="font-weight: bold;" 
+                                                 th:text="${u.perfil != null ? (u.perfil.nombre + ' ' + u.perfil.apellido) : u.username}">
+                                                Nombre Apellido
+                                            </div>
+                                            <small class="text-muted" th:text="${'@' + u.username}">@username</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td th:text="${u.perfil != null ? u.perfil.email : 'Sin email'}">email@ejemplo.com</td>
+                                <td>
+                                    <span class="role-badge" 
+                                          th:classappend="${u.rol.name() == 'ADMINISTRADOR' ? 'role-admin' : 'role-vendedor'}"
+                                          th:text="${u.rol}">ROL</span>
+                                </td>
+                                <td>
+                                    <span th:if="${u.estado}" class="text-success" style="font-weight: 600;">
+                                        <i class="fas fa-check-circle"></i> Activo
+                                    </span>
+                                    <span th:unless="${u.estado}" class="text-muted" style="font-weight: 600;">
+                                        <i class="fas fa-ban"></i> Inactivo
+                                    </span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/usuarios/toggle/{id}(id=${u.idUsuario})}" 
+                                       class="btn-action" 
+                                       th:classappend="${u.estado ? 'text-success' : 'text-muted'}"
+                                       th:title="${u.estado ? 'Desactivar acceso' : 'Reactivar acceso'}">
+                                        <i class="fas fa-power-off"></i>
+                                    </a>
+
+                                    <a th:href="@{/admin/usuarios/eliminar/{id}(id=${u.idUsuario})}" 
+                                       class="btn-action text-danger" 
+                                       title="Eliminar permanentemente"
+                                       onclick="return confirm('¿Estás seguro? Se borrará todo el historial asociado a este usuario.');">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const alerts = document.querySelectorAll('.alert-data');
+                alerts.forEach(alert => {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: alert.getAttribute('data-type'),
+                        title: alert.getAttribute('data-msg'),
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

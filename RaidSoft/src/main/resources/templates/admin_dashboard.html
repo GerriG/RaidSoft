@@ -5,6 +5,18 @@
     <title>Dashboard Administrador - RaidSoft</title>
     <link rel="stylesheet" th:href="@{/css/Admin.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.2s;
+        }
+        .card-link:hover {
+            transform: translateY(-5px);
+        }
+    </style>
 </head>
 <body>
     <div class="admin-container">
@@ -14,7 +26,7 @@
             </div>
             <ul class="sidebar-menu">
                 <li><a th:href="@{/admin/dashboard}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i>Usuarios</a></li>
                 
                 <li>
                     <a th:href="@{/admin/productos}">
@@ -23,7 +35,12 @@
                 </li>
                 
                 <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
-                <li><a th:href="@{/admin/reportes}"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                
+                <li>
+                    <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
+                        <i class="fas fa-chart-line"></i> Reportes
+                    </a>
+                </li>
                 
                 <li>
                     <a th:href="@{/perfil}">
@@ -47,20 +64,29 @@
             </header>
             
             <div class="dashboard-cards">
-                <div class="card">
-                    <h3>Productos</h3>
-                    <p class="number">120</p>
-                </div>
-                <div class="card">
-                    <h3>Stock Total</h3>
-                    <p class="number">5,430</p>
-                </div>
-                <div class="card alert">
-                    <h3>Alertas</h3>
-                    <p class="number">8</p>
-                </div>
+                <a th:href="@{/admin/productos}" class="card-link">
+                    <div class="card">
+                        <h3>Productos</h3>
+                        <p class="number">120</p> </div>
+                </a>
+
+                <a th:href="@{/admin/stock}" class="card-link">
+                    <div class="card">
+                        <h3>Stock Total</h3>
+                        <p class="number">5,430</p>
+                    </div>
+                </a>
+
+                <a th:href="@{/admin/stock}" class="card-link">
+                    <div class="card alert">
+                        <h3>Alertas</h3>
+                        <p class="number">8</p>
+                    </div>
+                </a>
             </div>
         </main>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

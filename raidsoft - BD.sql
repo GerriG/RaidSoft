@@ -1,4 +1,7 @@
--- CONFIGURACIÓN INICIAL
+-- ==========================================================
+-- SCRIPT FINAL RAIDSOFT (CON SEPARACIÓN DE PERFILES Y DATOS)
+-- ==========================================================
+
 SET NAMES utf8mb4;
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -11,11 +14,12 @@ SET time_zone = '-06:00';
 START TRANSACTION;
 
 -- CREACIÓN DE BD
+DROP DATABASE IF EXISTS `raidsoft`;
 CREATE DATABASE IF NOT EXISTS `raidsoft` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `raidsoft`;
 
 -- ==========================================
--- 1. TABLA CATEGORIAS
+-- 1. TABLA CATEGORIAS (27 Registros)
 -- ==========================================
 DROP TABLE IF EXISTS `categorias`;
 CREATE TABLE `categorias` (
@@ -25,7 +29,6 @@ CREATE TABLE `categorias` (
   PRIMARY KEY (`id_categoria`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertando 27 registros (2 originales + 25 nuevos)
 INSERT INTO `categorias` (`id_categoria`, `nombre`, `descripcion`) VALUES
 (1, 'Laptops', 'Equipos portátiles de todas las gamas'),
 (2, 'Periféricos', 'Teclados, mouse, audífonos'),
@@ -56,14 +59,11 @@ INSERT INTO `categorias` (`id_categoria`, `nombre`, `descripcion`) VALUES
 (27, 'Accesorios Celular', 'Cargadores y Cables');
 
 -- ==========================================
--- 2. TABLA USUARIOS (SOLO LOS EXISTENTES)
+-- 2. TABLA USUARIOS (SOLO AUTENTICACIÓN)
 -- ==========================================
 DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
-  `apellido` varchar(100) NOT NULL,
-  `imagen_url` varchar(255) DEFAULT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `rol` enum('ADMINISTRADOR','VENDEDOR') NOT NULL,
@@ -73,14 +73,34 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Mantenemos tus usuarios originales cifrados
-INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `imagen_url`, `username`, `password`, `rol`, `estado`, `created_at`) VALUES
-(5, 'Test', 'Test', NULL, 'Test', '$2a$10$SANBbxD/uHeIaZMvL40GSe.MeAgj8No.mxax1V5CTcWFdEDBDAcLm', 'VENDEDOR', 1, '2025-11-19 22:45:12'),
-(6, 'Administrador', 'Administrador', NULL, 'admin', '$2a$10$mu17XyvvbwY4LTMXrZVDXu5vj4/udIxEeUpDq8u/WYzNKvL8JdEQW', 'ADMINISTRADOR', 1, '2025-11-19 22:47:32'),
-(7, 'Vendedor', 'Vendedor', NULL, 'vendedor', '$2a$10$wOFc263FTx.Rbrd5hrDHLOcrP/PcMpwTGGtf5UnV528j0nVRfTKqu', 'VENDEDOR', 1, '2025-11-19 22:47:54');
+INSERT INTO `usuarios` (`id_usuario`, `username`, `password`, `rol`, `estado`) VALUES
+(5, 'Test', '$2a$10$SANBbxD/uHeIaZMvL40GSe.MeAgj8No.mxax1V5CTcWFdEDBDAcLm', 'VENDEDOR', 1),
+(6, 'admin', '$2a$10$mu17XyvvbwY4LTMXrZVDXu5vj4/udIxEeUpDq8u/WYzNKvL8JdEQW', 'ADMINISTRADOR', 1),
+(7, 'vendedor', '$2a$10$wOFc263FTx.Rbrd5hrDHLOcrP/PcMpwTGGtf5UnV528j0nVRfTKqu', 'VENDEDOR', 1);
 
 -- ==========================================
--- 3. TABLA PRODUCTOS
+-- 3. TABLA PERFILES (DATOS PERSONALES) - NUEVA
+-- ==========================================
+DROP TABLE IF EXISTS `perfiles`;
+CREATE TABLE `perfiles` (
+  `id_perfil` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `apellido` varchar(100) NOT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `fecha_nacimiento` date DEFAULT NULL,
+  `avatar_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_perfil`),
+  UNIQUE KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `perfiles` (`id_usuario`, `nombre`, `apellido`, `email`) VALUES
+(5, 'Usuario', 'Prueba', 'test@raidsoft.com'),
+(6, 'Super', 'Administrador', 'admin@raidsoft.com'),
+(7, 'Juan', 'Vendedor', 'vendedor@raidsoft.com');
+
+-- ==========================================
+-- 4. TABLA PRODUCTOS (30 Registros)
 -- ==========================================
 DROP TABLE IF EXISTS `productos`;
 CREATE TABLE `productos` (
@@ -101,11 +121,10 @@ CREATE TABLE `productos` (
   KEY `id_categoria` (`id_categoria`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertando 30 productos variados
 INSERT INTO `productos` (`id_producto`, `nombre`, `id_categoria`, `precio_compra`, `precio_venta`, `stock`, `stock_minimo`) VALUES
 (1, 'Laptop HP Pavilion 15', 1, 750.00, 920.00, 10, 2),
 (2, 'Mouse Logitech G203', 2, 15.00, 25.00, 50, 5),
-(3, 'Monitor Samsung 24\" IPS', 3, 110.00, 145.00, 15, 3),
+(3, 'Monitor Samsung 24" IPS', 3, 110.00, 145.00, 15, 3),
 (4, 'SSD Kingston 480GB', 4, 25.00, 35.00, 40, 5),
 (5, 'RAM Corsair Vengeance 8GB', 5, 30.00, 45.00, 30, 5),
 (6, 'Procesador Ryzen 5 5600G', 6, 120.00, 160.00, 8, 2),
@@ -124,7 +143,7 @@ INSERT INTO `productos` (`id_producto`, `nombre`, `id_categoria`, `precio_compra
 (19, 'Disipador Cooler Master 212', 20, 35.00, 50.00, 10, 2),
 (20, 'Tablet Samsung Tab A8', 21, 180.00, 220.00, 8, 2),
 (21, 'Teclado Mecánico Redragon', 2, 35.00, 55.00, 25, 4),
-(22, 'Monitor LG 27\" 144Hz', 3, 200.00, 260.00, 6, 2),
+(22, 'Monitor LG 27" 144Hz', 3, 200.00, 260.00, 6, 2),
 (23, 'HDD Seagate 1TB', 4, 35.00, 50.00, 20, 5),
 (24, 'RAM Kingston Fury 16GB', 5, 50.00, 75.00, 18, 4),
 (25, 'Procesador Intel i5 12400F', 6, 140.00, 180.00, 7, 2),
@@ -135,7 +154,7 @@ INSERT INTO `productos` (`id_producto`, `nombre`, `id_categoria`, `precio_compra
 (30, 'Cargador Carga Rápida Samsung', 27, 15.00, 25.00, 40, 5);
 
 -- ==========================================
--- 4. TABLA COMPRAS
+-- 5. TABLA COMPRAS (25 Registros)
 -- ==========================================
 DROP TABLE IF EXISTS `compras`;
 CREATE TABLE `compras` (
@@ -148,7 +167,6 @@ CREATE TABLE `compras` (
   KEY `id_usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertando 25 compras (Asociadas al usuario ID 6 - Administrador)
 INSERT INTO `compras` (`id_usuario`, `proveedor`, `total`) VALUES
 (6, 'Ingram Micro', 7500.00),
 (6, 'Intcomex', 300.00),
@@ -177,7 +195,7 @@ INSERT INTO `compras` (`id_usuario`, `proveedor`, `total`) VALUES
 (6, 'Amazon Imports', 2500.00);
 
 -- ==========================================
--- 5. TABLA DETALLE_COMPRAS
+-- 6. TABLA DETALLE_COMPRAS
 -- ==========================================
 DROP TABLE IF EXISTS `detalle_compras`;
 CREATE TABLE `detalle_compras` (
@@ -192,7 +210,6 @@ CREATE TABLE `detalle_compras` (
   KEY `id_producto` (`id_producto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Detalles aleatorios para las compras generadas
 INSERT INTO `detalle_compras` (`id_compra`, `id_producto`, `cantidad`, `costo_unitario`) VALUES
 (1, 1, 10, 750.00),
 (2, 2, 20, 15.00),
@@ -221,7 +238,7 @@ INSERT INTO `detalle_compras` (`id_compra`, `id_producto`, `cantidad`, `costo_un
 (25, 29, 5, 300.00);
 
 -- ==========================================
--- 6. TABLA VENTAS
+-- 7. TABLA VENTAS (25 Registros)
 -- ==========================================
 DROP TABLE IF EXISTS `ventas`;
 CREATE TABLE `ventas` (
@@ -234,7 +251,6 @@ CREATE TABLE `ventas` (
   KEY `id_usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertando 25 ventas (Usuario 7 es Vendedor, Usuario 6 es Admin)
 INSERT INTO `ventas` (`id_usuario`, `total`, `cliente_nombre`) VALUES
 (7, 920.00, 'Juan Pérez'),
 (7, 50.00, 'María López'),
@@ -263,7 +279,7 @@ INSERT INTO `ventas` (`id_usuario`, `total`, `cliente_nombre`) VALUES
 (6, 180.00, 'Venta Directa Admin');
 
 -- ==========================================
--- 7. TABLA DETALLE_VENTAS
+-- 8. TABLA DETALLE_VENTAS
 -- ==========================================
 DROP TABLE IF EXISTS `detalle_ventas`;
 CREATE TABLE `detalle_ventas` (
@@ -306,7 +322,7 @@ INSERT INTO `detalle_ventas` (`id_venta`, `id_producto`, `cantidad`, `precio_uni
 (25, 25, 1, 180.00);
 
 -- ==========================================
--- 8. TABLA MOVIMIENTOS
+-- 9. TABLA MOVIMIENTOS (25 Registros)
 -- ==========================================
 DROP TABLE IF EXISTS `movimientos`;
 CREATE TABLE `movimientos` (
@@ -322,7 +338,6 @@ CREATE TABLE `movimientos` (
   KEY `id_usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertando 25 movimientos (Mezcla de entradas por compra y salidas por venta)
 INSERT INTO `movimientos` (`id_producto`, `id_usuario`, `tipo`, `cantidad`, `observacion`) VALUES
 (1, 6, 'ENTRADA', 10, 'Compra Inicial'),
 (2, 6, 'ENTRADA', 50, 'Stock Periféricos'),
@@ -353,6 +368,11 @@ INSERT INTO `movimientos` (`id_producto`, `id_usuario`, `tipo`, `cantidad`, `obs
 -- ==========================================
 -- RELACIONES (CLAVES FORÁNEAS)
 -- ==========================================
+
+-- Relación 1 a 1: Perfil pertenece a Usuario
+ALTER TABLE `perfiles`
+  ADD CONSTRAINT `perfiles_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE;
+
 ALTER TABLE `compras`
   ADD CONSTRAINT `compras_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
 
@@ -376,7 +396,6 @@ ALTER TABLE `ventas`
 
 COMMIT;
 
--- RESTAURAR CONFIGURACIÓN ORIGINAL
 SET TIME_ZONE=@OLD_TIME_ZONE;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

@@ -1,155 +1,120 @@
-:root {
-    --primary-color: #4e73df;
-    --secondary-color: #858796;
-    --background-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.5);
-    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-}
-
-body {
-    background: var(--background-gradient);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
-}
-
-/* Tarjeta Principal con efecto Vidrio */
-.profile-glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    border: var(--glass-border);
-    box-shadow: var(--shadow);
+/* Contenedor Principal de la Tarjeta */
+.profile-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     padding: 3rem;
-    margin-top: 2rem;
+    margin-top: 20px;
     position: relative;
-    overflow: hidden;
 }
 
-/* Cabecera del Perfil */
+/* Header del Perfil Centrado y Circular */
 .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrado horizontal */
+    justify-content: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e3e6f0;
+    padding-bottom: 2rem;
     text-align: center;
-    margin-bottom: 3rem;
 }
 
-.avatar-container {
-    width: 150px;
+.profile-avatar {
+    width: 150px; /* Tamaño grande */
     height: 150px;
-    margin: 0 auto 1.5rem;
-    position: relative;
-}
-
-.avatar-img {
-    width: 100%;
-    height: 100%;
+    border-radius: 50%; /* Círculo perfecto */
     object-fit: cover;
-    border-radius: 50%;
-    border: 5px solid white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
+    border: 5px solid white; /* Borde blanco grueso */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Sombra suave */
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease; /* Animación suave */
 }
 
-.avatar-img:hover {
-    transform: scale(1.05);
+.profile-avatar:hover {
+    transform: scale(1.05); /* Efecto zoom al pasar mouse */
 }
 
-.user-name {
-    font-size: 2rem;
+.profile-name {
+    color: #4e73df;
+    font-size: 2rem; /* Tamaño de fuente grande */
     font-weight: 700;
-    color: #2c3e50;
     margin-bottom: 0.5rem;
 }
 
-.role-badge {
-    background: linear-gradient(45deg, #4e73df, #224abe);
+.profile-role {
+    background: linear-gradient(45deg, #4e73df, #224abe); /* Gradiente Admin */
     color: white;
     padding: 0.5rem 1.5rem;
     border-radius: 50px;
     font-size: 0.9rem;
     font-weight: 600;
-    letter-spacing: 1px;
     text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-block;
 }
 
-/* Campos de Lectura */
-.info-group {
-    background: rgba(255, 255, 255, 0.6);
+.role-vendedor {
+    background: linear-gradient(45deg, #1cc88a, #13855c); /* Gradiente Vendedor */
+}
+
+/* Grid de Información */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.info-item {
     padding: 1.5rem;
-    border-radius: 15px;
-    border: 1px solid rgba(255,255,255,0.8);
-    transition: all 0.3s ease;
-    height: 100%;
+    background-color: #f8f9fa;
+    border-radius: 15px; /* Bordes más redondeados */
+    border: 1px solid rgba(0,0,0,0.05);
+    border-left: 5px solid #4e73df;
+    transition: transform 0.2s;
 }
 
-.info-group:hover {
+.info-item:hover {
+    transform: translateY(-5px); /* Efecto elevación */
     background: white;
-    transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
-.label-text {
-    color: #858796;
+.info-label {
     font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
+    color: #858796;
     margin-bottom: 0.5rem;
     display: block;
 }
 
-.value-text {
-    color: #333;
-    font-size: 1.1rem;
+.info-value {
+    font-size: 1.2rem;
     font-weight: 500;
+    color: #5a5c69;
 }
 
-/* Botones */
-.btn-edit-floating {
+/* Botón Editar Flotante */
+.btn-edit {
     position: absolute;
     top: 20px;
     right: 20px;
+    background-color: white;
+    color: #4e73df;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: white;
-    color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: all 0.3s;
     text-decoration: none;
-}
-
-.btn-edit-floating:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: rotate(15deg);
-}
-
-.btn-theme {
-    background: linear-gradient(45deg, #4e73df, #224abe);
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 50px;
-    font-weight: 600;
     transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.btn-theme:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(78, 115, 223, 0.4);
+.btn-edit:hover {
+    background-color: #4e73df;
     color: white;
+    transform: rotate(15deg); /* Rotación sutil */
 }
-
-/* Preview de imagen en edición */
-.img-preview-box {
-    background: rgba(255,255,255,0.5);
-    padding: 10px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
