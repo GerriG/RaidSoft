@@ -3,97 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a RaidSoft</title>
-    <!-- Iconos -->
+    <title>Bienvenido - RaidSoft</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Nuestro CSS animado -->
+    
     <link rel="stylesheet" th:href="@{/css/Styles.css}">
 </head>
+
 <body>
-    <!-- Contenedor Principal -->
     <div class="container" id="container">
         
-        <!-- Formulario de Registro (Sign Up) -->
         <div class="form-container sign-up-container">
-            <form th:action="@{/register}" method="post">
+            <form id="formRegistro">
                 <h1>Crear Cuenta</h1>
                 <div class="social-container">
-                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social"><i class="fas fa-user-plus"></i></a>
                 </div>
-                <span>o usa tu correo para registrarte</span>
+                <span>Usa tus datos para registrarte</span>
                 
                 <input type="text" name="nombre" placeholder="Nombre" required />
                 <input type="text" name="apellido" placeholder="Apellido" required />
+                <input type="email" name="email" placeholder="Correo Electrónico" required />
+                <input type="date" name="fechaNacimiento" placeholder="Fecha Nacimiento" required />
+
                 <input type="text" name="username" placeholder="Usuario" required />
                 <input type="password" name="password" placeholder="Contraseña" required />
-                
-                <!-- Selector de Rol simple para la demo -->
-                <select name="rol" required>
-                    <option value="VENDEDOR">Vendedor</option>
-                    <option value="ADMINISTRADOR">Administrador</option>
-                </select>
 
-                <button type="submit">Registrarse</button>
+                <div id="registroAlert" class="alert-compact" style="display: none; margin-top: 10px;"></div>
+
+                <button type="submit" id="btnRegistro">Registrarse</button>
             </form>
         </div>
 
-        <!-- Formulario de Login (Sign In) -->
         <div class="form-container sign-in-container">
-            <form th:action="@{/login}" method="post">
+            <form id="formLogin">
                 <h1>Iniciar Sesión</h1>
                 <div class="social-container">
-                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social"><i class="fas fa-lock"></i></a>
                 </div>
                 <span>o usa tu cuenta</span>
-                
-                <!-- Mensajes de Alerta -->
-                <div th:if="${param.error}" class="alert error">
-                    Credenciales incorrectas o usuario ya existe.
+
+                <div id="alertError" class="alert-compact error" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> Credenciales incorrectas
                 </div>
-                <div th:if="${success}" class="alert success" th:text="${success}"></div>
-                <div th:if="${param.logout}" class="alert success">Sesión cerrada.</div>
+
+                <div id="alertDisabled" class="alert-compact error" style="display: none; background:#fff8e1; border-color:#ffbb33; color:#856404;">
+                    <i class="fas fa-user-slash"></i> Tu cuenta está deshabilitada
+                </div>
+
+                <div th:if="${param.logout}" class="alert-compact success">Sesión cerrada</div>
 
                 <input type="text" name="username" placeholder="Usuario" required />
                 <input type="password" name="password" placeholder="Contraseña" required />
-                <a href="#">¿Olvidaste tu contraseña?</a>
-                <button type="submit">Ingresar</button>
+
+                <a href="#" id="forgotPassLink">¿Olvidaste tu contraseña?</a>
+
+                <button type="submit" id="btnLogin">Ingresar</button>
             </form>
         </div>
 
-        <!-- Panel de Superposición (Overlay) para la animación -->
         <div class="overlay-container">
             <div class="overlay">
                 <div class="overlay-panel overlay-left">
                     <h1>¡Bienvenido de nuevo!</h1>
-                    <p>Para mantenerte conectado con nosotros, inicia sesión con tu información personal</p>
+                    <p>Para mantenerte conectado con RaidSoft, inicia sesión</p>
                     <button class="ghost" id="signIn">Iniciar Sesión</button>
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h1>¡Hola, Amigo!</h1>
-                    <p>Ingresa tus datos personales y comienza tu viaje con RaidSoft</p>
+                    <p>Ingresa tus datos y comienza tu viaje con RaidSoft</p>
                     <button class="ghost" id="signUp">Registrarse</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script simple para alternar la clase -->
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal-card">
+            <button class="btn-close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="modal-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+
+            <h2>Recuperar Acceso</h2>
+            <p>Ingresa los datos para restablecer tu contraseña.</p>
+
+            <div id="modalSuccess" class="modal-alert success">
+                <i class="fas fa-check-circle"></i> ¡Contraseña actualizada!
+            </div>
+            <div id="modalError" class="modal-alert error">
+                <i class="fas fa-times-circle"></i> Los datos no coinciden
+            </div>
+
+            <form id="formReset" style="background: transparent; padding: 0;">
+                <div class="input-group">
+                    <i class="far fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Correo Electrónico" required />
+                </div>
+
+                <div class="input-group">
+                    <i class="far fa-calendar-alt"></i>
+                    <input type="date" name="fechaNacimiento" required />
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="password" name="newPassword" placeholder="Nueva Contraseña" required />
+                </div>
+                
+                <button type="submit" class="btn-modal" id="btnReset">Restablecer</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
 
-        signUpButton.addEventListener('click', () => {
-            container.classList.add("right-panel-active");
-        });
+        signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+        signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+    </script>
 
-        signInButton.addEventListener('click', () => {
-            container.classList.remove("right-panel-active");
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Usamos FormData y URLSearchParams para obtener los datos
+            const formData = new FormData(this);
+            const params = new URLSearchParams(formData);
+            
+            // Creamos el objeto JSON a enviar para que Spring Security lo reconozca
+            const jsonData = {};
+            for (let pair of formData.entries()) {
+                jsonData[pair[0]] = pair[1];
+            }
+            
+            const btn = document.getElementById('btnLogin');
+            const originalText = btn.innerText;
+
+            btn.innerText = 'Verificando...';
+            btn.disabled = true;
+
+            document.getElementById('alertError').style.display = 'none';
+            document.getElementById('alertDisabled').style.display = 'none';
+
+            // Nota: Se usa 'fetch' para POST con body: params, 
+            // pero Spring Security requiere que el form-login use el formato application/x-www-form-urlencoded
+            // (que es lo que params hace por defecto al enviarse como 'body').
+            fetch('/login', { method: 'POST', body: params })
+            .then(r => {
+                 // Manejar la respuesta del CustomAuthSuccessHandler (que devuelve JSON)
+                 if (!r.ok) {
+                    // Si no es OK (ej. 401 Unauthorized), Spring Security llama a CustomAuthFailureHandler
+                    throw r;
+                 }
+                 return r.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // CORRECCIÓN CRÍTICA: Se usa data.redirectUrl en lugar de data.url
+                    window.location.href = data.redirectUrl; 
+                }
+            })
+            .catch(r => {
+                // Manejo de errores 401 del CustomAuthFailureHandler
+                r.json().then(errorData => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    
+                    if (errorData.message.includes('deshabilitada'))
+                         document.getElementById('alertDisabled').style.display = 'flex';
+                    else
+                         document.getElementById('alertError').style.display = 'flex';
+                }).catch(() => {
+                    // Si la respuesta no es JSON (error grave)
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    document.getElementById('alertError').style.display = 'flex';
+                });
+            });
         });
     </script>
+
+    <script>
+        document.getElementById('formRegistro').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const jsonData = {};
+            for (let pair of formData.entries()) {
+                jsonData[pair[0]] = pair[1];
+            }
+
+            const btn = document.getElementById('btnRegistro');
+            const alertDiv = document.getElementById('registroAlert');
+            const originalText = btn.innerText;
+
+            btn.innerText = 'Registrando...';
+            btn.disabled = true;
+            alertDiv.style.display = 'none';
+            alertDiv.classList.remove('success', 'error');
+
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Necesario para AuthRestController
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(r => r.json().then(data => ({ status: r.status, body: data })))
+            .then(result => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+
+                if (result.status === 201) {
+                    alertDiv.innerText = result.body.message;
+                    alertDiv.classList.add('success');
+                    // Opcional: Redirigir al panel de inicio de sesión
+                    setTimeout(() => container.classList.remove("right-panel-active"), 1500);
+                } else {
+                    alertDiv.innerText = result.body.message;
+                    alertDiv.classList.add('error');
+                }
+                alertDiv.style.display = 'flex';
+            })
+            .catch(error => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                alertDiv.innerText = 'Error de conexión con el servidor.';
+                alertDiv.classList.add('error');
+                alertDiv.style.display = 'flex';
+            });
+        });
+    </script>
+
+    <script>
+        const modal = document.getElementById('resetModal');
+        document.getElementById('forgotPassLink').addEventListener('click', e => {
+            e.preventDefault();
+            modal.classList.add('active');
+            document.getElementById('formReset').reset();
+        });
+        document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('active'));
+    </script>
+
+    <script>
+        document.getElementById('formReset').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const params = new URLSearchParams(new FormData(this));
+            const btn = document.getElementById('btnReset');
+            const original = btn.innerText;
+
+            btn.innerText = 'Procesando...';
+            btn.disabled = true;
+
+            document.getElementById('modalSuccess').style.display = 'none';
+            document.getElementById('modalError').style.display = 'none';
+
+            fetch('/reset-password', { method: 'POST', body: params })
+            .then(r => r.json())
+            .then(data => {
+                btn.innerText = original;
+                btn.disabled = false;
+                if (data.status === 'success') {
+                    document.getElementById('modalSuccess').style.display = 'flex';
+                    setTimeout(() => modal.classList.remove('active'), 2000);
+                } else {
+                    document.getElementById('modalError').style.display = 'flex';
+                }
+            })
+            .catch(() => {
+                btn.innerText = original;
+                btn.disabled = false;
+                document.getElementById('modalError').style.display = 'flex';
+            });
+        });
+    </script>
+
 </body>
 </html>

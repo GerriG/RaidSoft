@@ -263,25 +263,36 @@ public class AppController {
 
     // --- REGISTRO (PÚBLICO) ---
 
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
-        try {
-            if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
-                redirectAttributes.addFlashAttribute("error", "El usuario ya existe.");
-                return "redirect:/login?error";
-            }
-            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-            usuario.setEstado(true);
-            if (usuario.getRol() == null) usuario.setRol(Rol.VENDEDOR);
-            
-            // Al guardar el usuario, si tiene perfil asociado se guardará por cascada
-            usuarioRepository.save(usuario);
-            
-            redirectAttributes.addFlashAttribute("success", "Cuenta creada. Inicia sesión.");
-            return "redirect:/login";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
-            return "redirect:/login?error";
-        }
-    }
+//    @PostMapping("/register")
+//    public String registerUser(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
+//        try {
+//            if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
+//                redirectAttributes.addFlashAttribute("error", "El usuario ya existe.");
+//                return "redirect:/login?error";
+//            }
+//            
+//            // 1. Encriptar contraseña y configurar estado/rol
+//            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+//            usuario.setEstado(true);
+//            if (usuario.getRol() == null) usuario.setRol(Rol.VENDEDOR);
+//            
+//            // 2. CORRECCIÓN CRÍTICA: Crear, asociar el Perfil e INICIALIZAR campos no nulos
+//            Perfil nuevoPerfil = new Perfil();
+//            // Evitar la excepción: Perfil requiere nombre y apellido (nullable=false)
+//            nuevoPerfil.setNombre(usuario.getUsername()); // Usar username como nombre temporal
+//            nuevoPerfil.setApellido("(Sin Apellido)");
+//            
+//            usuario.setPerfil(nuevoPerfil); // Vinculación bidireccional
+//            
+//            // 3. Guardar. Al tener cascade = ALL, se guarda el usuario y su perfil
+//            usuarioRepository.save(usuario);
+//            
+//            redirectAttributes.addFlashAttribute("success", "Cuenta creada. Inicia sesión.");
+//            return "redirect:/login";
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
+//            return "redirect:/login?error";
+//        }
+//    }
 }

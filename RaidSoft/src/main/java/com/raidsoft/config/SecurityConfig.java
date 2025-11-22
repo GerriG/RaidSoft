@@ -1,49 +1,54 @@
 package com.raidsoft.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
+    // Ahora ambos beans se encuentran correctamente
+    @Autowired
+    private AuthenticationSuccessHandler customAuthSuccessHandler;
+    
+    @Autowired
+    private AuthenticationFailureHandler customAuthFailureHandler;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                // Recursos estáticos públicos (CSS, JS, Imágenes, etc.)
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/Profiles/**").permitAll()
+            .authorizeHttpRequests(authorize -> authorize
+                // Rutas públicas
+                .requestMatchers("/css/**", "/Profiles/**", "/register", "/login", "/").permitAll()
+                .requestMatchers("/api/register").permitAll() // Necesario para el endpoint de registro JSON
                 
-                // Permitir acceso público al Login y al Registro
-                .requestMatchers("/login", "/register", "/redirectByRole").permitAll()
-                
-                // RUTAS COMPARTIDAS (ACCESIBLES POR CUALQUIER USUARIO AUTENTICADO)
-                // Se definen antes de las rutas específicas de rol para mayor claridad.
-                .requestMatchers("/perfil", "/perfil/editar", "/perfil/guardar").authenticated()
-                
-                // Rutas protegidas por Rol ADMINISTRADOR (Cubre /admin/dashboard, /admin/productos/**, /admin/stock)
-                .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
-                
-                // Rutas protegidas por Rol VENDEDOR
-                .requestMatchers("/vendedor/**").hasRole("VENDEDOR")
-                
-                // Todo lo demás requiere autenticación
+                // Rutas privadas con roles
+                .requestMatchers("/admin/**").hasAuthority("ADMINISTRADOR")
+                .requestMatchers("/vendedor/**").hasAnyAuthority("VENDEDOR", "ADMINISTRADOR")
                 .anyRequest().authenticated()
-                )
-                .formLogin(login -> login
-                .loginPage("/login")
-                .permitAll()
-                .defaultSuccessUrl("/redirectByRole", true) // Redirige aquí si el login es correcto
-                .failureUrl("/login?error") // Redirige aquí si la contraseña falla
-                )
-                .logout(logout -> logout
+            )
+            .formLogin(form -> form
+                .loginPage("/login") 
+                .loginProcessingUrl("/login") // Endpoint que procesa el login
+                // Configuramos los handlers JSON para las respuestas de AJAX
+                .successHandler(customAuthSuccessHandler)
+                .failureHandler(customAuthFailureHandler)
+            )
+            .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
-                );
+            )
+            // Deshabilitar CSRF para permitir peticiones POST via AJAX sin token CSRF
+            .csrf(csrf -> csrf.disable()); 
 
         return http.build();
     }

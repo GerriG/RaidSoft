@@ -19,18 +19,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
         // 2. Convertir Rol (Enum -> Spring Authority)
-        // Ejemplo: Si en BD es "ADMINISTRADOR", Spring necesita "ROLE_ADMINISTRADOR"
-        String rolSpring = "ROLE_" + usuario.getRol().name();
+        String authority = usuario.getRol().name();
 
         // 3. Retornar objeto User de Spring Security
-        // NOTA CRÍTICA: Pasamos usuario.getPassword() DIRECTAMENTE.
-        // No agregamos {noop} ni {bcrypt}. El PasswordEncoder en SecurityConfig
-        // se encargará de verificar este hash contra la contraseña plana que ingresa el usuario.
+        // CORRECCIÓN CRÍTICA: La contraseña en la DB ya tiene el prefijo {bcrypt},
+        // por lo tanto, la pasamos directamente sin modificar.
+        String passwordAlmacenada = usuario.getPassword(); 
+        
         return User.builder()
                 .username(usuario.getUsername())
-                .password(usuario.getPassword()) 
-                .authorities(rolSpring)
-                .disabled(!usuario.getEstado()) // Bloquea el acceso si estado es false (0)
+                .password(passwordAlmacenada) // CAMBIO: Se pasa directamente.
+                .authorities(authority) 
+                .disabled(!usuario.getEstado()) 
                 .build();
     }
 }
