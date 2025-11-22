@@ -18,6 +18,11 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String apellido;
 
+    // --- NUEVO CAMPO AGREGADO ---
+    @Column(name = "imagen_url")
+    private String imagenUrl;
+    // ----------------------------
+
     @Column(unique = true, nullable = false, length = 50)
     private String username;
 
@@ -79,6 +84,16 @@ public class Usuario {
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
+
+    // --- NUEVOS GETTER Y SETTER PARA LA IMAGEN ---
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+    // ---------------------------------------------
 
     public String getUsername() {
         return username;

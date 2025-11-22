@@ -3,20 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Vendedor - RaidSoft</title>
-    <!-- Enlace correcto al CSS -->
     <link rel="stylesheet" th:href="@{/css/Vendedor.css}">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .btn-profile {
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+            margin-right: 15px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .btn-profile:hover {
+            background-color: #f0f2f5;
+            color: #4e73df;
+        }
+    </style>
 </head>
 <body>
     <div class="vendedor-container">
-        <!-- Navbar Superior -->
         <nav class="top-nav">
             <div class="nav-brand">
                 <i class="fas fa-shopping-bag"></i> RaidSoft Vendedor
             </div>
             <div class="nav-user">
                 <span class="user-welcome">Hola, <strong th:text="${#authentication.name}">Vendedor</strong></span>
+                
+                <a th:href="@{/perfil}" class="btn-profile" title="Ver mi perfil">
+                    <i class="fas fa-user-circle"></i> Mi Perfil
+                </a>
+
                 <form th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="logout-link">
                         <i class="fas fa-sign-out-alt"></i> Salir
@@ -25,7 +43,6 @@
             </div>
         </nav>
 
-        <!-- Contenido Principal -->
         <main class="content">
             <div class="welcome-section">
                 <h2>Panel de Ventas</h2>
@@ -33,7 +50,6 @@
             </div>
             
             <div class="actions-grid">
-                <!-- Tarjeta: Nueva Venta -->
                 <a href="#" class="action-card">
                     <div class="icon-wrapper sale">
                         <i class="fas fa-cash-register"></i>
@@ -42,7 +58,6 @@
                     <p>Registrar una salida de productos</p>
                 </a>
 
-                <!-- Tarjeta: Consultar Stock -->
                 <a href="#" class="action-card">
                     <div class="icon-wrapper stock">
                         <i class="fas fa-boxes"></i>
@@ -51,7 +66,6 @@
                     <p>Verificar disponibilidad de inventario</p>
                 </a>
 
-                <!-- Tarjeta: Historial -->
                 <a href="#" class="action-card">
                     <div class="icon-wrapper history">
                         <i class="fas fa-history"></i>
