@@ -1,11 +1,11 @@
-com\raidsoft\config\SecurityConfig.class
 com\raidsoft\repository\UsuarioRepository.class
 com\raidsoft\controller\AppController.class
 com\raidsoft\model\Rol.class
 com\raidsoft\config\WebConfig.class
-com\raidsoft\service\UsuarioService.class
 com\raidsoft\repository\ProductoRepository.class
+com\raidsoft\RaidSoftApplication.class
+com\raidsoft\config\SecurityConfig.class
+com\raidsoft\service\UsuarioService.class
 com\raidsoft\service\UserDetailsServiceImpl.class
 com\raidsoft\model\Producto.class
-com\raidsoft\RaidSoftApplication.class
 com\raidsoft\model\Usuario.class

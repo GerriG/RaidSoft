@@ -10,18 +10,23 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Convertimos la ruta a URI para que funcione en Windows/Linux/Mac sin errores
+        
         String pathProfiles = Paths.get("src", "main", "resources", "static", "Profiles")
                                    .toAbsolutePath()
                                    .toUri()
                                    .toString();
 
-        // Imprimimos en consola para verificar que la ruta es correcta al arrancar
         System.out.println("------------------------------------------------------");
         System.out.println("Mapeando recursos /Profiles/** a: " + pathProfiles);
         System.out.println("------------------------------------------------------");
 
+        // 1. Mapeo para el recurso custom (/Profiles/**)
         registry.addResourceHandler("/Profiles/**")
                 .addResourceLocations(pathProfiles);
+
+        // 2. CORRECCIÓN CRÍTICA: Volver a añadir el manejador de recursos estáticos por defecto.
+        // Esto sirve los archivos CSS, JS, etc. desde la carpeta /static/
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/"); //
     }
 }

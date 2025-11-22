@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${accion} + ' Producto - RaidSoft'"></title>
+    
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <style>
+        /* Mantenemos los estilos generales del Admin.css */
+
+        /* Estilos Gamer para el Formulario */
+        .form-container {
+            background: linear-gradient(135deg, #1a1a2e, #16213e); /* Degradado oscuro */
+            border-radius: 15px; /* Bordes más pronunciados */
+            box-shadow: 0 8px 16px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 255, 255, 0.1); /* Sombra futurista con cian */
+            padding: 40px; /* Más espacio */
+            margin-top: 30px; /* Más margen superior */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 2px solid #00ffff; /* Borde cian vibrante */
+        }
+        .form-group {
+            margin-bottom: 25px; /* Más espacio entre grupos */
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00ffff; /* Cian para las etiquetas */
+            font-size: 1.1em; /* Un poco más grande */
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7); /* Efecto neón en el texto */
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px; /* Más padding */
+            border: 1px solid #00aaff; /* Borde azul brillante */
+            border-radius: 8px; /* Bordes redondeados */
+            box-sizing: border-box; 
+            background-color: #0d1222; /* Fondo de input muy oscuro */
+            color: #e0f2f7; /* Texto claro */
+            font-family: 'Consolas', monospace; /* Fuente de código para un toque tech */
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+        .form-control:focus {
+            border-color: #00ffff; /* Cian al enfocar */
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.6), inset 0 1px 3px rgba(0, 0, 0, 0.6); /* Sombra neón al enfocar */
+            outline: none;
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px; /* Altura mínima para la descripción */
+        }
+
+        /* Botones con estilo gamer */
+        .btn-success { 
+            background: linear-gradient(90deg, #1eff80, #00e676); /* Degradado verde neón */
+            color: #1a1a2e; /* Texto oscuro para contraste */
+            padding: 12px 25px; /* Más padding */
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 1.05em;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(30, 255, 128, 0.4); /* Sombra brillante */
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background: linear-gradient(90deg, #00e676, #1eff80); /* Invertir degradado al pasar el mouse */
+            box-shadow: 0 8px 20px rgba(30, 255, 128, 0.6);
+            transform: translateY(-2px); /* Pequeño levantamiento */
+        }
+        .btn-secondary { 
+            background: linear-gradient(90deg, #6c757d, #495057); /* Degradado gris oscuro */
+            color: #e0f2f7; 
+            padding: 12px 25px; 
+            border: none; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            margin-left: 15px; /* Más margen */
+            font-weight: bold;
+            font-size: 1.05em;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #495057, #6c757d);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .form-actions { 
+            margin-top: 30px; 
+            text-align: center; /* Centrar botones */
+        }
+        
+        /* Estilos para el título principal, alineado con el dashboard */
+        .main-content h1 {
+            color: #00ffff; /* Cian brillante para el título */
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8); /* Efecto neón */
+            margin-bottom: 5px;
+            font-size: 2.5em; /* Título más grande */
+        }
+        .main-content .text-muted {
+            color: #a0ffff; /* Subtítulo con un cian más claro */
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3>RaidSoft Admin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/productos}" class="active"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a href="#"><i class="fas fa-clipboard-list"></i> Stock</a></li>
+                <li><a href="#"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                <li class="logout-item">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <header>
+                <div class="user-welcome">
+                    <h1 th:text="${accion} + ' Producto'">Formulario Producto</h1>
+                    <p class="text-muted">Ingresa o modifica la información del producto</p>
+                </div>
+            </header>
+
+            <div class="form-container">
+                <form th:action="@{/admin/productos/guardar}" th:object="${producto}" method="post">
+                    
+                    <input type="hidden" th:field="*{idProducto}" />
+                    <input type="hidden" th:field="*{estado}" /> 
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="codigoBarras">Código de Barras:</label>
+                        <input type="text" id="codigoBarras" th:field="*{codigoBarras}" class="form-control" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descripcion">Descripción:</label>
+                        <textarea id="descripcion" th:field="*{descripcion}" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precioCompra">Precio de Compra:</label>
+                        <input type="number" id="precioCompra" th:field="*{precioCompra}" class="form-control" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precioVenta">Precio de Venta:</label>
+                        <input type="number" id="precioVenta" th:field="*{precioVenta}" class="form-control" step="0.01" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stock">Stock:</label>
+                        <input type="number" id="stock" th:field="*{stock}" class="form-control" required/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stockMinimo">Stock Mínimo:</label>
+                        <input type="number" id="stockMinimo" th:field="*{stockMinimo}" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imagenUrl">URL de Imagen:</label>
+                        <input type="text" id="imagenUrl" th:field="*{imagenUrl}" class="form-control" />
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-success" th:text="${accion}"></button>
+                        <a th:href="@{/admin/productos}" class="btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    
+    <script th:if="${success}">
+        // Extraemos el mensaje flash del modelo
+        let message = '[[${success}]]'; 
+
+        // Activamos SweetAlert con el estilo gamer
+        Swal.fire({
+          title: "¡Operación Exitosa!",
+          text: message,
+          icon: "success",
+          draggable: true,
+          customClass: {
+            popup: 'swal-gamer-popup',
+            confirmButton: 'swal-gamer-button'
+          },
+          buttonsStyling: false // Deshabilita el estilo por defecto para usar customClass
+        });
+    </script>
+
+    <style>
+        .swal-gamer-popup {
+            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+            border: 2px solid #00ffff !important;
+            color: #e0f2f7 !important;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7) !important;
+        }
+        .swal-title {
+            color: #00ffff !important;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.7) !important;
+        }
+        .swal-html-container {
+            color: #a0ffff !important;
+        }
+        .swal-gamer-button {
+            background: linear-gradient(90deg, #1eff80, #00e676) !important;
+            color: #1a1a2e !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: bold !important;
+            padding: 10px 20px !important;
+            margin: 5px !important;
+            box-shadow: 0 5px 15px rgba(30, 255, 128, 0.4) !important;
+            transition: all 0.3s ease !important;
+        }
+        .swal-gamer-button:hover {
+            box-shadow: 0 8px 20px rgba(30, 255, 128, 0.6) !important;
+            transform: translateY(-2px) !important;
+        }
+        .swal2-icon.swal2-success [class^='swal2-success-line'] {
+            background-color: #1eff80 !important; /* Color verde neón para la marca de éxito */
+        }
+        .swal2-icon.swal2-success .swal2-success-ring {
+            border-color: rgba(30, 255, 128, 0.3) !important; /* Anillo más sutil */
+        }
+    </style>
+</body>
+</html>

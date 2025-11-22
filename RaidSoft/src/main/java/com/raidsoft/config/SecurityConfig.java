@@ -14,13 +14,22 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                // Recursos estáticos públicos (CSS, JS, Imágenes)
+                // Recursos estáticos públicos (CSS, JS, Imágenes, etc.)
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/Profiles/**").permitAll()
+                
                 // Permitir acceso público al Login y al Registro
                 .requestMatchers("/login", "/register", "/redirectByRole").permitAll()
-                // Rutas protegidas por Rol
+                
+                // RUTAS COMPARTIDAS (ACCESIBLES POR CUALQUIER USUARIO AUTENTICADO)
+                // Se definen antes de las rutas específicas de rol para mayor claridad.
+                .requestMatchers("/perfil", "/perfil/editar", "/perfil/guardar").authenticated()
+                
+                // Rutas protegidas por Rol ADMINISTRADOR (Cubre /admin/dashboard, /admin/productos/**, /admin/stock)
                 .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
+                
+                // Rutas protegidas por Rol VENDEDOR
                 .requestMatchers("/vendedor/**").hasRole("VENDEDOR")
+                
                 // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
                 )
@@ -40,7 +49,6 @@ public class SecurityConfig {
     }
 
     // --- BEAN OBLIGATORIO PARA BCRYPT ---
-    // Este componente se encarga de encriptar en el registro y verificar en el login.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
