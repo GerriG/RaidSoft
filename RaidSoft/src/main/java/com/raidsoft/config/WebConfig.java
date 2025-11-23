@@ -11,22 +11,33 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         
+        // 1. Configuración para Profiles (Ya la tenías)
         String pathProfiles = Paths.get("src", "main", "resources", "static", "Profiles")
                                    .toAbsolutePath()
                                    .toUri()
                                    .toString();
 
+        // 2. NUEVA CONFIGURACIÓN PARA PRODUCTOS
+        String pathProductos = Paths.get("src", "main", "resources", "static", "Productos")
+                                   .toAbsolutePath()
+                                   .toUri()
+                                   .toString();
+
         System.out.println("------------------------------------------------------");
-        System.out.println("Mapeando recursos /Profiles/** a: " + pathProfiles);
+        System.out.println("Mapeando /Profiles/** -> " + pathProfiles);
+        System.out.println("Mapeando /Productos/** -> " + pathProductos);
         System.out.println("------------------------------------------------------");
 
-        // 1. Mapeo para el recurso custom (/Profiles/**)
+        // Registrar manejador para Profiles
         registry.addResourceHandler("/Profiles/**")
                 .addResourceLocations(pathProfiles);
 
-        // 2. CORRECCIÓN CRÍTICA: Volver a añadir el manejador de recursos estáticos por defecto.
-        // Esto sirve los archivos CSS, JS, etc. desde la carpeta /static/
+        // Registrar manejador para Productos (ESTO FALTABA)
+        registry.addResourceHandler("/Productos/**")
+                .addResourceLocations(pathProductos);
+
+        // 3. Recursos estáticos por defecto (CSS, JS)
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/"); //
+                .addResourceLocations("classpath:/static/");
     }
 }

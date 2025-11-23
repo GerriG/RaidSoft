@@ -124,3 +124,33 @@ h1, h2 {
     box-shadow: 0 0 15px rgba(0, 255, 255, 1);
     transform: scale(1.05);
 }
+
+/* --- AGREGAR ESTO EN TU BLOQUE <style> --- */
+.product-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover; /* Evita que la imagen se estire */
+    border-radius: 8px;
+    border: 2px solid #00ffff; /* Borde Cian Neón */
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.3); /* Resplandor suave */
+    transition: transform 0.2s;
+    background-color: #16213e;
+}
+
+.product-thumb:hover {
+    transform: scale(1.1); /* Efecto zoom al pasar el mouse */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+}
+
+.no-img-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: rgba(0, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #5a5c69;
+    color: #5a5c69;
+    font-size: 1.2rem;
+}

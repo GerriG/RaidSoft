@@ -94,7 +94,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
+                            <th>Imagen</th> <th>Nombre</th>
                             <th>Precio Venta</th>
                             <th>Stock</th>
                             <th>Estado</th>
@@ -104,10 +104,24 @@
                     <tbody>
                         <tr th:each="prod : ${listaProductos}">
                             <td th:text="${prod.idProducto}">#1</td>
+
+                            <td>
+                                <img th:if="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
+                                     th:src="@{${prod.imagenUrl}}" 
+                                     alt="Producto" 
+                                     class="product-thumb">
+
+                                <div th:unless="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
+                                     class="no-img-placeholder">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            </td>
+
                             <td>
                                 <div style="font-weight: bold;" th:text="${prod.nombre}">Laptop HP</div>
                                 <small th:text="${prod.codigoBarras}" style="color: #a0ffff;">CODE123</small>
                             </td>
+
                             <td th:text="'$' + ${prod.precioVenta}" style="color: #1eff80;">$0.00</td>
                             <td>
                                 <span th:class="${prod.stock <= prod.stockMinimo ? 'badge-low' : 'badge-stock'}"
@@ -127,15 +141,8 @@
                                 <a href="javascript:void(0);"
                                    th:onclick="|confirmDelete(${prod.idProducto})|"
                                    class="btn-action btn-delete">
-                                   <i class="fas fa-trash"></i>
+                                    <i class="fas fa-trash"></i>
                                 </a>
-                            </td>
-                        </tr>
-
-                        <tr th:if="${listaProductos.empty}">
-                            <td colspan="6" style="text-align: center; padding: 30px; color: #a0ffff;">
-                                <i class="fas fa-box-open" style="font-size: 2rem; color: #00ffff;"></i>
-                                <p>No hay productos registrados aún.</p>
                             </td>
                         </tr>
                     </tbody>

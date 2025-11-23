@@ -9,6 +9,7 @@ com\raidsoft\repository\ProductoRepository.class
 com\raidsoft\RaidSoftApplication.class
 com\raidsoft\config\SecurityConfig.class
 com\raidsoft\config\CustomAuthSuccessHandler.class
+com\raidsoft\service\ProductoService.class
 com\raidsoft\model\Perfil.class
 com\raidsoft\service\UsuarioService.class
 com\raidsoft\service\UserDetailsServiceImpl.class
