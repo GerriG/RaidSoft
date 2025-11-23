@@ -51,36 +51,106 @@ public class Producto {
     }
 
     // --- Getters y Setters ---
-    public Long getIdProducto() { return idProducto; }
-    public void setIdProducto(Long idProducto) { this.idProducto = idProducto; }
-    
-    public String getCodigoBarras() { return codigoBarras; }
-    public void setCodigoBarras(String codigoBarras) { this.codigoBarras = codigoBarras; }
-    
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    
-    public BigDecimal getPrecioCompra() { return precioCompra; }
-    public void setPrecioCompra(BigDecimal precioCompra) { this.precioCompra = precioCompra; }
-    
-    public BigDecimal getPrecioVenta() { return precioVenta; }
-    public void setPrecioVenta(BigDecimal precioVenta) { this.precioVenta = precioVenta; }
-    
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
-    
-    public Integer getStockMinimo() { return stockMinimo; }
-    public void setStockMinimo(Integer stockMinimo) { this.stockMinimo = stockMinimo; }
-    
-    public String getImagenUrl() { return imagenUrl; }
-    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
-    
-    public Boolean getEstado() { return estado; }
-    public void setEstado(Boolean estado) { this.estado = estado; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Long getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public String getCodigoBarras() {
+        return codigoBarras;
+    }
+
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecioCompra() {
+        return precioCompra;
+    }
+
+    public void setPrecioCompra(BigDecimal precioCompra) {
+        this.precioCompra = precioCompra;
+    }
+
+    public BigDecimal getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(BigDecimal precioVenta) {
+        this.precioVenta = precioVenta;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Integer getStockMinimo() {
+        return stockMinimo;
+    }
+
+    public void setStockMinimo(Integer stockMinimo) {
+        this.stockMinimo = stockMinimo;
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    // --- LÓGICA PARA EL ESTADO DEL STOCK EN LA VISTA ---
+    // Este método permite usar ${p.estadoStock} en Thymeleaf
+    public String getEstadoStock() {
+        if (this.stock == null) {
+            return "No definido";
+        }
+        if (this.stock <= 0) {
+            return "Agotado";
+        }
+        if (this.stockMinimo != null && this.stock <= this.stockMinimo) {
+            return "Poco Stock";
+        }
+        return "Disponible";
+    }
 }

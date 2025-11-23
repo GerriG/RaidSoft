@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List; // Importante para las listas del buscador
+
 @Controller
 public class AppController {
 
@@ -67,14 +69,47 @@ public class AppController {
         return "vendedor_dashboard";
     }
 
-    // --- GESTIÓN DE PERFIL (ADAPTADA A NUEVA BD) ---
+    // --- NUEVO: METODOS PARA EL STOCK EN VENDEDOR --- 
+    @GetMapping("/vendedor/stock")
+    public String vendedorStock(Model model, Authentication auth) {
+        String username = auth.getName();
+        Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("productos", productoRepository.findAll());
+
+        return "vendedor_stock";
+    }
+
+    // --- NUEVO: BUSCADOR DE PRODUCTOS PARA STOCK --- 
+    @GetMapping("/vendedor/stock/search")
+    public String buscarStock(@RequestParam("query") String query, Model model, Authentication auth) {
+        // Agregamos el usuario para que no se rompa el layout si usas el sidebar
+        String username = auth.getName();
+        Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
+        model.addAttribute("usuario", usuario);
+
+        List<Producto> productos;
+
+        if (query == null || query.trim().isEmpty()) {
+            productos = productoRepository.findAll();
+        } else {
+            productos = productoRepository.search(query);
+        }
+
+        model.addAttribute("productos", productos);
+        model.addAttribute("query", query);
+
+        return "vendedor_stock";
+    }
+
+    // --- GESTIÓN DE PERFIL ---
     @GetMapping("/perfil")
     public String verPerfil(Authentication auth, Model model) {
         String username = auth.getName();
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow();
 
         model.addAttribute("usuario", usuario);
-        // Pasamos el perfil explícitamente para facilitar el acceso en la vista
         model.addAttribute("perfil", usuario.getPerfil());
 
         return "perfil";
@@ -86,7 +121,6 @@ public class AppController {
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow();
 
         model.addAttribute("usuario", usuario);
-        // Pasamos el objeto 'perfil' para que el formulario th:object="${perfil}" funcione
         model.addAttribute("perfil", usuario.getPerfil());
 
         return "edit_perfil";
@@ -94,15 +128,14 @@ public class AppController {
 
     @PostMapping("/perfil/guardar")
     public String guardarPerfil(Authentication auth,
-                                @ModelAttribute Perfil perfilForm, // Recibimos el objeto Perfil del formulario
-                                @RequestParam("file") MultipartFile archivo,
-                                @RequestParam(required = false) String newPassword,
-                                RedirectAttributes redirectAttributes) {
+            @ModelAttribute Perfil perfilForm,
+            @RequestParam("file") MultipartFile archivo,
+            @RequestParam(required = false) String newPassword,
+            RedirectAttributes redirectAttributes) {
         try {
             String username = auth.getName();
             Usuario usuarioActual = usuarioRepository.findByUsername(username).orElseThrow();
 
-            // El servicio actualiza el Perfil (datos) y el Usuario (password)
             usuarioService.actualizarPerfil(usuarioActual, perfilForm, archivo, newPassword);
 
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado correctamente.");
@@ -118,12 +151,9 @@ public class AppController {
     // --- GESTIÓN DE USUARIOS (ADMIN) ---
     @GetMapping("/admin/usuarios")
     public String adminUsuarios(Model model, Authentication auth) {
-        // Datos del usuario logueado para el sidebar
         String username = auth.getName();
         Usuario usuarioLogueado = usuarioRepository.findByUsername(username).orElse(null);
         model.addAttribute("usuario", usuarioLogueado);
-
-        // Listar todos los usuarios
         model.addAttribute("listaUsuarios", usuarioRepository.findAll());
 
         return "admin_usuarios";
@@ -134,7 +164,6 @@ public class AppController {
         try {
             Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
-            // Evitar que el admin se desactive a sí mismo
             if (usuario != null && usuario.getUsername().equals(auth.getName())) {
                 redirectAttributes.addFlashAttribute("error", "No puedes desactivar tu propia cuenta.");
                 return "redirect:/admin/usuarios";
@@ -158,15 +187,12 @@ public class AppController {
     public String eliminarUsuario(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, Authentication auth) {
         try {
             Usuario usuario = usuarioRepository.findById(id).orElse(null);
-
-            // Seguridad: No auto-eliminarse
             if (usuario != null && usuario.getUsername().equals(auth.getName())) {
                 redirectAttributes.addFlashAttribute("error", "No puedes eliminar tu propia cuenta.");
                 return "redirect:/admin/usuarios";
             }
 
             if (usuario != null) {
-                // Al tener CascadeType.ALL, borrar el usuario borra su perfil asociado
                 usuarioRepository.delete(usuario);
                 redirectAttributes.addFlashAttribute("success", "Usuario y perfil eliminados permanentemente.");
             } else {
@@ -193,12 +219,9 @@ public class AppController {
         String username = auth.getName();
         Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
         model.addAttribute("usuario", usuario);
-        // Nota: Asegúrate de tener este método en tu ProductoRepository
-        // Si no, usa findAll() y filtra en la vista con th:if="${p.stock <= p.stockMinimo}"
         try {
             model.addAttribute("productosFaltantes", productoRepository.findProductosByStockCritico());
         } catch (Exception e) {
-            // Fallback si el método del repo no existe aún
             model.addAttribute("productosFaltantes", productoRepository.findAll());
         }
         return "admin_stock";
@@ -233,15 +256,13 @@ public class AppController {
         return "form_producto";
     }
 
-    // --- GESTIÓN DE PRODUCTOS: GUARDAR (Actualizado con imagen) ---
+    // METODO GUARDAR PRODUCTO (CORREGIDO CON GESTIÓN DE IMAGEN)
     @PostMapping("/admin/productos/guardar")
     public String guardarProducto(@ModelAttribute Producto producto,
-                                  @RequestParam("file") MultipartFile imagen,
-                                  RedirectAttributes redirectAttributes) {
+            @RequestParam("file") MultipartFile imagen,
+            RedirectAttributes redirectAttributes) {
         try {
             boolean isNew = producto.getIdProducto() == null;
-
-            // Usamos el servicio para manejar la imagen y el guardado
             productoService.guardarProducto(producto, imagen);
 
             String message = isNew ? "Producto creado correctamente." : "Producto actualizado correctamente.";
@@ -263,5 +284,30 @@ public class AppController {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar el producto: " + e.getMessage());
         }
         return "redirect:/admin/productos";
+    }
+
+    // --- REGISTRO (PÚBLICO) --- (Agregado del archivo que subiste)
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
+        try {
+            if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "El usuario ya existe.");
+                return "redirect:/login?error";
+            }
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            // Asumiendo que tienes un campo 'estado' booleano
+            usuario.setEstado(true);
+            if (usuario.getRol() == null) {
+                usuario.setRol(Rol.VENDEDOR);
+            }
+
+            usuarioRepository.save(usuario);
+
+            redirectAttributes.addFlashAttribute("success", "Cuenta creada. Inicia sesión.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
+            return "redirect:/login?error";
+        }
     }
 }
