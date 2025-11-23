@@ -226,6 +226,30 @@ public class AppController {
         }
         return "admin_stock";
     }
+    
+    // --- NUEVO: Método para Activar/Descontinuar Productos ---
+    @GetMapping("/admin/productos/toggle/{id}")
+    public String toggleEstadoProducto(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Producto producto = productoRepository.findById(id).orElse(null);
+
+            if (producto != null) {
+                // Invertimos el estado actual (true -> false, false -> true)
+                boolean estadoActual = Boolean.TRUE.equals(producto.getEstado());
+                producto.setEstado(!estadoActual);
+                
+                productoRepository.save(producto);
+
+                String mensaje = estadoActual ? "Producto descontinuado correctamente." : "Producto reactivado correctamente.";
+                redirectAttributes.addFlashAttribute("success", mensaje);
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Producto no encontrado.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cambiar el estado: " + e.getMessage());
+        }
+        return "redirect:/admin/productos";
+    }
 
     @GetMapping("/admin/productos/nuevo")
     public String mostrarFormularioNuevoProducto(Model model, Authentication auth) {

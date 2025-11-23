@@ -41,6 +41,8 @@
                 border-radius: 6px;
                 cursor: pointer;
             }
+
+            /* --- ESTILOS DE TABLA MEJORADOS --- */
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -49,16 +51,31 @@
             table th, table td {
                 padding: 12px;
                 border-bottom: 1px solid #ddd;
-                text-align: left;
+                vertical-align: middle; /* Centrado vertical */
             }
+
+            /* 1. Centrar encabezados y celdas por defecto */
             table th {
                 background: #4e73df;
                 color: white;
+                text-align: center;
             }
+            table td {
+                text-align: center;
+            }
+
+            /* 2. Excepción: La columna "Producto" (la 2da) va a la izquierda */
+            table td:nth-child(2) {
+                text-align: left;
+                padding-left: 20px; /* Un poco de aire a la izquierda */
+            }
+
+            /* --- ESTILOS DE ESTADO --- */
             .estado {
                 padding: 6px 10px;
                 border-radius: 6px;
                 font-weight: bold;
+                display: inline-block;
             }
             .disponible {
                 background: #c8f7c5;
@@ -72,12 +89,52 @@
                 background: #ffb3b3;
                 color: #8a0000;
             }
+            .inactivo {
+                background: #e2e3e5;
+                color: #6c757d;
+                font-style: italic;
+            }
+
             a.back {
                 text-decoration: none;
                 color: #4e73df;
                 font-weight: bold;
                 margin-bottom: 20px;
                 display: inline-block;
+            }
+
+            /* --- ESTILOS PARA IMÁGENES --- */
+            .product-thumb {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                transition: transform 0.2s;
+                background-color: #fff;
+                display: inline-block; /* Asegura que se centre con text-align: center */
+            }
+
+            .product-thumb:hover {
+                transform: scale(1.5);
+                z-index: 10;
+                position: relative;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+
+            .no-img-placeholder {
+                width: 50px;
+                height: 50px;
+                border-radius: 6px;
+                background: #e9ecef;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #ced4da;
+                color: #adb5bd;
+                font-size: 1.2rem;
+                margin: 0 auto; /* Centrado automático del bloque */
             }
         </style>
     </head>
@@ -102,8 +159,8 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Producto</th>
-                        <th>Código de Barras</th>
+                        <th>Imagen</th> 
+                        <th>Producto</th> <th>Código de Barras</th>
                         <th>Stock</th>
                         <th>Stock Mínimo</th>
                         <th>Estado</th>
@@ -112,19 +169,39 @@
 
                 <tbody>
                     <tr th:each="p : ${productos}">
+
+                        <td>
+                            <img th:if="${p.imagenUrl != null && !p.imagenUrl.isEmpty()}" 
+                                 th:src="@{${p.imagenUrl}}" 
+                                 class="product-thumb" 
+                                 alt="Producto">
+
+                            <div th:unless="${p.imagenUrl != null && !p.imagenUrl.isEmpty()}" 
+                                 class="no-img-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        </td>
+
                         <td th:text="${p.nombre}">Nombre</td>
+
                         <td th:text="${p.codigoBarras}">codigo</td>
                         <td th:text="${p.stock}">10</td>
                         <td th:text="${p.stockMinimo}">3</td>
 
                         <td>
-                            <span class="estado"
-                                  th:classappend="${p.estadoStock.equals('Disponible')} ? ' disponible' :
-                                  (${p.estadoStock.equals('Poco Stock')} ? ' poco' : ' agotado')"
-                                  th:text="${p.estadoStock}">
+                            <span th:unless="${p.estado}" class="estado inactivo">
+                                <i class="fas fa-ban"></i> Descontinuado
                             </span>
-                        </td>
-                    </tr>
+
+                <th:block th:if="${p.estado}">
+                    <span class="estado"
+                          th:classappend="${p.estadoStock.equals('Disponible')} ? ' disponible' :
+                          (${p.estadoStock.equals('Poco Stock')} ? ' poco' : ' agotado')"
+                          th:text="${p.estadoStock}">
+                    </span>
+                </th:block>
+                </td>
+                </tr>
                 </tbody>
             </table>
 
