@@ -5,6 +5,8 @@ com\raidsoft\config\CustomAuthSuccessHandler.class
 com\raidsoft\service\ProductoService.class
 com\raidsoft\service\UsuarioService.class
 com\raidsoft\service\UserDetailsServiceImpl.class
+com\raidsoft\service\VentaService.class
+com\raidsoft\model\Venta.class
 com\raidsoft\model\Rol.class
 com\raidsoft\controller\AuthRestController.class
 com\raidsoft\config\WebConfig.class
@@ -13,6 +15,7 @@ com\raidsoft\repository\ProductoRepository.class
 com\raidsoft\RaidSoftApplication.class
 com\raidsoft\config\SecurityConfig.class
 com\raidsoft\exception\GlobalExceptionHandler.class
+com\raidsoft\repository\VentaRepository.class
 com\raidsoft\model\Perfil.class
 com\raidsoft\model\Producto.class
 com\raidsoft\model\Usuario.class

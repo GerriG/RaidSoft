@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Transacciones Realizadas - RaidSoft</title>
+    <link rel="stylesheet" th:href="@{/css/Vendedor.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Estilos básicos para la tabla de ventas, puedes expandirlos en Vendedor.css */
+        .ventas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .ventas-table th, .ventas-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .ventas-table th {
+            background-color: #4e73df;
+            color: white;
+            font-weight: 600;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .btn-primary {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4e73df;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #2e59d9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vendedor-container">
+        <main class="content">
+            <h1>Transacciones de Venta Realizadas</h1>
+            
+            <a th:href="@{/vendedor/dashboard}" class="btn-primary" style="margin-bottom: 20px;">
+                <i class="fas fa-arrow-left"></i> Volver al Panel
+            </a>
+
+            <div th:if="${#lists.isEmpty(ventas)}" class="alert alert-info" style="margin-top: 20px; padding: 15px; background-color: #f0f8ff; border: 1px solid #bce8f1; color: #31708f; border-radius: 5px;">
+                <p><i class="fas fa-info-circle"></i> No se encontraron transacciones de venta para este usuario.</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(ventas)}" class="table-responsive">
+                <table class="ventas-table">
+                    <thead>
+                        <tr>
+                            <th>ID Venta</th>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Total ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="venta : ${ventas}">
+                            <td th:text="${venta.id}">123</td>
+                            
+                            <td th:text="${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:30</td>
+                            
+                            <td>
+                                <span th:if="${venta.producto != null}" th:text="${venta.producto.nombre}">Nombre de Producto</span>
+                                <span th:unless="${venta.producto != null}" style="color: red; font-style: italic;">[Producto no disponible]</span>
+                            </td>
+                            
+                            <td th:text="${venta.cantidad}">1</td>
+                            <td th:text="${#numbers.formatCurrency(venta.total)}">$100.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </main>
+    </div>
+</body>
+</html>

@@ -5,6 +5,8 @@ import com.raidsoft.model.Producto;
 import com.raidsoft.model.Rol;
 import com.raidsoft.service.ProductoService;
 import com.raidsoft.model.Usuario;
+import com.raidsoft.model.Venta;
+import com.raidsoft.service.VentaService;
 import com.raidsoft.repository.ProductoRepository;
 import com.raidsoft.repository.UsuarioRepository;
 import com.raidsoft.service.UsuarioService;
@@ -36,6 +38,9 @@ public class AppController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private VentaService ventaService;
 
     // --- LOGIN Y REDIRECCIÓN ---
     @GetMapping("/login")
@@ -226,7 +231,7 @@ public class AppController {
         }
         return "admin_stock";
     }
-    
+
     // --- NUEVO: Método para Activar/Descontinuar Productos ---
     @GetMapping("/admin/productos/toggle/{id}")
     public String toggleEstadoProducto(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
@@ -237,7 +242,7 @@ public class AppController {
                 // Invertimos el estado actual (true -> false, false -> true)
                 boolean estadoActual = Boolean.TRUE.equals(producto.getEstado());
                 producto.setEstado(!estadoActual);
-                
+
                 productoRepository.save(producto);
 
                 String mensaje = estadoActual ? "Producto descontinuado correctamente." : "Producto reactivado correctamente.";
@@ -333,5 +338,68 @@ public class AppController {
             redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
             return "redirect:/login?error";
         }
+    }
+
+//    Registrar venta (Vendedor)
+    // --- SECCIÓN DE VENTAS (VENDEDOR) ---
+    @GetMapping("/vendedor/productos")
+    public String listarProductosParaVenta(Model model, Authentication auth) {
+        String username = auth.getName();
+        Usuario vendedor = usuarioRepository.findByUsername(username).orElse(null);
+        model.addAttribute("usuario", vendedor);
+
+        // Filtramos productos: que existan, estén activos (estado true) y tengan stock > 0
+        List<Producto> productos = productoRepository.findAll()
+                .stream()
+                .filter(p -> p != null && Boolean.TRUE.equals(p.getEstado()) && p.getStock() != null && p.getStock() > 0)
+                .toList();
+
+        model.addAttribute("productos", productos);
+        return "vender_producto"; // Necesitas tener este HTML
+    }
+
+    @PostMapping("/vendedor/vender/{id}")
+    public String venderProducto(@PathVariable("id") Long idProducto,
+            @RequestParam("cantidad") int cantidad,
+            RedirectAttributes redirectAttributes,
+            Authentication auth) {
+        Usuario vendedor = usuarioRepository.findByUsername(auth.getName()).orElse(null);
+        Producto producto = productoRepository.findById(idProducto).orElse(null);
+
+        // --- Validaciones ---
+        if (producto == null) {
+            redirectAttributes.addFlashAttribute("error", "Producto no encontrado.");
+            return "redirect:/vendedor/productos";
+        }
+
+        if (cantidad <= 0) {
+            redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
+            return "redirect:/vendedor/productos";
+        }
+
+        if (cantidad > producto.getStock()) {
+            redirectAttributes.addFlashAttribute("error", "No hay suficiente stock disponible. Stock actual: " + producto.getStock());
+            return "redirect:/vendedor/productos";
+        }
+
+        try {
+            ventaService.registrarVenta(vendedor, producto, cantidad);
+            redirectAttributes.addFlashAttribute("success", "Venta registrada correctamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al registrar la venta: " + e.getMessage());
+        }
+
+        return "redirect:/vendedor/productos";
+    }
+
+    @GetMapping("/vendedor/ventas")
+    public String historialVentas(Model model, Authentication auth) {
+        Usuario vendedor = usuarioRepository.findByUsername(auth.getName()).orElse(null);
+        List<Venta> ventas = ventaService.historialVentas(vendedor);
+
+        model.addAttribute("usuario", vendedor);
+        model.addAttribute("ventas", ventas);
+
+        return "ventas_realizadas"; // Necesitas tener este HTML
     }
 }

@@ -10,9 +10,12 @@ C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\mod
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\model\Producto.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\model\Rol.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\model\Usuario.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\model\Venta.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\RaidSoftApplication.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\repository\ProductoRepository.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\repository\UsuarioRepository.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\repository\VentaRepository.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\Service\ProductoService.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\Service\UserDetailsServiceImpl.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\Service\UsuarioService.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\Service\VentaService.java

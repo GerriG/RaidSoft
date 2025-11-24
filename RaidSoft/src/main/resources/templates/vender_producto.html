@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Venta - RaidSoft</title>
+
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <style>
+        /* Estilos específicos para la vista de ventas (Tema Gamer) */
+        body {
+            background-color: #f4f6f9; /* Fondo base si falla el CSS externo */
+        }
+        .table-gamer {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 255, 255, 0.1);
+        }
+        .table-gamer th, .table-gamer td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #00ffff50;
+            color: #e0f2f7;
+        }
+        .table-gamer th {
+            background: #0d1222;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+        }
+        .btn-vender {
+            background: linear-gradient(90deg, #1eff80, #00e676);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-vender:hover {
+            background: linear-gradient(90deg, #00e676, #1eff80);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 255, 128, 0.6);
+        }
+        .form-cantidad input {
+            width: 60px;
+            text-align: center;
+            border-radius: 6px;
+            border: 1px solid #00aaff;
+            background: #0d1222;
+            color: #e0f2f7;
+        }
+        h1 {
+            color: #333; /* Ajustado para legibilidad si no carga fondo oscuro global */
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        /* DataTables ajuste colores */
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            background: #0d1222;
+            color: #e0f2f7;
+            border: 1px solid #00aaff;
+            border-radius: 6px;
+            padding: 5px;
+        }
+        /* Botón volver */
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body th:attr="data-success=${success}, data-error=${error}">
+
+<div class="main-content" style="padding: 20px;">
+    <a th:href="@{/vendedor/dashboard}" class="btn-back"><i class="fas fa-arrow-left"></i> Volver al Dashboard</a>
+    
+    <h1>Registrar Venta</h1>
+
+    <table id="tablaProductos" class="table-gamer display">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Cantidad</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="producto : ${productos}">
+                <td th:text="${producto.nombre}">Nombre</td>
+                <td th:text="${producto.precioVenta}">0.00</td>
+                <td th:text="${producto.stock}">0</td>
+                <td class="form-cantidad">
+                    <input type="number" name="cantidad_visible" value="1" min="1" required/>
+                </td>
+                <td>
+                    <form th:action="@{/vendedor/vender/{id}(id=${producto.idProducto})}" method="post">
+                        <input type="hidden" name="cantidad" value="1"/>
+                        <button type="submit" class="btn-vender">Vender</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(productos)}">
+                <td colspan="5">No hay productos disponibles con stock.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const body = document.querySelector("body");
+        const successMsg = body.getAttribute("data-success");
+        const errorMsg = body.getAttribute("data-error");
+
+        if (successMsg) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: successMsg,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        if (errorMsg) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMsg
+            });
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#tablaProductos').DataTable({
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ productos",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                },
+                zeroRecords: "No se encontraron productos"
+            }
+        });
+    });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("form").forEach(form => {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            // Buscamos el input visible en la misma fila (tr)
+            const row = form.closest("tr");
+            const cantidadInputVisible = row.querySelector('input[name="cantidad_visible"]');
+            const cantidad = parseInt(cantidadInputVisible.value);
+            const stock = parseInt(row.querySelector("td:nth-child(3)").textContent.trim());
+            const producto = row.querySelector("td:nth-child(1)").textContent.trim();
+
+            if (isNaN(cantidad) || cantidad < 1) {
+                Swal.fire({
+                    title: "Cantidad inválida",
+                    text: "Debes ingresar al menos 1 unidad.",
+                    icon: "error",
+                    confirmButtonColor: "#ff1744"
+                });
+                return;
+            }
+
+            if (cantidad > stock) {
+                Swal.fire({
+                    title: "Stock insuficiente",
+                    text: `Solo hay ${stock} unidades disponibles de "${producto}".`,
+                    icon: "warning",
+                    confirmButtonColor: "#ff1744"
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: "¿Confirmar venta?",
+                text: `¿Deseas vender ${cantidad} unidades de "${producto}"?`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#00e676",
+                cancelButtonColor: "#ff1744",
+                confirmButtonText: "Sí, vender",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Actualizamos el input hidden dentro del form antes de enviar
+                    const hiddenInput = form.querySelector('input[name="cantidad"]');
+                    hiddenInput.value = cantidad;
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
+
+</body>
+</html>
