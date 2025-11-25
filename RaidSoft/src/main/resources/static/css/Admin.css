@@ -1,171 +1,605 @@
-/* ======== Estilo general ======== */
-body {
+/* ============================================================ */
+/* RAIDSOFT UI - PREMIUM DESIGN SYSTEM (v2.0 "Fine")           */
+/* Ubicación: src/main/resources/static/css/Admin.css          */
+/* ============================================================ */
+
+/* 1. FUENTES Y VARIABLES GLOBALES */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Paleta de Colores Premium */
+    --primary: #4361ee;       /* Azul vibrante moderno */
+    --primary-light: #4895ef;
+    --primary-dark: #3f37c9;
+    
+    --secondary: #6c757d;
+    --success: #2dc653;       /* Verde esmeralda */
+    --danger: #ef233c;        /* Rojo intenso */
+    --warning: #ffb703;       /* Amarillo ámbar */
+    
+    --dark: #2b2d42;          /* Casi negro, elegante */
+    --text-muted: #8d99ae;
+    
+    --bg-body: #f3f6fd;       /* Fondo azul grisáceo muy claro */
+    --bg-card: #ffffff;
+    
+    /* Sombras "High-End" */
+    --shadow-sm: 0 2px 8px rgba(67, 97, 238, 0.05);
+    --shadow-md: 0 8px 24px rgba(67, 97, 238, 0.08);
+    --shadow-lg: 0 15px 35px rgba(67, 97, 238, 0.1);
+    --shadow-glow: 0 8px 20px rgba(67, 97, 238, 0.3);
+    
+    --radius: 16px;           /* Bordes más redondeados */
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    font-family: "Segoe UI", "Segoe UI Emoji", sans-serif;
-    background: linear-gradient(-45deg, #7eb4ff, #a674ff, #5dc8ff, #8d7aff);
-    background-size: 400% 400%;
-    animation: gradientMove 12s ease infinite;
-    background-attachment: fixed;
-    color: #333;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif; /* Cambio a Inter por legibilidad */
 }
 
-/* ======== Layout del Dashboard ======== */
-.admin-container {
+body {
+    background-color: var(--bg-body);
+    color: var(--dark);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* 2. LAYOUT Y SIDEBAR DE CRISTAL */
+.dashboard-wrapper {
     display: flex;
     min-height: 100vh;
-    width: 100%;
 }
 
-/* ======== Sidebar (Barra Lateral) ======== */
 .sidebar {
-    width: 250px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    width: 280px;
+    background: var(--bg-card);
     display: flex;
     flex-direction: column;
-    color: white;
+    position: fixed;
+    height: 100vh;
+    padding: 30px 20px;
+    z-index: 100;
+    /* Sombra lateral suave */
+    box-shadow: 5px 0 25px rgba(0,0,0,0.02); 
+    border-right: 1px solid rgba(0,0,0,0.03);
 }
 
 .sidebar-header {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 50px;
+    padding: 0 15px;
+}
+
+.logo-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: var(--shadow-glow);
 }
 
 .sidebar-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--dark);
+    letter-spacing: -0.5px;
 }
 
 .sidebar-menu {
     list-style: none;
-    padding: 0;
-    margin: 0;
     flex-grow: 1;
-}
-
-.sidebar-menu li a {
-    display: block;
-    padding: 15px 20px;
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background 0.3s;
     display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.sidebar-menu li a:hover, .sidebar-menu li a.active {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-/* Logout en el Sidebar */
-.logout-item {
-    margin-top: auto; /* Empuja el botón al final */
-    padding: 20px;
-}
-
-/* ======== Contenido Principal ======== */
-.main-content {
-    flex: 1;
-    padding: 30px;
-    overflow-y: auto;
-}
-
-header h1 {
-    color: white;
-    margin-bottom: 30px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* ======== Tarjetas de Resumen (Cards) ======== */
-.dashboard-cards {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.card {
-    background: rgba(255, 255, 255, 0.85);
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    min-width: 200px;
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.card h3 {
-    margin: 0 0 10px;
-    color: #555;
-    font-size: 1.1rem;
-}
-
-.card .number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #a36bff; /* Color principal */
-    margin: 0;
-}
-
-.card.alert .number {
-    color: #ff5050; /* Color de alerta */
-}
-
-/* ======== Botón Cerrar Sesión ======== */
-.logout-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    color: #fff;
-    background: linear-gradient(135deg, #ff6b6b, #ff8787); /* Rojo suave para salir */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
 }
 
+.menu-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 20px 0 10px 15px;
+    letter-spacing: 1px;
+}
+
+.sidebar-menu li a {
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-radius: 14px;
+    transition: var(--transition);
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.sidebar-menu li a i {
+    width: 24px;
+    font-size: 18px;
+    margin-right: 12px;
+    transition: var(--transition);
+}
+
+/* Efecto Hover en Menú: Elegante */
+.sidebar-menu li a:hover, .sidebar-menu li a.active {
+    background-color: rgba(67, 97, 238, 0.08); /* Azul muy transparente */
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.sidebar-menu li a:hover i, .sidebar-menu li a.active i {
+    transform: scale(1.1);
+}
+
+/* Sección Logout */
+.logout-section {
+    border-top: 1px solid rgba(0,0,0,0.05);
+    padding-top: 25px;
+    margin-top: auto;
+}
+
+.logout-btn {
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-weight: 600;
+    padding: 12px 20px;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 12px;
+    transition: var(--transition);
+    cursor: pointer;
+    font-size: 15px;
+}
+
 .logout-btn:hover {
-    transform: scale(1.03);
-    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    background-color: rgba(239, 35, 60, 0.08); /* Rojo transparente */
 }
 
-/* ======== Animación del fondo ======== */
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* 3. CONTENIDO PRINCIPAL */
+.main-content {
+    margin-left: 280px;
+    padding: 40px 50px;
+    width: calc(100% - 280px);
 }
 
-/* ======== Responsividad ======== */
-@media (max-width: 768px) {
-    .admin-container {
-        flex-direction: column;
-    }
-    .sidebar {
-        width: 100%;
-        height: auto;
-    }
-    .sidebar-menu {
-        display: flex;
-        overflow-x: auto;
-    }
-    .logout-item {
-        display: none; /* Ocultar en menú horizontal móvil si es necesario */
-    }
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 50px;
+}
+
+.welcome-text h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+}
+
+.highlight { color: var(--primary); }
+
+.date-display {
+    background: var(--white);
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--secondary);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+/* 4. TARJETAS MODERNAS (DASHBOARD) */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.dashboard-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 20px; /* Más redondeado */
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border: 1px solid rgba(255,255,255,0.5);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+}
+
+/* Efecto flotante al pasar el mouse */
+.dashboard-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-info h3 {
+    font-size: 15px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.card-info .number {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--dark);
+    margin: 10px 0;
+    letter-spacing: -1px;
+}
+
+/* Iconos de fondo abstractos */
+.card-icon {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 80px;
+    opacity: 0.05;
+    transform: rotate(15deg);
+    transition: var(--transition);
+}
+
+.dashboard-card:hover .card-icon {
+    opacity: 0.1;
+    transform: rotate(0deg) scale(1.1);
+}
+
+/* Variantes de color más sutiles */
+.card-blue { border-bottom: 4px solid var(--primary); }
+.card-green { border-bottom: 4px solid var(--success); }
+.card-red { border-bottom: 4px solid var(--danger); }
+.card-purple { border-bottom: 4px solid #7209b7; }
+
+/* Etiquetas de tendencia */
+.trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.trend.up { background: rgba(67, 97, 238, 0.1); color: var(--primary); }
+.trend.down { background: rgba(239, 35, 60, 0.1); color: var(--danger); }
+
+/* 5. BOTONES DE ACCIÓN (REINVENTADOS) */
+.recent-section { margin-top: 50px; }
+.recent-section h3 { font-size: 22px; font-weight: 700; margin-bottom: 25px; color: var(--dark); }
+
+.actions-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+
+/* Botón Principal con Gradiente y Glow */
+.action-btn {
+    padding: 14px 35px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3); /* Glow azul */
+    
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.5); /* Glow más fuerte */
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+
+/* Botón Secundario (Outline Premium) */
+.action-btn.outline {
+    background: transparent;
+    border: 2px solid #e0e6ed;
+    color: var(--secondary);
+    box-shadow: none;
+}
+
+.action-btn.outline:hover {
+    border-color: var(--dark);
+    color: var(--dark);
+    background: var(--white);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 6. TABLAS ELEGANTE */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+/* Botón Nuevo genérico */
+.btn-new {
+    background: var(--dark);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(43, 45, 66, 0.2);
+}
+.btn-new:hover {
+    background: black;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(43, 45, 66, 0.3);
+}
+
+.table-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 10px; /* Espacio interno para que la tabla "flote" */
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0; /* Necesario para bordes redondeados */
+}
+
+.custom-table thead th {
+    background-color: #f9fafb;
+    color: var(--secondary);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 20px 25px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.custom-table tbody td {
+    padding: 20px 25px;
+    vertical-align: middle;
+    background: white;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 15px;
+    color: var(--dark);
+    transition: background 0.2s;
+}
+
+.custom-table tbody tr:last-child td { border-bottom: none; }
+
+/* Efecto Hover en Filas */
+.custom-table tbody tr:hover td {
+    background-color: #f8f9ff;
+}
+
+/* Thumbnails */
+.product-thumb, .no-img-placeholder {
+    width: 55px; height: 55px;
+    border-radius: 12px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    object-fit: cover;
+}
+.no-img-placeholder {
+    background: #f1f5f9;
+    color: #cbd5e1;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+
+/* Badges Finos */
+.badge {
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.badge-success { background: rgba(45, 198, 83, 0.1); color: var(--success); }
+.badge-warning { background: rgba(255, 183, 3, 0.1); color: #d97706; }
+.badge-danger  { background: rgba(239, 35, 60, 0.1); color: var(--danger); }
+.badge-primary { background: rgba(67, 97, 238, 0.1); color: var(--primary); }
+.badge-secondary { background: #f1f5f9; color: var(--secondary); }
+
+/* Acciones (Iconos) */
+.actions-cell { display: flex; gap: 10px; }
+.btn-action {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; cursor: pointer; transition: var(--transition);
+    font-size: 14px;
+}
+.btn-edit { background: transparent; color: var(--primary); border: 1px solid transparent; }
+.btn-edit:hover { background: rgba(67, 97, 238, 0.1); border-color: rgba(67, 97, 238, 0.2); }
+
+.btn-toggle { background: transparent; color: var(--warning); }
+.btn-toggle:hover { background: rgba(255, 183, 3, 0.1); }
+
+.btn-delete { background: transparent; color: var(--danger); }
+.btn-delete:hover { background: rgba(239, 35, 60, 0.1); }
+
+/* 7. ESTILOS DE FORMULARIO PRODUCTO (Refinados) */
+.product-upload-zone {
+    background-color: #fcfcfc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: var(--transition);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 300px;
+}
+.product-upload-zone:hover {
+    border-color: var(--primary);
+    background-color: rgba(67, 97, 238, 0.02);
+}
+
+.input-price {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--dark);
+    padding-left: 30px;
+}
+.input-price.sale {
+    background-color: rgba(45, 198, 83, 0.05);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+/* ============================================================ */
+/* ESTILOS DEL MODAL FLOTANTE (PREMIUM)                         */
+/* Agrega esto al final de Admin.css                            */
+/* ============================================================ */
+
+/* Fondo Oscuro con Blur */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6); /* Azul oscuro semi-transparente */
+    backdrop-filter: blur(8px); /* Efecto cristal */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estado Activo (Visible) */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* La Tarjeta del Modal */
+.modal-content {
+    background: #ffffff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.95) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+/* Header del Modal */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--dark);
+    margin: 0;
+}
+
+.btn-close {
+    background: var(--light);
+    border: none;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    color: var(--secondary);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+
+.btn-close:hover {
+    background: var(--danger);
+    color: white;
+    transform: rotate(90deg);
+}
+
+/* Inputs dentro del modal */
+.modal-form-group {
+    margin-bottom: 20px;
+}
+
+.modal-form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 8px;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+/* Botón de Guardar Modal */
+.btn-modal-save {
+    width: 100%;
+    padding: 14px;
+    background: var(--dark);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-modal-save:hover {
+    background: black;
+    transform: translateY(-2px);
 }

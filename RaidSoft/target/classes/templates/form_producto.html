@@ -2,125 +2,191 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${accion} + ' Producto - RaidSoft'"></title>
 
     <link rel="stylesheet" th:href="@{/css/Admin.css}">
-    <link rel="stylesheet" th:href="@{/css/form_producto.css}">
+    <link rel="stylesheet" th:href="@{/css/ProductForm.css}">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
-    <div class="admin-container">
+    <div class="dashboard-wrapper">
+        
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h3>RaidSoft Admin</h3>
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
             </div>
             <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
                 <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Usuarios</a></li>
+                
+                <li class="menu-label">Gestión</li>
                 <li><a th:href="@{/admin/productos}" class="active"><i class="fas fa-box"></i> Productos</a></li>
-                <li><a href="#"><i class="fas fa-clipboard-list"></i> Stock</a></li>
-                <li>
-                    <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
-                        <i class="fas fa-chart-line"></i> Reportes
-                    </a>
-                </li>
-                <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                <li class="logout-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
                     </form>
                 </li>
             </ul>
         </nav>
 
         <main class="main-content">
-            <header>
-                <div class="user-welcome">
-                    <h1 th:text="${accion} + ' Producto'">Formulario Producto</h1>
-                    <p class="text-muted">Ingresa o modifica la información del producto</p>
+            
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);" th:text="${accion} + ' Producto'">Gestión</h2>
+                    <p style="color: var(--secondary);">Configura los detalles del catálogo.</p>
                 </div>
-            </header>
+                <a th:href="@{/admin/productos}" class="btn-cancel-product">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
 
-            <div class="form-container">
+            <div class="form-card">
                 <form th:action="@{/admin/productos/guardar}" th:object="${producto}" method="post" enctype="multipart/form-data">
 
                     <input type="hidden" th:field="*{idProducto}" />
                     <input type="hidden" th:field="*{estado}" /> 
+                    <input type="hidden" th:field="*{imagenUrl}">
 
-                    <div class="form-group">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control" required/>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="codigoBarras">Código de Barras:</label>
-                        <input type="text" id="codigoBarras" th:field="*{codigoBarras}" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descripcion">Descripción:</label>
-                        <textarea id="descripcion" th:field="*{descripcion}" class="form-control"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="precioCompra">Precio de Compra:</label>
-                        <input type="number" id="precioCompra" th:field="*{precioCompra}" class="form-control" step="0.01" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="precioVenta">Precio de Venta:</label>
-                        <input type="number" id="precioVenta" th:field="*{precioVenta}" class="form-control" step="0.01" required/>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="stock">Stock:</label>
-                        <input type="number" id="stock" th:field="*{stock}" class="form-control" required/>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="stockMinimo">Stock Mínimo:</label>
-                        <input type="number" id="stockMinimo" th:field="*{stockMinimo}" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label>Imagen del Producto:</label>
+                    <div class="row">
                         
-                        <input type="file" name="file" class="form-control" accept="image/*">
-                        
-                        <div th:if="${producto.imagenUrl != null}" style="margin-top: 10px;">
-                            <p>Imagen actual:</p>
-                            <img th:src="@{${producto.imagenUrl}}" width="100" style="border: 1px solid #00ffff; border-radius: 5px;">
+                        <div class="col-lg-8" style="padding-right: 30px;">
+                            
+                            <div class="section-title">
+                                <i class="fas fa-cube"></i> &nbsp; Información Básica
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label">Nombre del Producto</label>
+                                    <input type="text" th:field="*{nombre}" class="form-control" placeholder="Ej: Monitor 24 Pulgadas" required/>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Código <span class="label-helper">(SKU/EAN)</span></label>
+                                    <input type="text" th:field="*{codigoBarras}" class="form-control" placeholder="Opcional" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea th:field="*{descripcion}" class="form-control" rows="3" placeholder="Detalles técnicos, garantía, etc..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="section-title" style="margin-top: 40px;">
+                                <i class="fas fa-chart-line"></i> &nbsp; Finanzas & Inventario
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3 position-relative">
+                                    <label class="form-label">Costo Unitario</label>
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" th:field="*{precioCompra}" class="form-control input-price" step="0.01" placeholder="0.00" />
+                                </div>
+                                
+                                <div class="col-md-6 mb-3 position-relative">
+                                    <label class="form-label" style="color: var(--success);">Precio Venta (Público)</label>
+                                    <span class="currency-symbol symbol-sale">$</span>
+                                    <input type="number" th:field="*{precioVenta}" class="form-control input-price sale" step="0.01" placeholder="0.00" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Stock Inicial</label>
+                                    <input type="number" th:field="*{stock}" class="form-control" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Alerta Stock Mínimo</label>
+                                    <input type="number" th:field="*{stockMinimo}" class="form-control" />
+                                </div>
+                            </div>
+
                         </div>
-                        
-                        <input type="hidden" th:field="*{imagenUrl}">
+
+                        <div class="col-lg-4">
+                            <div class="section-title">
+                                <i class="fas fa-image"></i> &nbsp; Imagen
+                            </div>
+
+                            <div class="product-upload-zone">
+                                
+                                <div class="product-preview-container">
+                                    <img th:if="${producto.imagenUrl != null}" 
+                                         th:src="@{${producto.imagenUrl}}" 
+                                         id="previewImg" class="product-preview-img">
+                                    
+                                    <div th:if="${producto.imagenUrl == null}" id="placeholderIcon" class="placeholder-content">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p style="font-size: 12px;">Subir Foto</p>
+                                    </div>
+                                    
+                                    <img id="previewImg" class="product-preview-img" style="display: none;">
+                                </div>
+
+                                <div class="btn-upload-wrapper">
+                                    <label class="btn-upload">
+                                        <i class="fas fa-camera"></i> Seleccionar Archivo
+                                        <input type="file" name="file" style="display: none;" accept="image/*" onchange="previewFile()">
+                                    </label>
+                                    <div style="text-align: center; margin-top: 10px; font-size: 11px; color: #b7b9cc;">
+                                        PNG, JPG o WEBP <br> Máx 5MB
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
+
                     <div class="form-actions">
-                        <button type="submit" class="btn-success" th:text="${accion}"></button>
-                        <a th:href="@{/admin/productos}" class="btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn-save-product">
+                            <i class="fas fa-check-circle"></i> <span th:text="${accion} + ' Producto'">Guardar</span>
+                        </button>
                     </div>
+
                 </form>
             </div>
         </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <script th:inline="javascript">
+        function previewFile() {
+            const previews = document.querySelectorAll('#previewImg');
+            const placeholder = document.getElementById('placeholderIcon');
+            const file = document.querySelector('input[type=file]').files[0];
+            const reader = new FileReader();
 
-    <script th:if="${success}">
-        let message = '[[${success}]]';
+            reader.addEventListener("load", function () {
+                if(placeholder) placeholder.style.display = 'none';
+                previews.forEach(img => {
+                    img.src = reader.result;
+                    img.style.display = 'block';
+                });
+            }, false);
 
-        Swal.fire({
-            title: "¡Operación Exitosa!",
-            text: message,
-            icon: "success",
-            draggable: true,
-            customClass: {
-                popup: 'swal-gamer-popup',
-                confirmButton: 'swal-gamer-button'
-            },
-            buttonsStyling: false
-        });
+            if (file) reader.readAsDataURL(file);
+        }
+
+        const successMsg = /*[[${success}]]*/ null;
+        if (successMsg) {
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success', 
+                title: successMsg, showConfirmButton: false, timer: 3000, timerProgressBar: true
+            });
+        }
     </script>
 </body>
 </html>

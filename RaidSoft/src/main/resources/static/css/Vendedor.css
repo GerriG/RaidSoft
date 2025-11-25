@@ -1,44 +1,63 @@
-/* ======== Estilo general ======== */
-body {
+/* ============================================================ */
+/* ESTILOS DEL DASHBOARD VENDEDOR (Modern POS Style)            */
+/* Archivo: static/css/Vendedor.css                             */
+/* ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #4e73df;
+    --secondary: #858796;
+    --success: #1cc88a;
+    --info: #36b9cc;
+    --warning: #f6c23e;
+    --danger: #e74a3b;
+    --dark: #2e3646;
+    --light: #f8f9fc;
+    --white: #ffffff;
+    --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-hover: 0 10px 20px rgba(0,0,0,0.1);
+    --radius: 15px;
+}
+
+* {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    font-family: "Segoe UI", "Segoe UI Emoji", sans-serif;
-    background: linear-gradient(-45deg, #7eb4ff, #a674ff, #5dc8ff, #8d7aff);
-    background-size: 400% 400%;
-    animation: gradientMove 12s ease infinite;
-    background-attachment: fixed;
-    color: #333;
+    box-sizing: border-box;
 }
 
-/* ======== Layout Principal ======== */
-.vendedor-container {
-    display: flex;
-    flex-direction: column;
+body {
+    background-color: #f0f2f5;
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark);
     min-height: 100vh;
 }
 
-/* ======== Navbar Superior ======== */
+/* --- BARRA SUPERIOR (Navbar) --- */
 .top-nav {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 15px 30px;
+    background: var(--white);
+    height: 70px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    justify-content: space-between;
+    padding: 0 30px;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .nav-brand {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
     display: flex;
     align-items: center;
     gap: 10px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nav-brand i {
+    font-size: 24px;
 }
 
 .nav-user {
@@ -48,145 +67,161 @@ body {
 }
 
 .user-welcome {
-    color: white;
-    font-size: 1rem;
+    font-size: 14px;
+    color: var(--secondary);
+    display: none; /* Oculto en móviles, visible en desktop */
+}
+@media (min-width: 768px) {
+    .user-welcome { display: block; }
 }
 
-.logout-link {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    color: white;
+.user-welcome strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* --- Botones del Header --- */
+.btn-nav {
+    text-decoration: none;
+    color: var(--secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     padding: 8px 15px;
     border-radius: 20px;
+}
+
+.btn-nav:hover {
+    background: #f1f3f9;
+    color: var(--primary);
+}
+
+.logout-btn {
+    background: transparent;
+    border: 1px solid #e3e6f0;
+    padding: 6px 15px;
+    border-radius: 20px;
+    color: var(--danger);
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.3s;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.logout-link:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+.logout-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
 }
 
-/* ======== Contenido Principal ======== */
+/* --- CONTENIDO PRINCIPAL --- */
 .content {
-    flex: 1;
-    padding: 40px;
     max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
 .welcome-section {
     text-align: center;
-    margin-bottom: 40px;
-    color: white;
+    margin-bottom: 50px;
 }
 
 .welcome-section h2 {
-    font-size: 2.2rem;
+    font-size: 28px;
+    color: var(--dark);
     margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .welcome-section p {
-    font-size: 1.1rem;
-    opacity: 0.9;
+    color: var(--secondary);
+    font-size: 16px;
 }
 
-/* ======== Grid de Acciones ======== */
+/* --- GRID DE ACCIONES --- */
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
-    justify-content: center;
 }
 
-/* ======== Tarjetas de Acción ======== */
+/* --- TARJETAS DE ACCIÓN --- */
 .action-card {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    padding: 30px;
-    text-align: center;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 40px 30px;
     text-decoration: none;
-    color: #444;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(0,0,0,0.02);
+    position: relative;
+    overflow: hidden;
 }
 
 .action-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-hover);
 }
 
-/* Iconos de las tarjetas */
+/* Iconos circulares grandes */
 .icon-wrapper {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 2rem;
+    justify-content: center;
+    font-size: 32px;
     margin-bottom: 20px;
-    color: white;
-}
-
-.icon-wrapper.sale {
-    background: linear-gradient(135deg, #4f9aff, #2979ff);
-    box-shadow: 0 5px 15px rgba(79, 154, 255, 0.4);
-}
-
-.icon-wrapper.stock {
-    background: linear-gradient(135deg, #a36bff, #7c4dff);
-    box-shadow: 0 5px 15px rgba(163, 107, 255, 0.4);
-}
-
-.icon-wrapper.history {
-    background: linear-gradient(135deg, #5dc8ff, #00b0ff);
-    box-shadow: 0 5px 15px rgba(93, 200, 255, 0.4);
+    transition: 0.3s;
 }
 
 .action-card h3 {
-    margin: 0;
-    font-size: 1.4rem;
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 10px;
     font-weight: 600;
-    color: #333;
 }
 
 .action-card p {
-    margin-top: 10px;
-    font-size: 0.95rem;
-    color: #666;
+    font-size: 14px;
+    color: var(--secondary);
+    line-height: 1.5;
 }
 
-/* ======== Animación del fondo ======== */
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+/* Colores Específicos por Tarjeta */
 
-/* ======== Responsividad ======== */
-@media (max-width: 768px) {
-    .top-nav {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .content {
-        padding: 20px;
-    }
-    
-    .welcome-section h2 {
-        font-size: 1.8rem;
-    }
+/* 1. Nueva Venta (Verde) */
+.action-card.sale .icon-wrapper {
+    background: #e6fffa;
+    color: var(--success);
 }
+.action-card.sale:hover { border-bottom: 5px solid var(--success); }
+.action-card.sale:hover .icon-wrapper { background: var(--success); color: white; transform: rotate(-10deg); }
+
+/* 2. Stock (Azul) */
+.action-card.stock .icon-wrapper {
+    background: #eef2ff;
+    color: var(--primary);
+}
+.action-card.stock:hover { border-bottom: 5px solid var(--primary); }
+.action-card.stock:hover .icon-wrapper { background: var(--primary); color: white; transform: scale(1.1); }
+
+/* 3. Historial (Naranja/Amarillo) */
+.action-card.history .icon-wrapper {
+    background: #fff8e1;
+    color: var(--warning);
+}
+.action-card.history:hover { border-bottom: 5px solid var(--warning); }
+.action-card.history:hover .icon-wrapper { background: var(--warning); color: white; transform: rotate(10deg); }
+

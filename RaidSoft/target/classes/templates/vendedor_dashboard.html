@@ -2,79 +2,72 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Vendedor - RaidSoft</title>
-    <link rel="stylesheet" th:href="@{/css/Vendedor.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        .btn-profile {
-            text-decoration: none;
-            color: #555;
-            font-weight: 600;
-            margin-right: 15px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        .btn-profile:hover {
-            background-color: #f0f2f5;
-            color: #4e73df;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/Vendedor.css}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="vendedor-container">
-        <nav class="top-nav">
-            <div class="nav-brand">
-                <i class="fas fa-shopping-bag"></i> RaidSoft Vendedor
-            </div>
-            <div class="nav-user">
-                <span class="user-welcome">Hola, <strong th:text="${#authentication.name}">Vendedor</strong></span>
-                
-                <a th:href="@{/perfil}" class="btn-profile" title="Ver mi perfil">
-                    <i class="fas fa-user-circle"></i> Mi Perfil
-                </a>
-
-                <form th:action="@{/logout}" method="post" style="display:inline;">
-                    <button type="submit" class="logout-link">
-                        <i class="fas fa-sign-out-alt"></i> Salir
-                    </button>
-                </form>
-            </div>
-        </nav>
-
-        <main class="content">
-            <div class="welcome-section">
-                <h2>Panel de Ventas</h2>
-                <p>Selecciona una acción para comenzar</p>
-            </div>
+    
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <i class="fas fa-shopping-bag"></i> 
+            <span>RaidSoft Vendedor</span>
+        </div>
+        
+        <div class="nav-user">
+            <span class="user-welcome">Hola, <strong th:text="${#authentication.name}">Usuario</strong></span>
             
-            <div class="actions-grid">
-                <a th:href="@{/vendedor/productos}" class="action-card">
-                    <div class="icon-wrapper sale">
-                        <i class="fas fa-cash-register"></i>
-                    </div>
-                    <h3>Nueva Venta</h3>
-                    <p>Registrar una salida de productos</p>
-                </a>
+            <a th:href="@{/perfil}" class="btn-nav" title="Ver mi perfil">
+                <i class="fas fa-user-circle"></i> <span>Mi Perfil</span>
+            </a>
 
-                <a th:href="@{/vendedor/stock}" class="action-card">
-                    <div class="icon-wrapper stock">
-                        <i class="fas fa-boxes"></i>
-                    </div>
-                    <h3>Consultar Stock</h3>
-                    <p>Verificar disponibilidad de inventario</p>
-                </a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </form>
+        </div>
+    </nav>
 
-                <a th:href="@{/vendedor/ventas}" class="action-card">
-                    <div class="icon-wrapper history">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <h3>Mis Ventas</h3>
-                    <p>Revisar transacciones realizadas</p>
-                </a>
-            </div>
-        </main>
-    </div>
+    <main class="content">
+        
+        <div class="welcome-section">
+            <h2>Panel de Ventas</h2>
+            <p>¿Qué deseas gestionar hoy?</p>
+        </div>
+        
+        <div class="actions-grid">
+            
+            <a th:href="@{/vendedor/productos}" class="action-card sale">
+                <div class="icon-wrapper">
+                    <i class="fas fa-cash-register"></i>
+                </div>
+                <h3>Nueva Venta</h3>
+                <p>Iniciar una nueva transacción y seleccionar productos del inventario.</p>
+            </a>
+
+            <a th:href="@{/vendedor/stock}" class="action-card stock">
+                <div class="icon-wrapper">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <h3>Consultar Stock</h3>
+                <p>Verificar disponibilidad rápida de precios y cantidades.</p>
+            </a>
+
+            <a th:href="@{/vendedor/ventas}" class="action-card history">
+                <div class="icon-wrapper">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Historial</h3>
+                <p>Revisar tus ventas realizadas y reimprimir comprobantes.</p>
+            </a>
+            
+        </div>
+    </main>
+
 </body>
 </html>

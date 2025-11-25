@@ -2,91 +2,120 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrador - RaidSoft</title>
-    <link rel="stylesheet" th:href="@{/css/Admin.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        .card-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            transition: transform 0.2s;
-        }
-        .card-link:hover {
-            transform: translateY(-5px);
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="admin-container">
+    <div class="dashboard-wrapper">
+        
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h3>RaidSoft Admin</h3>
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
             </div>
+            
             <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
                 <li><a th:href="@{/admin/dashboard}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i>Usuarios</a></li>
                 
-                <li>
-                    <a th:href="@{/admin/productos}">
-                        <i class="fas fa-box"></i> Productos
-                    </a>
-                </li>
+                <li class="menu-label">Gestión</li>
+                <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
                 
-                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
-                
-                <li>
-                    <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
-                        <i class="fas fa-chart-line"></i> Reportes
-                    </a>
-                </li>
-                
-                <li>
-                    <a th:href="@{/perfil}">
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link">
                         <i class="fas fa-user-circle"></i> Mi Perfil
                     </a>
-                </li>
-                
-                <li class="logout-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
                     </form>
                 </li>
             </ul>
         </nav>
 
         <main class="main-content">
-            <header>
-                <div class="user-welcome">
-                    <h1>Bienvenido, <span th:text="${#authentication.name}">Administrador</span></h1>
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h2>Hola, <span th:text="${#authentication.name}" class="highlight">Admin</span> 👋</h2>
+                    <p>Resumen del estado de tu negocio.</p>
                 </div>
+                <div class="date-display" id="currentDate"></div>
             </header>
             
-            <div class="dashboard-cards">
-                <a th:href="@{/admin/productos}" class="card-link">
-                    <div class="card">
+            <div class="cards-grid">
+                
+                <a th:href="@{/admin/productos}" class="dashboard-card card-blue">
+                    <div class="card-icon"><i class="fas fa-box-open"></i></div>
+                    <div class="card-info">
                         <h3>Productos</h3>
-                        <p class="number">120</p> </div>
+                        <p class="number" th:text="${totalProductos}">0</p>
+                        <span class="trend up"><i class="fas fa-arrow-up"></i> En Catálogo</span>
+                    </div>
                 </a>
 
-                <a th:href="@{/admin/stock}" class="card-link">
-                    <div class="card">
+                <a th:href="@{/admin/stock}" class="dashboard-card card-green">
+                    <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="card-info">
                         <h3>Stock Total</h3>
-                        <p class="number">5,430</p>
+                        <p class="number" th:text="${stockTotal}">0</p>
+                        <span class="trend"><i class="fas fa-check"></i> Unidades Físicas</span>
                     </div>
                 </a>
 
-                <a th:href="@{/admin/stock}" class="card-link">
-                    <div class="card alert">
-                        <h3>Alertas</h3>
-                        <p class="number">8</p>
+                <a th:href="@{/admin/stock}" class="dashboard-card card-red">
+                    <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="card-info">
+                        <h3>Alertas Stock</h3>
+                        <p class="number" th:text="${alertasStock}">0</p>
+                        
+                        <span class="trend" 
+                              th:classappend="${alertasStock > 0 ? 'down' : 'up'}"
+                              th:style="${alertasStock > 0 ? 'color: #e74a3b; background: #fff5f5;' : 'color: #1cc88a; background: #e6fffa;'}">
+                            
+                            <i class="fas" th:classappend="${alertasStock > 0 ? 'fa-arrow-down' : 'fa-check'}"></i>
+                            <span th:text="${alertasStock > 0 ? 'Reponer Urgente' : 'Inventario Sano'}">Estado</span>
+                        </span>
                     </div>
                 </a>
+
+                <a th:href="@{/ventas/reporte-vendedores}" class="dashboard-card card-purple">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="card-info">
+                        <h3>Reporte Ventas</h3>
+                        <p class="small-text" style="font-size: 14px; font-weight: 400; margin-top: 5px;">
+                            Ver rendimiento del equipo
+                        </p>
+                        <span class="trend up"><i class="fas fa-star"></i> Top Vendedores</span>
+                    </div>
+                </a>
+
             </div>
+
+            <div class="recent-section">
+                <h3>Acciones Rápidas</h3>
+                <div class="actions-grid">
+                     <button class="action-btn" onclick="location.href='/admin/productos/nuevo'">+ Nuevo Producto</button>
+                     <button class="action-btn outline" onclick="location.href='/admin/usuarios'">Gestionar Usuarios</button>
+                </div>
+             </div>
+
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
+    </script>
 </body>
 </html>

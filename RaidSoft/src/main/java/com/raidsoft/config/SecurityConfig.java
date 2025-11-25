@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Ahora ambos beans se encuentran correctamente
     @Autowired
     private AuthenticationSuccessHandler customAuthSuccessHandler;
     
@@ -26,19 +25,30 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                // Rutas públicas
-                .requestMatchers("/css/**", "/Profiles/**", "/register", "/login", "/").permitAll()
-                .requestMatchers("/api/register").permitAll() // Necesario para el endpoint de registro JSON
+                
+                // --- EXCLUSIÓN CRÍTICA DE ARCHIVOS ESTÁTICOS (SOLUCIÓN AL ERROR MIME TYPE) ---
+                .requestMatchers(
+                    "/css/**", "/js/**", "/images/**", 
+                    "/Profiles/**", "/Productos/**", "/favicon.ico"
+                ).permitAll()
+                
+                // --- RUTAS PÚBLICAS Y AJAX DE AUTENTICACIÓN/RECUPERACIÓN ---
+                .requestMatchers(
+                    "/login", "/", "/register", "/api/register", 
+                    "/api/reset-password", "/reset-password"
+                ).permitAll()
                 
                 // Rutas privadas con roles
                 .requestMatchers("/admin/**").hasAuthority("ADMINISTRADOR")
                 .requestMatchers("/vendedor/**").hasAnyAuthority("VENDEDOR", "ADMINISTRADOR")
+                .requestMatchers("/perfil/**").authenticated() 
+                
+                // Cualquier otra solicitud requiere autenticación
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login") 
-                .loginProcessingUrl("/login") // Endpoint que procesa el login
-                // Configuramos los handlers JSON para las respuestas de AJAX
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
                 .successHandler(customAuthSuccessHandler)
                 .failureHandler(customAuthFailureHandler)
             )
@@ -47,7 +57,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            // Deshabilitar CSRF para permitir peticiones POST via AJAX sin token CSRF
+            // Deshabilitamos CSRF para permitir peticiones POST (AJAX Login/Reset) sin el token
             .csrf(csrf -> csrf.disable()); 
 
         return http.build();

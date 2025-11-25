@@ -2,6 +2,8 @@ package com.raidsoft.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+// --- NUEVOS IMPORTS ---
+import jakarta.validation.constraints.PastOrPresent; 
 
 @Entity
 @Table(name = "perfiles")
@@ -21,8 +23,11 @@ public class Perfil {
     @Column(length = 150)
     private String email;
 
+    // --- VALIDACIÓN DE FECHA IMPLEMENTADA ---
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser una fecha futura.")
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+    // ----------------------------------------
 
     @Column(name = "avatar_url")
     private String avatarUrl;
@@ -35,7 +40,7 @@ public class Perfil {
     public Perfil() {
     }
 
-    // --- Getters y Setters ---
+    // --- Getters y Setters (Sin cambios) ---
     public Long getIdPerfil() { return idPerfil; }
     public void setIdPerfil(Long idPerfil) { this.idPerfil = idPerfil; }
 

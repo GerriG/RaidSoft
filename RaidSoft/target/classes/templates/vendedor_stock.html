@@ -1,169 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Stock - RaidSoft</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Stock - RaidSoft</title>
 
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background: #f4f5f7;
-                margin: 0;
-                padding: 0;
-            }
-            .container {
-                width: 90%;
-                margin: 30px auto;
-                background: white;
-                padding: 25px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            }
-            h2 {
-                margin-bottom: 15px;
-                color: #333;
-            }
-            .search-bar {
-                margin-bottom: 20px;
-            }
-            .search-input {
-                width: 300px;
-                padding: 10px;
-                border-radius: 6px;
-                border: 1px solid #ccc;
-            }
-            .btn-search {
-                padding: 10px 15px;
-                background: #4e73df;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-            }
+    <link rel="stylesheet" th:href="@{/css/Vendedor.css}">
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" th:href="@{/css/Ventas.css}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
 
-            /* --- ESTILOS DE TABLA MEJORADOS --- */
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 15px;
-            }
-            table th, table td {
-                padding: 12px;
-                border-bottom: 1px solid #ddd;
-                vertical-align: middle; /* Centrado vertical */
-            }
+<body style="background-color: #f0f2f5;">
 
-            /* 1. Centrar encabezados y celdas por defecto */
-            table th {
-                background: #4e73df;
-                color: white;
-                text-align: center;
-            }
-            table td {
-                text-align: center;
-            }
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <i class="fas fa-shopping-bag"></i> 
+            <span>RaidSoft Stock</span>
+        </div>
+        
+        <div class="nav-user">
+            <span class="user-welcome">Hola, <strong th:text="${#authentication.name}">Usuario</strong></span>
+            
+            <a th:href="@{/vendedor/dashboard}" class="btn-nav" style="background: #eef2ff; color: var(--primary);">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
 
-            /* 2. Excepción: La columna "Producto" (la 2da) va a la izquierda */
-            table td:nth-child(2) {
-                text-align: left;
-                padding-left: 20px; /* Un poco de aire a la izquierda */
-            }
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </nav>
 
-            /* --- ESTILOS DE ESTADO --- */
-            .estado {
-                padding: 6px 10px;
-                border-radius: 6px;
-                font-weight: bold;
-                display: inline-block;
-            }
-            .disponible {
-                background: #c8f7c5;
-                color: #2a7a2a;
-            }
-            .poco {
-                background: #ffe7a3;
-                color: #9f7700;
-            }
-            .agotado {
-                background: #ffb3b3;
-                color: #8a0000;
-            }
-            .inactivo {
-                background: #e2e3e5;
-                color: #6c757d;
-                font-style: italic;
-            }
+    <main class="content">
+        
+        <div class="welcome-section" style="margin-bottom: 30px; text-align: center;">
+            <h2 style="color: var(--dark); font-size: 28px; margin-bottom: 10px;">Consulta de Inventario</h2>
+            <p style="color: var(--secondary); font-size: 15px;">Verifica existencias y precios rápidamente.</p>
+        </div>
 
-            a.back {
-                text-decoration: none;
-                color: #4e73df;
-                font-weight: bold;
-                margin-bottom: 20px;
-                display: inline-block;
-            }
-
-            /* --- ESTILOS PARA IMÁGENES --- */
-            .product-thumb {
-                width: 50px;
-                height: 50px;
-                object-fit: cover;
-                border-radius: 6px;
-                border: 1px solid #ddd;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                transition: transform 0.2s;
-                background-color: #fff;
-                display: inline-block; /* Asegura que se centre con text-align: center */
-            }
-
-            .product-thumb:hover {
-                transform: scale(1.5);
-                z-index: 10;
-                position: relative;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            }
-
-            .no-img-placeholder {
-                width: 50px;
-                height: 50px;
-                border-radius: 6px;
-                background: #e9ecef;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid #ced4da;
-                color: #adb5bd;
-                font-size: 1.2rem;
-                margin: 0 auto; /* Centrado automático del bloque */
-            }
-        </style>
-    </head>
-
-    <body>
-
-        <div class="container">
-
-            <a href="/vendedor/dashboard" class="back"><i class="fa fa-arrow-left"></i> Regresar</a>
-
-            <h2>Inventario - Stock</h2>
-
-            <form th:action="@{/vendedor/stock/search}" method="get" class="search-bar">
-                <input type="text" name="query" class="search-input" placeholder="Buscar producto..."
-                       th:value="${query}">
-                <button class="btn-search">
-                    <i class="fa fa-search"></i>
-                    Buscar
-                </button>
+        <div class="search-container-hero">
+            <form th:action="@{/vendedor/stock/search}" method="get" class="search-box-hero" style="max-width: 700px;">
+                <i class="fas fa-search"></i>
+                
+                <input type="text" name="query" 
+                       placeholder="Escribe nombre, código o descripción..." 
+                       th:value="${query}" 
+                       autocomplete="off">
             </form>
 
-            <table>
+            <div th:if="${query != null}" style="margin-top: 15px;">
+                <a th:href="@{/vendedor/stock}" style="color: var(--danger); font-weight: 600; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                    <i class="fas fa-times-circle"></i> Limpiar filtro
+                </a>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <table class="custom-table">
                 <thead>
                     <tr>
-                        <th>Imagen</th> 
-                        <th>Producto</th> <th>Código de Barras</th>
-                        <th>Stock</th>
-                        <th>Stock Mínimo</th>
-                        <th>Estado</th>
+                        <th style="width: 80px;">Imagen</th> 
+                        <th>Producto</th>
+                        <th>Cód. Barras</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-center">Estado</th>
                     </tr>
                 </thead>
 
@@ -171,41 +74,50 @@
                     <tr th:each="p : ${productos}">
 
                         <td>
-                            <img th:if="${p.imagenUrl != null && !p.imagenUrl.isEmpty()}" 
-                                 th:src="@{${p.imagenUrl}}" 
-                                 class="product-thumb" 
-                                 alt="Producto">
+                            <img th:if="${p.imagenUrl != null}" th:src="@{${p.imagenUrl}}" class="product-thumb" alt="Img">
+                            <div th:if="${p.imagenUrl == null}" class="no-img-placeholder"><i class="fas fa-image"></i></div>
+                        </td>
 
-                            <div th:unless="${p.imagenUrl != null && !p.imagenUrl.isEmpty()}" 
-                                 class="no-img-placeholder">
-                                <i class="fas fa-image"></i>
+                        <td>
+                            <div style="font-weight: 600; color: var(--dark); font-size: 15px;" th:text="${p.nombre}">Nombre</div>
+                            <div style="color: var(--primary); font-weight: 700; font-size: 14px;">
+                                $ <span th:text="${p.precioVenta}">0.00</span>
                             </div>
                         </td>
 
-                        <td th:text="${p.nombre}">Nombre</td>
+                        <td th:text="${p.codigoBarras}" style="font-family: monospace; color: var(--secondary); font-size: 13px;">CODE</td>
+                        
+                        <td style="text-align: center;">
+                            <span style="font-size: 18px; font-weight: 800;" 
+                                  th:styleappend="${p.stock <= p.stockMinimo ? 'color: var(--danger);' : 'color: var(--dark);'}"
+                                  th:text="${p.stock}">
+                                10
+                            </span>
+                        </td>
 
-                        <td th:text="${p.codigoBarras}">codigo</td>
-                        <td th:text="${p.stock}">10</td>
-                        <td th:text="${p.stockMinimo}">3</td>
-
-                        <td>
-                            <span th:unless="${p.estado}" class="estado inactivo">
-                                <i class="fas fa-ban"></i> Descontinuado
+                        <td style="text-align: center;">
+                            <span th:unless="${p.estado}" class="badge badge-secondary">
+                                <i class="fas fa-ban"></i> Inactivo
                             </span>
 
-                <th:block th:if="${p.estado}">
-                    <span class="estado"
-                          th:classappend="${p.estadoStock.equals('Disponible')} ? ' disponible' :
-                          (${p.estadoStock.equals('Poco Stock')} ? ' poco' : ' agotado')"
-                          th:text="${p.estadoStock}">
-                    </span>
-                </th:block>
-                </td>
-                </tr>
+                            <th:block th:if="${p.estado}">
+                                <span th:if="${p.estadoStock == 'Disponible'}" class="badge badge-success">Disponible</span>
+                                <span th:if="${p.estadoStock == 'Poco Stock'}" class="badge badge-warning">Poco Stock</span>
+                                <span th:if="${p.estadoStock == 'Agotado'}" class="badge badge-danger">Agotado</span>
+                            </th:block>
+                        </td>
+                    </tr>
+                    
+                    <tr th:if="${#lists.isEmpty(productos)}">
+                        <td colspan="5" style="text-align: center; padding: 50px; color: var(--secondary);">
+                            <i class="fas fa-search fa-3x mb-3" style="opacity: 0.2;"></i><br>
+                            No se encontraron productos.
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-
         </div>
 
-    </body>
+    </main>
+</body>
 </html>

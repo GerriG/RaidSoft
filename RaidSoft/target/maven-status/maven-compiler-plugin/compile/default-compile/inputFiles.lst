@@ -2,9 +2,15 @@ C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\con
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\config\CustomAuthSuccessHandler.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\config\SecurityConfig.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\config\WebConfig.java
-C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\AppController.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\AdminController.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\AuthController.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\AuthRestController.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\PerfilController.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\ProductoController.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\VendedorController.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\controller\VentaController.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\dto\RegistroRequest.java
+C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\dto\VentaVendedorDTO.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\Exception\GlobalExceptionHandler.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\model\Perfil.java
 C:\Users\gerry\Documents\GitHub\RaidSoft\RaidSoft\src\main\java\com\raidsoft\model\Producto.java

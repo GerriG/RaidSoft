@@ -2,148 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Productos - RaidSoft</title>
-
+    
     <link rel="stylesheet" th:href="@{/css/Admin.css}">
-    <link rel="stylesheet" th:href="@{/css/Productos.css}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-    <style>
-        /* --- ALINEACIÓN DE TABLA (CORRECCIÓN VISUAL) --- */
-        .product-table th {
-            text-align: center !important;
-            vertical-align: middle !important;
-        }
-        
-        .product-table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        /* Excepción: La columna "Nombre" se ve mejor alineada a la izquierda */
-        .product-table td:nth-child(3) {
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        /* --- ESTILOS GAMER PARA ALERTAS --- */
-        .swal-gamer-popup {
-            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
-            border: 2px solid #00ffff !important;
-            color: #e0f2f7 !important;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7) !important;
-        }
-        .swal-title {
-            color: #00ffff !important;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.7) !important;
-        }
-        .swal-html-container {
-            color: #a0ffff !important;
-        }
-        .swal-confirm-button-gamer {
-            background: linear-gradient(90deg, #1eff80, #00e676) !important;
-            color: #1a1a2e !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: bold !important;
-            padding: 10px 20px !important;
-            margin: 5px !important;
-            box-shadow: 0 5px 15px rgba(30, 255, 128, 0.4) !important;
-        }
-        .swal-cancel-button-gamer {
-            background: linear-gradient(90deg, #ff3366, #c44036) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: bold !important;
-            padding: 10px 20px !important;
-            margin: 5px !important;
-            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4) !important;
-        }
-        
-        /* --- ESTILOS PARA IMÁGENES (THUMBNAILS) --- */
-        .product-thumb {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
-            transition: transform 0.2s;
-            background-color: #16213e;
-            display: inline-block;
-        }
-
-        .product-thumb:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
-        }
-
-        .no-img-placeholder {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            background: rgba(0, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px dashed #5a5c69;
-            color: #5a5c69;
-            font-size: 1.2rem;
-            margin: 0 auto;
-        }
-    </style>
-
 </head>
 <body>
-    <div class="admin-container">
+    <div class="dashboard-wrapper">
+        
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h3>RaidSoft Admin</h3>
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
             </div>
+            
             <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
                 <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                
+                <li class="menu-label">Gestión</li>
                 <li><a th:href="@{/admin/productos}" class="active"><i class="fas fa-box"></i> Productos</a></li>
-                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-list"></i> Stock</a></li>
-                <li>
-                    <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
-                        <i class="fas fa-chart-line"></i> Reportes
-                    </a>
-                </li>
-                <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                <li class="logout-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
                     </form>
                 </li>
             </ul>
         </nav>
 
         <main class="main-content">
-            <header>
-                <div class="user-welcome">
-                    <h1>Gestión de Inventario</h1>
-                    <p class="text-muted">Administra el catálogo de productos</p>
+            
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);">Catálogo de Productos</h2>
+                    <p style="color: var(--secondary);">Gestiona tu inventario, precios y stock.</p>
                 </div>
-            </header>
-
-            <div class="header-actions">
-                <h2 style="color: #5a5c69;">Lista de Productos</h2>
-                <a th:href="@{/admin/productos/nuevo}" class="btn-new"><i class="fas fa-plus"></i> Nuevo Producto</a>
+                <a th:href="@{/admin/productos/nuevo}" class="btn-new">
+                    <i class="fas fa-plus"></i> Nuevo Producto
+                </a>
             </div>
 
-            <div class="table-container">
-                <table class="product-table">
+            <div class="table-card">
+                <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Imagen</th>
-                            <th>Nombre</th>
-                            <th>Precio Venta</th>
+                            <th>Producto</th> <th>Código</th>
+                            <th>Precio</th>
                             <th>Stock</th>
                             <th>Estado</th>
                             <th>Acciones</th>
@@ -151,163 +65,124 @@
                     </thead>
                     <tbody>
                         <tr th:each="prod : ${listaProductos}">
-                            <td th:text="${prod.idProducto}">#1</td>
-
+                            
                             <td>
-                                <img th:if="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
-                                     th:src="@{${prod.imagenUrl}}" 
-                                     alt="Producto" 
-                                     class="product-thumb">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <img th:if="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
+                                         th:src="@{${prod.imagenUrl}}" class="product-thumb" alt="Img">
+                                    
+                                    <div th:unless="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
+                                         class="no-img-placeholder">
+                                        <i class="fas fa-image"></i>
+                                    </div>
 
-                                <div th:unless="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
-                                     class="no-img-placeholder">
-                                    <i class="fas fa-image"></i>
+                                    <div>
+                                        <div style="font-weight: 600;" th:text="${prod.nombre}">Laptop HP</div>
+                                        <small style="color: #a0aec0;" th:text="'ID: #' + ${prod.idProducto}">#1</small>
+                                    </div>
                                 </div>
                             </td>
 
-                            <td>
-                                <div style="font-weight: bold;" th:text="${prod.nombre}">Laptop HP</div>
-                                <small th:text="${prod.codigoBarras}" style="color: #a0ffff;">CODE123</small>
-                            </td>
+                            <td th:text="${prod.codigoBarras}" style="font-family: monospace;">CODE123</td>
 
-                            <td th:text="'$' + ${prod.precioVenta}" style="color: #1eff80;">$0.00</td>
+                            <td th:text="'$ ' + ${#numbers.formatDecimal(prod.precioVenta, 1, 'COMMA', 2, 'POINT')}" 
+                                style="font-weight: 600; color: var(--dark);">
+                                $0.00
+                            </td>
                             
                             <td>
-                                <span th:class="${prod.stock <= prod.stockMinimo ? 'badge-low' : 'badge-stock'}"
-                                      th:text="${prod.stock}">
-                                    10
-                                </span>
+                                <span th:if="${prod.stock > prod.stockMinimo}" class="badge badge-success" th:text="${prod.stock} + ' un.'">10</span>
+                                <span th:if="${prod.stock <= prod.stockMinimo && prod.stock > 0}" class="badge badge-warning" th:text="${prod.stock} + ' un.'">2</span>
+                                <span th:if="${prod.stock == 0}" class="badge badge-danger">Agotado</span>
                             </td>
 
                             <td>
-                                <span th:unless="${prod.estado}" style="color: #6c757d; font-style: italic;">
-                                    <i class="fas fa-ban"></i> Descontinuado
-                                </span>
-
-                                <th:block th:if="${prod.estado}">
-                                    <span th:if="${prod.estadoStock == 'Disponible'}" style="color: #00e676; text-shadow: 0 0 5px rgba(0,230,118,0.5);">
-                                        <i class="fas fa-check-circle"></i> Disponible
-                                    </span>
-                                    <span th:if="${prod.estadoStock == 'Poco Stock'}" style="color: #ffea00; text-shadow: 0 0 5px rgba(255,234,0,0.5);">
-                                        <i class="fas fa-exclamation-triangle"></i> Poco Stock
-                                    </span>
-                                    <span th:if="${prod.estadoStock == 'Agotado'}" style="color: #ff3366; text-shadow: 0 0 5px rgba(255,51,102,0.5);">
-                                        <i class="fas fa-times-circle"></i> Agotado
-                                    </span>
-                                </th:block>
+                                <span th:if="${prod.estado}" class="badge badge-success"><i class="fas fa-check"></i> Activo</span>
+                                <span th:unless="${prod.estado}" class="badge badge-secondary"><i class="fas fa-ban"></i> Inactivo</span>
                             </td>
 
                             <td>
-                                <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" class="btn-action btn-edit" title="Editar">
-                                    <i class="fas fa-pen"></i>
-                                </a>
+                                <div class="actions-cell">
+                                    <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" 
+                                       class="btn-action btn-edit" title="Editar">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
 
-                                <a href="javascript:void(0);"
-                                   th:onclick="|confirmToggle(${prod.idProducto}, ${prod.estado})|"
-                                   class="btn-action"
-                                   th:style="${prod.estado} ? 'background-color: #ff9800; color: black;' : 'background-color: #00e676; color: black;'"
-                                   th:title="${prod.estado} ? 'Descontinuar' : 'Reactivar'">
-                                    <i class="fas" th:classappend="${prod.estado} ? 'fa-ban' : 'fa-power-off'"></i>
-                                </a>
+                                    <a href="javascript:void(0);" 
+                                       th:onclick="|confirmToggle(${prod.idProducto}, ${prod.estado})|"
+                                       class="btn-action btn-toggle"
+                                       th:title="${prod.estado} ? 'Desactivar' : 'Activar'">
+                                        <i class="fas" th:classappend="${prod.estado} ? 'fa-power-off' : 'fa-check'"></i>
+                                    </a>
 
-                                <a href="javascript:void(0);"
-                                   th:onclick="|confirmDelete(${prod.idProducto})|"
-                                   class="btn-action btn-delete" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                    <a href="javascript:void(0);" 
+                                       th:onclick="|confirmDelete(${prod.idProducto})|"
+                                       class="btn-action btn-delete" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr th:if="${#lists.isEmpty(listaProductos)}">
+                            <td colspan="6" style="text-align: center; padding: 30px; color: var(--secondary);">
+                                <i class="fas fa-box-open fa-2x mb-2"></i><br>
+                                No hay productos registrados.
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
         </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script th:inline="javascript">
-        const deleteUrlTemplate = /*[[@{/admin/productos/eliminar/}]]*/ '/admin/productos/eliminar/';
-        const toggleUrlTemplate = /*[[@{/admin/productos/toggle/}]]*/ '/admin/productos/toggle/';
+        const deleteUrlTemplate = /*[[@{/admin/productos/eliminar/}]]*/ '';
+        const toggleUrlTemplate = /*[[@{/admin/productos/toggle/}]]*/ '';
 
-        // --- FUNCIÓN CONFIRMAR TOGGLE (ACTIVAR/DESCONTINUAR) ---
+        // Estilos modernos para SweetAlert (Bootstrap theme colors)
+        const swalColors = {
+            confirm: '#4e73df',
+            cancel: '#858796',
+            danger: '#e74a3b'
+        };
+
         function confirmToggle(id, isActive) {
-            let title = isActive ? "¿Descontinuar Producto?" : "¿Reactivar Producto?";
-            let text = isActive ? "El producto dejará de estar visible para ventas." : "El producto volverá a estar disponible para ventas.";
-            let confirmBtnText = isActive ? "Sí, descontinuar" : "Sí, reactivar";
-            let icon = isActive ? "warning" : "question"; // Warning naranja para descontinuar, interrogación para activar
-
             Swal.fire({
-                title: title,
-                text: text,
-                icon: icon,
+                title: isActive ? '¿Desactivar producto?' : '¿Reactivar producto?',
+                text: isActive ? "No aparecerá en nuevas ventas." : "Volverá a estar visible.",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: confirmBtnText,
-                cancelButtonText: "Cancelar",
-                customClass: {
-                    popup: 'swal-gamer-popup',
-                    confirmButton: 'swal-confirm-button-gamer',
-                    cancelButton: 'swal-cancel-button-gamer'
-                },
-                buttonsStyling: false
+                confirmButtonColor: isActive ? swalColors.danger : swalColors.confirm,
+                cancelButtonColor: swalColors.cancel,
+                confirmButtonText: isActive ? 'Sí, desactivar' : 'Sí, activar'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = toggleUrlTemplate + id;
-                }
+                if (result.isConfirmed) window.location.href = toggleUrlTemplate + id;
             });
         }
 
-        // --- FUNCIÓN CONFIRMAR ELIMINAR ---
         function confirmDelete(id) {
             Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡No podrás revertir esto! Eliminará el historial de ventas si existe.",
-                icon: "warning",
+                title: '¿Eliminar definitivamente?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar",
-                customClass: {
-                    popup: 'swal-gamer-popup',
-                    confirmButton: 'swal-confirm-button-gamer',
-                    cancelButton: 'swal-cancel-button-gamer'
-                },
-                buttonsStyling: false
+                confirmButtonColor: swalColors.danger,
+                cancelButtonColor: swalColors.cancel,
+                confirmButtonText: 'Sí, eliminar'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = deleteUrlTemplate + id;
-                }
+                if (result.isConfirmed) window.location.href = deleteUrlTemplate + id;
             });
         }
 
-        // --- MANEJO DE MENSAJES DEL CONTROLADOR ---
-        
-        const successMessage = /*[[${success}]]*/ null;
-        const errorMessage = /*[[${error}]]*/ null;
+        // Mensajes flash del controlador
+        const successMsg = /*[[${success}]]*/ null;
+        const errorMsg = /*[[${error}]]*/ null;
 
-        if (successMessage) {
-            Swal.fire({
-                title: "¡Operación Exitosa!",
-                text: successMessage,
-                icon: "success",
-                customClass: {
-                    popup: 'swal-gamer-popup',
-                    confirmButton: 'swal-confirm-button-gamer'
-                },
-                buttonsStyling: false
-            });
-        }
-
-        if (errorMessage) {
-            Swal.fire({
-                title: "¡Error!",
-                text: errorMessage,
-                icon: "error",
-                customClass: {
-                    popup: 'swal-gamer-popup',
-                    confirmButton: 'swal-cancel-button-gamer'
-                },
-                buttonsStyling: false
-            });
-        }
+        if (successMsg) Swal.fire({ title: '¡Hecho!', text: successMsg, icon: 'success', confirmButtonColor: swalColors.confirm });
+        if (errorMsg) Swal.fire({ title: 'Error', text: errorMsg, icon: 'error', confirmButtonColor: swalColors.confirm });
     </script>
 </body>
 </html>

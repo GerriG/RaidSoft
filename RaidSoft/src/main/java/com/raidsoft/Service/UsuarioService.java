@@ -6,6 +6,7 @@ import com.raidsoft.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // <-- IMPORTANTE
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -14,9 +15,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
+
+    // Directorio base para guardar los avatares.
+    private final String UPLOAD_DIR = System.getProperty("user.dir") + "/src/main/resources/static/Profiles/"; 
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -24,82 +29,87 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Ruta absoluta para evitar errores de "archivo no encontrado" en Windows
-    private final String UPLOAD_DIR = System.getProperty("user.dir") + "/src/main/resources/static/Profiles/";
+    // Puedes agregar más métodos de búsqueda si los necesitas
+    public Optional<Usuario> findByUsername(String username) {
+        return usuarioRepository.findByUsername(username);
+    }
+    
+    // --- LÓGICA PRINCIPAL DE ACTUALIZACIÓN ---
+    @Transactional // <--- CRUCIAL: Asegura que el guardado sea atómico y la data fresca
+    public void actualizarPerfil(Usuario usuarioActual, Perfil perfilForm, 
+                                 MultipartFile archivo, String newPassword) throws IOException {
 
-    public void actualizarPerfil(Usuario usuario, Perfil datosFormulario, MultipartFile archivo, String nuevaPassword) throws IOException {
+        // 1. Obtener o crear Perfil
+        Perfil perfil = usuarioActual.getPerfil();
         
-        // 1. Obtener el perfil actual de la base de datos
-        Perfil perfilActual = usuario.getPerfil();
+        if (perfil == null) {
+            perfil = new Perfil();
+            perfil.setUsuario(usuarioActual);
+        }
+
+        // 2. TRANSFERENCIA DE DATOS (Incluyendo la fecha, que soluciona el bug)
+        // La validación de longitud de String se maneja en la DB/Controller.
+        if (perfilForm.getNombre() != null) { perfil.setNombre(perfilForm.getNombre()); }
+        if (perfilForm.getApellido() != null) { perfil.setApellido(perfilForm.getApellido()); }
+        if (perfilForm.getEmail() != null) { perfil.setEmail(perfilForm.getEmail()); }
         
-        // Validación de seguridad por si el usuario no tuviera perfil creado (casos raros)
-        if (perfilActual == null) {
-            perfilActual = new Perfil();
-            perfilActual.setUsuario(usuario);
-            usuario.setPerfil(perfilActual);
+        // FIX: La fecha se transfiere explícitamente y es el valor validado
+        if (perfilForm.getFechaNacimiento() != null) { 
+            perfil.setFechaNacimiento(perfilForm.getFechaNacimiento()); 
         }
 
-        // 2. Actualizar datos básicos en el objeto PERFIL
-        if (datosFormulario.getNombre() != null && !datosFormulario.getNombre().isEmpty()) {
-            perfilActual.setNombre(datosFormulario.getNombre());
-        }
-        if (datosFormulario.getApellido() != null && !datosFormulario.getApellido().isEmpty()) {
-            perfilActual.setApellido(datosFormulario.getApellido());
-        }
-        if (datosFormulario.getEmail() != null && !datosFormulario.getEmail().isEmpty()) {
-            perfilActual.setEmail(datosFormulario.getEmail());
-        }
-        if (datosFormulario.getFechaNacimiento() != null) {
-            perfilActual.setFechaNacimiento(datosFormulario.getFechaNacimiento());
+        // 3. ACTUALIZAR CONTRASEÑA (si se proporcionó)
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
+            usuarioActual.setPassword(passwordEncoder.encode(newPassword));
         }
 
-        // 3. Actualizar Contraseña en el objeto USUARIO (solo si se envía)
-        if (nuevaPassword != null && !nuevaPassword.isEmpty()) {
-            usuario.setPassword(passwordEncoder.encode(nuevaPassword));
-        }
-
-        // 4. Manejo de la Imagen (Lógica de borrado + subida)
-        if (archivo != null && !archivo.isEmpty()) {
+        // 4. MANEJO DE IMAGEN (Avatar)
+        if (archivo != null && !archivo.isEmpty() && archivo.getSize() > 0) {
+            String nuevoAvatarUrl = guardarArchivo(archivo);
             
-            // A) Intentar borrar la imagen anterior del disco
-            String imagenAnteriorUrl = perfilActual.getAvatarUrl(); // Ahora obtenemos la URL del Perfil
-            
-            if (imagenAnteriorUrl != null && !imagenAnteriorUrl.isEmpty() && !imagenAnteriorUrl.contains("default")) {
-                try {
-                    // Limpiar URL: "/Profiles/foto.jpg" -> "foto.jpg"
-                    String nombreArchivoAnterior = imagenAnteriorUrl.replace("/Profiles/", "");
-                    
-                    // Construir ruta absoluta
-                    Path rutaArchivoAnterior = Paths.get(UPLOAD_DIR, nombreArchivoAnterior);
-                    
-                    // Borrar si existe
-                    boolean borrado = Files.deleteIfExists(rutaArchivoAnterior);
-                    
-                    if(borrado) {
-                        System.out.println("✅ Imagen anterior eliminada: " + nombreArchivoAnterior);
-                    }
-                } catch (IOException e) {
-                    System.err.println("❌ Error no crítico al borrar imagen anterior: " + e.getMessage());
-                }
+            // Opcional: Borrar el archivo antiguo si existe
+            if (perfil.getAvatarUrl() != null && !perfil.getAvatarUrl().isEmpty()) {
+                 borrarArchivoAntiguo(perfil.getAvatarUrl());
             }
 
-            // B) Guardar la nueva imagen
-            Path rutaDirectorio = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(rutaDirectorio)) {
-                Files.createDirectories(rutaDirectorio);
-            }
-
-            String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename();
-            Path rutaArchivo = rutaDirectorio.resolve(nombreArchivo);
-            
-            Files.copy(archivo.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
-            
-            // Actualizar la URL en el Perfil
-            perfilActual.setAvatarUrl("/Profiles/" + nombreArchivo);
-            System.out.println("✅ Nueva imagen guardada: " + nombreArchivo);
+            perfil.setAvatarUrl(nuevoAvatarUrl); 
         }
 
-        // 5. Guardar cambios (Al guardar Usuario, JPA actualiza Perfil por la cascada)
-        usuarioRepository.save(usuario);
+        // 5. GUARDAR (JPA guarda el Perfil por cascada)
+        usuarioActual.setPerfil(perfil);
+        usuarioRepository.save(usuarioActual);
+    }
+
+    // --- MÉTODOS PRIVADOS PARA MANEJO DE ARCHIVOS (Necesarios para el punto 4) ---
+    
+    /** Guarda el archivo subido en el directorio estático. */
+    private String guardarArchivo(MultipartFile archivo) throws IOException {
+        String originalFilename = archivo.getOriginalFilename();
+        // Usamos la extensión del archivo original
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); 
+        String newFilename = UUID.randomUUID().toString() + extension;
+        Path filePath = Paths.get(UPLOAD_DIR, newFilename);
+        
+        // Crea la carpeta si no existe
+        Files.createDirectories(filePath.getParent()); 
+        Files.copy(archivo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        
+        // Retorna la URL relativa para el HTML
+        return "/Profiles/" + newFilename;
+    }
+
+    /** Borra el archivo de avatar antiguo del disco. */
+    private void borrarArchivoAntiguo(String avatarUrl) {
+        String filename = avatarUrl.replace("/Profiles/", "");
+        Path filePath = Paths.get(UPLOAD_DIR, filename);
+        
+        try {
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+        } catch (IOException e) {
+            // Error no crítico: el archivo ya fue borrado o está bloqueado
+            System.err.println("Error al borrar el archivo antiguo: " + e.getMessage());
+        }
     }
 }

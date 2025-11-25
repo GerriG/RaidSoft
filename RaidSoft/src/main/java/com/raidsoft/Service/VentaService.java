@@ -1,5 +1,6 @@
 package com.raidsoft.service;
 
+import com.raidsoft.dto.VentaVendedorDTO;
 import com.raidsoft.model.Producto;
 import com.raidsoft.model.Usuario;
 import com.raidsoft.model.Venta;
@@ -22,46 +23,35 @@ public class VentaService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // Registro de venta con validación de stock y actualización automática
     @Transactional
     public Venta registrarVenta(Usuario vendedor, Producto producto, int cantidad) throws Exception {
-        // 1. Validación de stock
         if (producto.getStock() < cantidad) {
-            throw new Exception("No hay suficiente stock para este producto.");
+            throw new Exception("Stock insuficiente.");
         }
-
-        // 2. Actualizar stock
         producto.setStock(producto.getStock() - cantidad);
         productoRepository.save(producto);
 
-        // 3. Crear venta
         Venta venta = new Venta();
         venta.setVendedor(vendedor);
         venta.setProducto(producto);
         venta.setCantidad(cantidad);
+        
+        // Cálculo de total (Asegúrate que tu modelo Producto tenga precioVenta como BigDecimal o Double)
+        // Si en tu modelo es Double:
+        venta.setTotal(producto.getPrecioVenta().doubleValue() * cantidad); 
+        // Si en tu modelo es BigDecimal:
+        // venta.setTotal(producto.getPrecioVenta().multiply(new BigDecimal(cantidad)));
 
-        // 4. Calcular total
-        // Asumiendo que getPrecioVenta() retorna BigDecimal. Si es Double, elimina el BigDecimal.valueOf
-        venta.setTotal(producto.getPrecioVenta().multiply(BigDecimal.valueOf(cantidad)).doubleValue());
-
-        // 5. Registrar fecha
         venta.setFecha(LocalDateTime.now());
-
-        // 6. Guardar y retornar
         return ventaRepository.save(venta);
     }
 
-    // Listar todas las ventas
-    public List<Venta> listarVentas() {
-        return ventaRepository.findAll();
-    }
-
-    // Listar ventas de un vendedor específico
-    public List<Venta> listarVentasPorVendedor(Usuario vendedor) {
+    public List<Venta> historialVentas(Usuario vendedor) {
         return ventaRepository.findByVendedorOrderByFechaDesc(vendedor);
     }
 
-    public List<Venta> historialVentas(Usuario vendedor) {
-        return listarVentasPorVendedor(vendedor);
+    // --- MÉTODO PARA EL REPORTE DE ADMIN ---
+    public List<VentaVendedorDTO> obtenerReporteVendedores() {
+        return ventaRepository.obtenerReporteVentasPorVendedor();
     }
 }

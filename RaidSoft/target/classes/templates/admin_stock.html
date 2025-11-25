@@ -1,203 +1,123 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Reporte de Stock Mínimo - RaidSoft</title>
-        <link rel="stylesheet" th:href="@{/css/Admin.css}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Stock Mínimo - RaidSoft</title>
+    
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
+                <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                
+                <li class="menu-label">Gestión</li>
+                <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}" class="active"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
 
-        <style>
-            /* Definición de la Animación de Borde Sutil (Movimiento) */
-            @keyframes subtle-neon-glow {
-                0% {
-                    box-shadow: 0 0 5px rgba(255, 51, 102, 0.4);
-                } /* Usamos rojo/rosa para advertencia */
-                50% {
-                    box-shadow: 0 0 10px rgba(255, 51, 102, 0.8);
-                }
-                100% {
-                    box-shadow: 0 0 5px rgba(255, 51, 102, 0.4);
-                }
-            }
-
-            /* ESTILOS GAMER PARA LA TABLA */
-            .table-container {
-                background: linear-gradient(145deg, #1a1a2e, #10192e);
-                border-radius: 15px;
-                box-shadow: 0 0 20px rgba(255, 51, 102, 0.3); /* Sombra neón rosa */
-                padding: 20px;
-                margin-top: 20px;
-                border: 1px solid #ff3366; /* Borde rojo neón */
-            }
-
-            .product-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            .product-table th {
-                background-color: #16213e;
-                color: #ff3366; /* Rojo neón para los encabezados de advertencia */
-                font-weight: 700;
-                padding: 15px 15px;
-                text-align: left;
-                border-bottom: 2px solid #ff3366;
-                text-transform: uppercase;
-            }
-
-            .product-table td {
-                padding: 12px 15px;
-                border-bottom: 1px solid #2a3c5d;
-                color: #e0f2f7;
-            }
-
-            /* Efecto de movimiento en la fila al pasar el mouse */
-            .product-table tr:hover {
-                background-color: #1e2a4a;
-                cursor: pointer;
-                animation: subtle-neon-glow 1.5s infinite alternate;
-            }
-
-            /* Badge de stock bajo, resaltado */
-            .badge-low {
-                background-color: #ff3366;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 15px;
-                font-size: 0.85rem;
-                font-weight: bold;
-                box-shadow: 0 0 5px #ff3366;
-            }
-
-            /* Botones de Acción Gamer */
-            .btn-action {
-                padding: 8px 12px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-size: 0.8rem;
-                margin-right: 5px;
-                display: inline-block;
-                transition: all 0.2s ease;
-            }
-
-            .btn-edit {
-                background-color: #ffc400; /* Amarillo neón */
-                color: #1a1a2e;
-                box-shadow: 0 0 5px #ffc400;
-            }
-            .btn-action:hover {
-                transform: translateY(-2px);
-                opacity: 0.8;
-            }
-
-            /* Estilos de Encabezado y Botón Nuevo Producto Gamer */
-            .header-actions {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            h1, h2 {
-                color: #ff3366; /* Rojo/Rosa neón */
-                text-shadow: 0 0 8px rgba(255, 51, 102, 0.7);
-            }
-            p.text-muted {
-                color: #ff99aa;
-            }
-            .btn-new {
-                background: linear-gradient(90deg, #00ffff, #00aaff);
-                color: #1a1a2e;
-                padding: 10px 20px;
-                border-radius: 25px;
-                text-decoration: none;
-                font-weight: bold;
-                text-transform: uppercase;
-                box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-                transition: all 0.3s ease;
-            }
-            .btn-new:hover {
-                box-shadow: 0 0 15px rgba(0, 255, 255, 1);
-                transform: scale(1.05);
-            }
-        </style>
-    </head>
-    <body>
-        <div class="admin-container">
-            <nav class="sidebar">
-                <div class="sidebar-header">
-                    <h3>RaidSoft Admin</h3>
+        <main class="main-content">
+            
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);">Gestión de Stock</h2>
+                    <p style="color: var(--secondary);">Monitoreo de productos con existencias bajas.</p>
                 </div>
-                <ul class="sidebar-menu">
-                    <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
-                    <li><a href="#"><i class="fas fa-users"></i> Usuarios</a></li>
-                    <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
-                    <li><a th:href="@{/admin/stock}" class="active"><i class="fas fa-clipboard-list"></i> Stock (Reporte)</a></li>
-                    <li>
-                        <a href="#" onclick="Swal.fire('En desarrollo', 'El módulo de reportes estará disponible pronto.', 'info'); return false;">
-                            <i class="fas fa-chart-line"></i> Reportes
-                        </a>
-                    </li>
-                    <li><a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                    <li class="logout-item">
-                        <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
-                        </form>
-                    </li>
-                </ul>
-            </nav>
+                
+                <a th:href="@{/admin/productos}" class="btn-new" style="background-color: var(--secondary);">
+                    <i class="fas fa-arrow-left"></i> Volver a Productos
+                </a>
+            </div>
 
-            <main class="main-content">
-                <header>
-                    <div class="user-welcome">
-                        <h1>Reporte de Stock Crítico</h1>
-                        <p class="text-muted">Productos que requieren reabastecimiento urgente</p>
-                    </div>
-                </header>
-
-                <div class="header-actions">
-                    <h2>Productos Bajo Stock Mínimo</h2>
-                    <a th:href="@{/admin/productos}" class="btn-new"><i class="fas fa-list"></i> Ver todos los productos</a>
+            <div class="alert-banner" th:if="${!productosFaltantes.empty}">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-circle"></i>
                 </div>
-
-                <div class="table-container">
-                    <table class="product-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Cód. Barras</th>
-                                <th>Stock Actual</th>
-                                <th>Stock Mínimo</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="prod : ${productosFaltantes}">
-                                <td th:text="${prod.idProducto}">#1</td>
-                                <td>
-                                    <div style="font-weight: bold;" th:text="${prod.nombre}">Producto Faltante</div>
-                                </td>
-                                <td th:text="${prod.codigoBarras}" style="color: #ff99aa;">CODE123</td>
-                                <td>
-                                    <span class="badge-low" th:text="${prod.stock}">10</span>
-                                </td>
-                                <td style="color: #ff99aa;" th:text="${prod.stockMinimo}">5</td>
-                                <td>
-                                    <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" class="btn-action btn-edit"><i class="fas fa-pen"></i> Editar Stock</a>
-                                </td>
-                            </tr>
-                            <tr th:if="${productosFaltantes.empty}">
-                                <td colspan="6" style="text-align: center; padding: 30px; color: #ff99aa;">
-                                    <i class="fas fa-box-open" style="font-size: 2rem; color: #ff3366;"></i>
-                                    <p>¡Inventario al 100%! Ningún producto requiere reabastecimiento.</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="alert-content">
+                    <h3>Atención Requerida</h3>
+                    <p>Se han detectado productos por debajo del nivel mínimo de inventario. Se recomienda reabastecer pronto.</p>
                 </div>
-            </main>
-        </div>
-    </body>
+            </div>
+
+            <div class="table-card">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Código</th>
+                            <th>Stock Actual</th>
+                            <th>Mínimo Requerido</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prod : ${productosFaltantes}">
+                            <td>
+                                <div style="font-weight: 600; color: var(--dark);" th:text="${prod.nombre}">
+                                    Producto Faltante
+                                </div>
+                                <small style="color: var(--secondary);" th:text="'ID: #' + ${prod.idProducto}">#1</small>
+                            </td>
+                            
+                            <td th:text="${prod.codigoBarras}" style="font-family: monospace;">CODE123</td>
+                            
+                            <td>
+                                <span class="badge badge-danger" style="font-size: 14px;">
+                                    <i class="fas fa-arrow-down"></i> <span th:text="${prod.stock}">10</span> un.
+                                </span>
+                            </td>
+                            
+                            <td style="font-weight: 600; color: var(--dark);" th:text="${prod.stockMinimo} + ' un.'">5 un.</td>
+                            
+                            <td>
+                                <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" 
+                                   class="btn-new" 
+                                   style="padding: 6px 15px; font-size: 13px; background-color: var(--warning); color: #333;">
+                                    <i class="fas fa-dolly"></i> Reabastecer
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${productosFaltantes.empty}">
+                            <td colspan="5">
+                                <div class="empty-state-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <h4>¡Todo en orden!</h4>
+                                    <p style="color: var(--secondary);">No hay productos con stock crítico en este momento.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
 </html>

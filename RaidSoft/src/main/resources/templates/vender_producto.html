@@ -1,232 +1,195 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Registrar Venta - RaidSoft</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nueva Venta - RaidSoft POS</title>
 
-    <link rel="stylesheet" th:href="@{/css/Admin.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-    <style>
-        /* Estilos específicos para la vista de ventas (Tema Gamer) */
-        body {
-            background-color: #f4f6f9; /* Fondo base si falla el CSS externo */
-        }
-        .table-gamer {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 255, 255, 0.1);
-        }
-        .table-gamer th, .table-gamer td {
-            padding: 12px 15px;
-            text-align: center;
-            border-bottom: 1px solid #00ffff50;
-            color: #e0f2f7;
-        }
-        .table-gamer th {
-            background: #0d1222;
-            color: #00ffff;
-            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
-        }
-        .btn-vender {
-            background: linear-gradient(90deg, #1eff80, #00e676);
-            color: #1a1a2e;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-vender:hover {
-            background: linear-gradient(90deg, #00e676, #1eff80);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(30, 255, 128, 0.6);
-        }
-        .form-cantidad input {
-            width: 60px;
-            text-align: center;
-            border-radius: 6px;
-            border: 1px solid #00aaff;
-            background: #0d1222;
-            color: #e0f2f7;
-        }
-        h1 {
-            color: #333; /* Ajustado para legibilidad si no carga fondo oscuro global */
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        /* DataTables ajuste colores */
-        .dataTables_wrapper .dataTables_filter input,
-        .dataTables_wrapper .dataTables_length select {
-            background: #0d1222;
-            color: #e0f2f7;
-            border: 1px solid #00aaff;
-            border-radius: 6px;
-            padding: 5px;
-        }
-        /* Botón volver */
-        .btn-back {
-            display: inline-block;
-            margin-bottom: 15px;
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .btn-back:hover {
-            background-color: #5a6268;
-        }
-    </style>
-</head>
-<body th:attr="data-success=${success}, data-error=${error}">
-
-<div class="main-content" style="padding: 20px;">
-    <a th:href="@{/vendedor/dashboard}" class="btn-back"><i class="fas fa-arrow-left"></i> Volver al Dashboard</a>
+    <link rel="stylesheet" th:href="@{/css/Vendedor.css}" />
+    <link rel="stylesheet" th:href="@{/css/Admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/Ventas.css}" />
     
-    <h1>Registrar Venta</h1>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 
-    <table id="tablaProductos" class="table-gamer display">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Cantidad</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="producto : ${productos}">
-                <td th:text="${producto.nombre}">Nombre</td>
-                <td th:text="${producto.precioVenta}">0.00</td>
-                <td th:text="${producto.stock}">0</td>
-                <td class="form-cantidad">
-                    <input type="number" name="cantidad_visible" value="1" min="1" required/>
-                </td>
-                <td>
-                    <form th:action="@{/vendedor/vender/{id}(id=${producto.idProducto})}" method="post">
-                        <input type="hidden" name="cantidad" value="1"/>
-                        <button type="submit" class="btn-vender">Vender</button>
+<body style="background-color: #f0f2f5;" th:attr="data-success=${success}, data-error=${error}">
+
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <i class="fas fa-shopping-bag"></i> 
+            <span>RaidSoft POS</span>
+        </div>
+        
+        <div class="nav-user">
+            <span class="user-welcome">Cajero: <strong th:text="${#authentication.name}">Usuario</strong></span>
+            
+            <a th:href="@{/vendedor/dashboard}" class="btn-nav" style="background: #eef2ff; color: var(--primary);">
+                <i class="fas fa-times"></i> Salir
+            </a>
+
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="content">
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: var(--dark); font-size: 28px; font-weight: 800; margin-bottom: 5px;">Punto de Venta</h2>
+            <p style="color: var(--secondary); margin: 0;">Selecciona productos para procesar la venta.</p>
+        </div>
+
+        <div class="search-container-hero">
+            <div class="search-box-hero" style="max-width: 800px;">
+                <i class="fas fa-barcode"></i>
+                
+                <input type="text" id="searchBox" 
+                       placeholder="Escanear código de barras o escribir nombre..." 
+                       autocomplete="off" autofocus>
+            </div>
+            <p style="text-align: center; margin-top: 10px; color: #b7b9cc; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                <i class="fas fa-bolt" style="color: var(--warning);"></i> Búsqueda Instantánea
+            </p>
+        </div>
+
+        <div class="pos-catalog-grid" id="productGrid">
+            
+            <div th:each="p : ${productos}" class="product-card-pos product-item" 
+                 th:data-name="${p.nombre.toLowerCase()}" 
+                 th:data-code="${p.codigoBarras != null ? p.codigoBarras.toLowerCase() : ''}">
+                
+                <div class="pos-img-container">
+                    <div class="stock-badge-pos" 
+                         th:classappend="${p.stock <= p.stockMinimo ? 'stock-low' : 'stock-ok'}">
+                        <i class="fas fa-layer-group"></i> <span th:text="${p.stock}">10</span>
+                    </div>
+
+                    <img th:if="${p.imagenUrl != null}" th:src="@{${p.imagenUrl}}" class="pos-product-img" alt="Producto">
+                    <i th:if="${p.imagenUrl == null}" class="fas fa-box-open" style="font-size: 4rem; color: #e2e8f0;"></i>
+                </div>
+
+                <div class="pos-card-body">
+                    <div class="pos-product-title" th:text="${p.nombre}">Nombre del Producto</div>
+                    <div class="pos-product-code" th:text="${p.codigoBarras != null ? p.codigoBarras : '---'}">CODE</div>
+                    
+                    <div class="pos-product-price">
+                        $ <span th:text="${#numbers.formatDecimal(p.precioVenta, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                    </div>
+
+                    <form th:action="@{/vendedor/vender/{id}(id=${p.idProducto})}" method="post" class="form-venta pos-actions">
+                        <input type="hidden" name="cantidad" value="1">
+                        
+                        <input type="number" class="input-qty-pos input-qty-visible" value="1" min="1" 
+                               th:max="${p.stock}" onkeydown="return false;">
+                        
+                        <button type="submit" class="btn-add-pos">
+                            <i class="fas fa-plus"></i> Vender
+                        </button>
                     </form>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(productos)}">
-                <td colspan="5">No hay productos disponibles con stock.</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                </div>
+            </div>
 
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <div th:if="${#lists.isEmpty(productos)}" style="grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #858796;">
+                <i class="fas fa-search fa-4x mb-3" style="opacity: 0.2;"></i>
+                <h3 style="color: var(--dark);">No se encontraron productos</h3>
+                <p>Parece que el inventario está vacío o no hay productos activos.</p>
+            </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const body = document.querySelector("body");
-        const successMsg = body.getAttribute("data-success");
-        const errorMsg = body.getAttribute("data-error");
+        </div>
 
-        if (successMsg) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: successMsg,
-                timer: 2000,
-                showConfirmButton: false
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> 
+
+    <script>
+        // 1. Lógica del Buscador "Hero" (Filtrado en tiempo real)
+        document.getElementById('searchBox').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let cards = document.querySelectorAll('.product-item');
+            let found = false;
+
+            cards.forEach(card => {
+                let name = card.getAttribute('data-name');
+                let code = card.getAttribute('data-code');
+                
+                if (name.includes(filter) || code.includes(filter)) {
+                    card.style.display = "flex"; // Mostrar tarjeta
+                    found = true;
+                } else {
+                    card.style.display = "none"; // Ocultar tarjeta
+                }
             });
-        }
-        if (errorMsg) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: errorMsg
-            });
-        }
-    });
-</script>
-
-<script>
-    $(document).ready(function () {
-        $('#tablaProductos').DataTable({
-            language: {
-                search: "Buscar:",
-                lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ productos",
-                paginate: {
-                    first: "Primero",
-                    last: "Último",
-                    next: "Siguiente",
-                    previous: "Anterior"
-                },
-                zeroRecords: "No se encontraron productos"
-            }
         });
-    });
-</script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll("form").forEach(form => {
-        form.addEventListener("submit", function(e) {
+        // 2. Lógica de Procesamiento de Venta (SweetAlert)
+        $(document).on('submit', '.form-venta', function(e) {
             e.preventDefault();
+            const form = this;
+            
+            // Capturar datos del contexto de la tarjeta actual
+            const cantidadInput = $(form).find('.input-qty-visible');
+            const cantidad = parseInt(cantidadInput.val());
+            
+            // Subimos en el DOM para encontrar el badge de stock de ESTA tarjeta
+            const card = $(form).closest('.product-card-pos');
+            const stockText = card.find('.stock-badge-pos span').text();
+            const stock = parseInt(stockText);
 
-            // Buscamos el input visible en la misma fila (tr)
-            const row = form.closest("tr");
-            const cantidadInputVisible = row.querySelector('input[name="cantidad_visible"]');
-            const cantidad = parseInt(cantidadInputVisible.value);
-            const stock = parseInt(row.querySelector("td:nth-child(3)").textContent.trim());
-            const producto = row.querySelector("td:nth-child(1)").textContent.trim();
-
+            // Validaciones Frontend
             if (isNaN(cantidad) || cantidad < 1) {
-                Swal.fire({
-                    title: "Cantidad inválida",
-                    text: "Debes ingresar al menos 1 unidad.",
-                    icon: "error",
-                    confirmButtonColor: "#ff1744"
+                Swal.fire({ 
+                    toast: true, position: 'top-end', icon: 'warning', 
+                    title: 'Cantidad inválida', showConfirmButton: false, timer: 1500 
                 });
                 return;
             }
 
             if (cantidad > stock) {
-                Swal.fire({
-                    title: "Stock insuficiente",
-                    text: `Solo hay ${stock} unidades disponibles de "${producto}".`,
-                    icon: "warning",
-                    confirmButtonColor: "#ff1744"
+                Swal.fire({ 
+                    icon: 'error', title: 'Stock Insuficiente', 
+                    text: `Solo quedan ${stock} unidades disponibles.`,
+                    confirmButtonColor: '#e74a3b'
                 });
                 return;
             }
 
-            Swal.fire({
-                title: "¿Confirmar venta?",
-                text: `¿Deseas vender ${cantidad} unidades de "${producto}"?`,
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#00e676",
-                cancelButtonColor: "#ff1744",
-                confirmButtonText: "Sí, vender",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Actualizamos el input hidden dentro del form antes de enviar
-                    const hiddenInput = form.querySelector('input[name="cantidad"]');
-                    hiddenInput.value = cantidad;
-                    form.submit();
-                }
-            });
+            // Pasar cantidad al input hidden y enviar
+            $(form).find('input[name="cantidad"]').val(cantidad);
+            
+            // Feedback visual rápido
+            const btn = $(form).find('button');
+            const originalContent = btn.html();
+            btn.html('<i class="fas fa-spinner fa-spin"></i>'); // Loader
+            
+            // Pequeño delay para que se vea la animación
+            setTimeout(() => {
+                form.submit();
+            }, 300);
         });
-    });
-});
-</script>
+
+        // 3. Manejo de Mensajes Flash del Servidor (Éxito/Error)
+        document.addEventListener("DOMContentLoaded", function() {
+            const body = document.querySelector("body");
+            const successMsg = body.getAttribute("data-success");
+            const errorMsg = body.getAttribute("data-error");
+
+            if (successMsg) {
+                Swal.fire({ 
+                    toast: true, position: 'top-end', icon: 'success', 
+                    title: successMsg, showConfirmButton: false, timer: 2500, timerProgressBar: true 
+                });
+            }
+            if (errorMsg) {
+                Swal.fire({ 
+                    icon: 'error', title: 'Error', text: errorMsg, 
+                    confirmButtonColor: '#e74a3b' 
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>

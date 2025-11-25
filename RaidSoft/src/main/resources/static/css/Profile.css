@@ -1,0 +1,293 @@
+/* ============================================================ */
+/* ESTILOS DE PERFIL (VER Y EDITAR) - RAIDSOFT                  */
+/* Ubicación: src/main/resources/static/css/Profile.css         */
+/* ============================================================ */
+
+/* Definición de variables locales para consistencia */
+:root {
+    --primary: #4e73df;
+    --primary-dark: #2e59d9;
+    --secondary: #858796;
+    --success: #1cc88a;
+    --danger: #e74a3b;
+    --dark: #2e3646;
+    --light: #f8f9fc;
+    --white: #ffffff;
+}
+
+/* ------------------------------------------------------------ */
+/* 1. CONTENEDOR PRINCIPAL (Tarjeta)                            */
+/* ------------------------------------------------------------ */
+.profile-card, .form-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    border-top: 4px solid var(--primary); /* Toque de color superior */
+    transition: transform 0.3s ease;
+}
+
+/* ------------------------------------------------------------ */
+/* 2. ENCABEZADO (Avatar y Nombre)                              */
+/* ------------------------------------------------------------ */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid #f0f2f5;
+    padding-bottom: 2rem;
+    text-align: center;
+}
+
+/* --- Estilo del Avatar (Círculo) --- */
+.profile-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover; /* Asegura que la foto no se deforme */
+    border: 5px solid var(--white);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05) rotate(2deg); /* Efecto zoom sutil */
+}
+
+/* --- Textos del Encabezado --- */
+.profile-name {
+    color: var(--dark);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.profile-email {
+    color: var(--secondary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* --- Badges de Rol (Etiquetas de colores) --- */
+.profile-role {
+    padding: 0.6rem 2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: inline-block;
+}
+
+.role-admin {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.role-vendedor {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+}
+
+/* ------------------------------------------------------------ */
+/* 3. GRID DE INFORMACIÓN (Tarjetas de datos)                   */
+/* ------------------------------------------------------------ */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    padding: 1.5rem;
+    background-color: #f8f9fc; /* Fondo gris muy suave */
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.02);
+    border-left: 5px solid var(--primary); /* Borde izquierdo de color */
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    transform: translateY(-5px);
+    background: var(--white);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #b7b9cc; /* Gris claro para etiquetas */
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    word-break: break-all; /* Evita que emails largos rompan el diseño */
+}
+
+/* ------------------------------------------------------------ */
+/* 4. BOTÓN FLOTANTE (Editar)                                   */
+/* ------------------------------------------------------------ */
+.btn-floating-edit {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background-color: var(--white);
+    color: var(--primary);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.btn-floating-edit:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 8px 20px rgba(78, 115, 223, 0.4);
+}
+
+/* ------------------------------------------------------------ */
+/* 5. ESTILOS ESPECÍFICOS PARA MODO EDICIÓN                     */
+/* ------------------------------------------------------------ */
+
+/* --- Contenedor de Subida de Foto (Overlay) --- */
+.avatar-upload-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 1.5rem;
+    cursor: pointer; /* Manita al pasar el mouse */
+    border-radius: 50%;
+}
+
+.avatar-upload-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--white);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: filter 0.3s;
+}
+
+/* Capa oscura que aparece al pasar el mouse */
+.avatar-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 5px solid transparent; /* Para mantener tamaño */
+}
+
+.avatar-overlay i {
+    color: white;
+    font-size: 2rem;
+}
+
+.avatar-upload-container:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-upload-container:hover img {
+    filter: blur(2px);
+}
+
+/* Ocultar el input file feo */
+.file-input-hidden {
+    display: none;
+}
+
+/* --- Inputs dentro de las tarjetas --- */
+.info-item.editable {
+    padding: 1rem; /* Menos padding para dar espacio al input */
+}
+
+.info-item .form-control {
+    width: 100%;
+    background: var(--white);
+    border: 1px solid #d1d3e2;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: var(--dark);
+    font-weight: 500;
+    margin-top: 5px;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s;
+}
+
+.info-item .form-control:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+}
+
+/* --- Botones Generales --- */
+.btn-save {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-save:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #f1f3f9;
+    color: var(--secondary);
+    padding: 12px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-cancel:hover {
+    background-color: #e3e6f0;
+    color: var(--dark);
+}
