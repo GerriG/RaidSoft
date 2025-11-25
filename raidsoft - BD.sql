@@ -1,5 +1,5 @@
 -- ==========================================================
--- SCRIPT FINAL RAIDSOFT (USUARIOS LIMPIOS + ESTRUCTURA) - CORREGIDO
+-- SCRIPT FINAL RAIDSOFT (CORREGIDO PARA JAVA ENTITY)
 -- ==========================================================
 
 SET NAMES utf8mb4;
@@ -60,7 +60,7 @@ INSERT INTO `categorias` (`id_categoria`, `nombre`, `descripcion`) VALUES
 (26, 'Consolas', 'PlayStation, Xbox y Nintendo'),
 (27, 'Accesorios Celular', 'Cargadores y Cables');
 
--- TABLA USUARIOS (SOLO ADMIN, VENDEDOR Y PEDRO)
+-- TABLA USUARIOS
 DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL AUTO_INCREMENT,
@@ -78,7 +78,7 @@ INSERT INTO `usuarios` (`id_usuario`, `username`, `password`, `rol`, `estado`, `
 (7, 'vendedor', '$2a$10$wOFc263FTx.Rbrd5hrDHLOcrP/PcMpwTGGtf5UnV528j0nVRfTKqu', 'VENDEDOR', 1, '2025-11-23 04:18:07'),
 (16, 'pedro', '$2a$10$pRQFiSt/LGC2wvrAeoLIm.TqGdSczfpwajKllEmB37mHMINIr5LVm', 'VENDEDOR', 1, '2025-11-25 03:31:56');
 
--- TABLA PERFILES (SOLO PERFILES DE LOS USUARIOS ANTERIORES)
+-- TABLA PERFILES
 DROP TABLE IF EXISTS `perfiles`;
 CREATE TABLE `perfiles` (
   `id_perfil` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -137,7 +137,7 @@ INSERT INTO `productos` (`id_producto`, `codigo_barras`, `nombre`, `descripcion`
 (17, '092636333001', 'Mochila Targo Targus', 'Diseño ergonómico, compartimentos acolchados para laptop hasta 15.6\"', 18, 25.00, 40.00, 15, 3, '/Productos/ac75e5eb-56e3-4150-9826-717751b5250d_34818.jpg', 1, '2025-11-23 04:18:07'),
 (18, '750105999001', 'Aire Comprimido 500ml', 'Gas comprimido de alta pureza, ideal para limpieza de teclados y PCs', 19, 4.00, 7.50, 30, 5, '/Productos/ab6d4048-57e5-4032-a826-1dd0e1da0357_image.jpg', 1, '2025-11-23 04:18:07'),
 (19, '884102044001', 'Disipador Cooler Master 212', 'Ventilador 120mm PWM, 4 heatpipes de contacto directo, LED rojo', 20, 35.00, 50.00, 10, 2, '/Productos/d875f586-2191-492e-ac0d-cc22e243cae8_Cooler Master Disipador Hyper 212 Halo Black RR-S4KK-20PA-R1 .png', 1, '2025-11-23 04:18:07'),
-(20, '887276555001', 'Samsung Galaxy Tab S8 Ultra', 'Pantalla 14.6\" Super AMOLED, S Pen incluido, 128GB almacenamiento', 21, 180.00, 820.00, 8, 2, '/Productos/220e0c36-f1bf-4bde-b6bf-b29b2c9741e1_51sWD2-949L.jpg', 1, '2025-11-23 04:18:07'),
+(20, '887276555001', 'Samsung Galaxy Tab S11 Ultra', 'Pantalla 14.6\" Super AMOLED, S Pen incluido, 128GB almacenamiento', 21, 180.00, 820.00, 8, 2, '/Productos/220e0c36-f1bf-4bde-b6bf-b29b2c9741e1_51sWD2-949L.jpg', 1, '2025-11-23 04:18:07'),
 (21, '695037673001', 'Teclado Mecánico Redragon', 'Switch Blue mecánico, retroiluminación RGB, diseño TKL compacto', 2, 35.00, 55.00, 25, 4, '/Productos/f549a120-970f-4637-9df5-6d7d39fd79df_c7uk0qcs_d57502a4_thumbnail_512.jpg', 1, '2025-11-23 04:18:07'),
 (22, '880609122002', 'Monitor LG 27\" 144Hz', 'Monitor Ultragear, 1ms de respuesta, AMD FreeSync, panel TN', 3, 200.00, 260.00, 6, 2, '/Productos/b7240d2e-a4ac-4dff-8cb5-f419e3302795_1702305854747-MKZC7JFPP6-1-1.webp', 1, '2025-11-23 04:18:07'),
 (23, '763649114001', 'HDD Seagate SkyHawk 1TB', 'Disco duro optimizado para videovigilancia y trabajo continuo 24/7', 4, 35.00, 50.00, 20, 5, '/Productos/0004dd0b-9712-467a-9a31-611cdf7e86cb_images.jpg', 1, '2025-11-23 04:18:07'),
@@ -229,88 +229,49 @@ INSERT INTO `detalle_compras` (`id_compra`, `id_producto`, `cantidad`, `costo_un
 (24, 30, 20, 15.00),
 (25, 29, 5, 300.00);
 
--- TABLA VENTAS
+-- TABLA VENTAS (MODIFICADA PARA SPRING BOOT ENTITY)
+-- Se integran id_producto y cantidad en la tabla principal
 DROP TABLE IF EXISTS `ventas`;
 CREATE TABLE `ventas` (
   `id_venta` int(11) NOT NULL AUTO_INCREMENT,
   `id_usuario` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL DEFAULT 1,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `total` decimal(10,2) NOT NULL,
   `cliente_nombre` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id_venta`),
-  KEY `id_usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `ventas` (`id_venta`, `id_usuario`, `fecha`, `total`, `cliente_nombre`) VALUES
-(1, 7, '2025-11-23 04:18:07', 920.00, 'Juan Pérez'),
-(2, 7, '2025-11-23 04:18:07', 50.00, 'María López'),
-(3, 7, '2025-11-23 04:18:07', 145.00, 'Carlos Ruiz'),
-(4, 7, '2025-11-23 04:18:07', 70.00, 'Ana Martínez'),
-(5, 7, '2025-11-23 04:18:07', 90.00, 'Pedro Aguilar'),
-(6, 7, '2025-11-23 04:18:07', 320.00, 'Empresa XYZ'),
-(7, 7, '2025-11-23 04:18:07', 350.00, 'Gamer Pro'),
-(8, 7, '2025-11-23 04:18:07', 65.00, 'Sofía Méndez'),
-(9, 7, '2025-11-23 04:18:07', 190.00, 'Roberto Gómez'),
-(10, 7, '2025-11-23 04:18:07', 460.00, 'Lucía Torres'),
-(11, 7, '2025-11-23 04:18:07', 50.00, 'Miguel Ángel'),
-(12, 7, '2025-11-23 04:18:07', 195.00, 'Escuela Local'),
-(13, 7, '2025-11-23 04:18:07', 170.00, 'Streamer 01'),
-(14, 7, '2025-11-23 04:18:07', 135.00, 'Podcaster Joy'),
-(15, 7, '2025-11-23 04:18:07', 25.00, 'Usuario Casual'),
-(16, 7, '2025-11-23 04:18:07', 16.00, 'Cliente Rápido'),
-(17, 7, '2025-11-23 04:18:07', 40.00, 'Estudiante UTEC'),
-(18, 7, '2025-11-23 04:18:07', 15.00, 'Mantenimiento PC'),
-(19, 7, '2025-11-23 04:18:07', 50.00, 'Overclock Fan'),
-(20, 7, '2025-11-23 04:18:07', 220.00, 'Diseñador Gráfico'),
-(21, 7, '2025-11-23 04:18:07', 110.00, 'Oficina Contable'),
-(22, 7, '2025-11-23 04:18:07', 520.00, 'Editor de Video'),
-(23, 7, '2025-11-23 04:18:07', 50.00, 'Backup Cliente'),
-(24, 7, '2025-11-23 04:18:07', 150.00, 'Upgrade PC'),
-(25, 6, '2025-11-23 04:18:07', 180.00, 'Venta Directa Admin'),
-(26, 7, '2025-11-24 03:06:49', 15.00, NULL),
-(27, 7, '2025-11-24 03:46:55', 8.00, NULL);
-
--- TABLA DETALLE_VENTAS
-DROP TABLE IF EXISTS `detalle_ventas`;
-CREATE TABLE `detalle_ventas` (
-  `id_detalle` int(11) NOT NULL AUTO_INCREMENT,
-  `id_venta` int(11) NOT NULL,
-  `id_producto` int(11) NOT NULL,
-  `cantidad` int(11) NOT NULL,
-  `precio_unitario` decimal(10,2) NOT NULL,
-  `subtotal` decimal(10,2) GENERATED ALWAYS AS (`cantidad` * `precio_unitario`) STORED,
-  PRIMARY KEY (`id_detalle`),
-  KEY `id_venta` (`id_venta`),
+  KEY `id_usuario` (`id_usuario`),
   KEY `id_producto` (`id_producto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `detalle_ventas` (`id_venta`, `id_producto`, `cantidad`, `precio_unitario`) VALUES
-(1, 1, 1, 920.00),
-(2, 2, 2, 25.00),
-(3, 3, 1, 145.00),
-(4, 4, 2, 35.00),
-(5, 5, 2, 45.00),
-(6, 6, 2, 160.00),
-(7, 7, 1, 350.00),
-(8, 8, 1, 65.00),
-(9, 9, 2, 95.00),
-(10, 10, 2, 230.00),
-(11, 11, 1, 50.00),
-(12, 12, 1, 195.00),
-(13, 13, 2, 85.00),
-(14, 14, 1, 135.00),
-(15, 15, 1, 25.00),
-(16, 16, 2, 8.00),
-(17, 17, 1, 40.00),
-(18, 18, 2, 7.50),
-(19, 19, 1, 50.00),
-(20, 20, 1, 220.00),
-(21, 21, 2, 55.00),
-(22, 22, 2, 260.00),
-(23, 23, 1, 50.00),
-(24, 24, 2, 75.00),
-(25, 25, 1, 180.00);
--- Nota: se eliminaron dos filas malformadas que tenían 5 valores. Si deseas que las ventas 26 y 27 tengan detalle, indícame producto/cantidad/precio y las agrego.
+-- INSERT VENTAS CORREGIDO (Datos unificados de detalle_ventas)
+INSERT INTO `ventas` (`id_venta`, `id_usuario`, `id_producto`, `cantidad`, `fecha`, `total`, `cliente_nombre`) VALUES
+(1, 7, 1, 1, '2025-11-23 04:18:07', 920.00, 'Juan Pérez'),
+(2, 7, 2, 2, '2025-11-23 04:18:07', 50.00, 'María López'),
+(3, 7, 3, 1, '2025-11-23 04:18:07', 145.00, 'Carlos Ruiz'),
+(4, 7, 4, 2, '2025-11-23 04:18:07', 70.00, 'Ana Martínez'),
+(5, 7, 5, 2, '2025-11-23 04:18:07', 90.00, 'Pedro Aguilar'),
+(6, 7, 6, 2, '2025-11-23 04:18:07', 320.00, 'Empresa XYZ'),
+(7, 7, 7, 1, '2025-11-23 04:18:07', 350.00, 'Gamer Pro'),
+(8, 7, 8, 1, '2025-11-23 04:18:07', 65.00, 'Sofía Méndez'),
+(9, 7, 9, 2, '2025-11-23 04:18:07', 190.00, 'Roberto Gómez'),
+(10, 7, 10, 2, '2025-11-23 04:18:07', 460.00, 'Lucía Torres'),
+(11, 7, 11, 1, '2025-11-23 04:18:07', 50.00, 'Miguel Ángel'),
+(12, 7, 12, 1, '2025-11-23 04:18:07', 195.00, 'Escuela Local'),
+(13, 7, 13, 2, '2025-11-23 04:18:07', 170.00, 'Streamer 01'),
+(14, 7, 14, 1, '2025-11-23 04:18:07', 135.00, 'Podcaster Joy'),
+(15, 7, 15, 1, '2025-11-23 04:18:07', 25.00, 'Usuario Casual'),
+(16, 7, 16, 2, '2025-11-23 04:18:07', 16.00, 'Cliente Rápido'),
+(17, 7, 17, 1, '2025-11-23 04:18:07', 40.00, 'Estudiante UTEC'),
+(18, 7, 18, 2, '2025-11-23 04:18:07', 15.00, 'Mantenimiento PC'),
+(19, 7, 19, 1, '2025-11-23 04:18:07', 50.00, 'Overclock Fan'),
+(20, 7, 20, 1, '2025-11-23 04:18:07', 220.00, 'Diseñador Gráfico'),
+(21, 7, 21, 2, '2025-11-23 04:18:07', 110.00, 'Oficina Contable'),
+(22, 7, 22, 2, '2025-11-23 04:18:07', 520.00, 'Editor de Video'),
+(23, 7, 23, 1, '2025-11-23 04:18:07', 50.00, 'Backup Cliente'),
+(24, 7, 24, 2, '2025-11-23 04:18:07', 150.00, 'Upgrade PC'),
+(25, 6, 25, 1, '2025-11-23 04:18:07', 180.00, 'Venta Directa Admin');
 
 -- TABLA MOVIMIENTOS
 DROP TABLE IF EXISTS `movimientos`;
@@ -368,10 +329,6 @@ ALTER TABLE `detalle_compras`
   ADD CONSTRAINT `detalle_compras_ibfk_1` FOREIGN KEY (`id_compra`) REFERENCES `compras` (`id_compra`) ON DELETE CASCADE,
   ADD CONSTRAINT `detalle_compras_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`);
 
-ALTER TABLE `detalle_ventas`
-  ADD CONSTRAINT `detalle_ventas_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `ventas` (`id_venta`) ON DELETE CASCADE,
-  ADD CONSTRAINT `detalle_ventas_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`);
-
 ALTER TABLE `movimientos`
   ADD CONSTRAINT `movimientos_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`),
   ADD CONSTRAINT `movimientos_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
@@ -380,7 +337,8 @@ ALTER TABLE `productos`
   ADD CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`) ON DELETE SET NULL;
 
 ALTER TABLE `ventas`
-  ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
+  ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
+  ADD CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`);
 
 COMMIT;
 
