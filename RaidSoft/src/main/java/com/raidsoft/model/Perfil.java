@@ -1,9 +1,8 @@
 package com.raidsoft.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-// --- NUEVOS IMPORTS ---
-import jakarta.validation.constraints.PastOrPresent; 
 
 @Entity
 @Table(name = "perfiles")
@@ -23,16 +22,14 @@ public class Perfil {
     @Column(length = 150)
     private String email;
 
-    // --- VALIDACIÓN DE FECHA IMPLEMENTADA ---
-    @PastOrPresent(message = "La fecha de nacimiento no puede ser una fecha futura.")
+    // --- CAMBIO AQUÍ: Mensaje personalizado exacto ---
+    @PastOrPresent(message = "No se admiten fechas en el futuro")
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
-    // ----------------------------------------
 
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    // Relación 1 a 1 con Usuario
     @OneToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
     private Usuario usuario;
@@ -40,25 +37,60 @@ public class Perfil {
     public Perfil() {
     }
 
-    // --- Getters y Setters (Sin cambios) ---
-    public Long getIdPerfil() { return idPerfil; }
-    public void setIdPerfil(Long idPerfil) { this.idPerfil = idPerfil; }
+    // Getters y Setters
+    public Long getIdPerfil() {
+        return idPerfil;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setIdPerfil(Long idPerfil) {
+        this.idPerfil = idPerfil;
+    }
 
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public String getApellido() {
+        return apellido;
+    }
 
-    public String getAvatarUrl() { return avatarUrl; }
-    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

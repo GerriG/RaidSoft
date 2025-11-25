@@ -291,3 +291,66 @@
     background-color: #e3e6f0;
     color: var(--dark);
 }
+
+/* ============================================================ */
+/* MEDIA QUERY PARA LAPTOPS Y PANTALLAS PEQUEÑAS (1366x768)     */
+/* ============================================================ */
+@media screen and (max-width: 1366px) {
+    
+    /* 1. Reducir el padding general de la tarjeta para ganar altura */
+    .profile-card, .form-card {
+        padding: 1.5rem 2rem; /* Reduce de 3rem a 1.5rem vertical */
+        margin-top: 10px;
+    }
+
+    /* 2. Compactar el encabezado */
+    .profile-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+
+    /* 3. Hacer el avatar más pequeño (de 160px a 120px) */
+    .profile-avatar, 
+    .avatar-upload-container {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 1rem;
+    }
+
+    /* 4. Ajustar tipografía */
+    .profile-name {
+        font-size: 1.5rem; /* Reduce de 2rem */
+    }
+
+    .profile-role {
+        padding: 0.4rem 1.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* 5. Compactar la cuadrícula de información */
+    .info-grid {
+        gap: 1rem; /* Menos espacio entre cajas */
+    }
+
+    .info-item {
+        padding: 1rem; /* Cajas más delgadas */
+    }
+
+    .info-label {
+        font-size: 0.7rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+    }
+
+    /* 6. Ajustar botón flotante */
+    .btn-floating-edit {
+        width: 40px;
+        height: 40px;
+        top: 20px;
+        right: 20px;
+        font-size: 1rem;
+    }
+}

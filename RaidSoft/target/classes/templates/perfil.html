@@ -1,141 +1,130 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - RaidSoft</title>
-    
-    <link rel="stylesheet" th:href="@{/css/Admin.css}">
-    <link rel="stylesheet" th:href="@{/css/Profile.css}">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <div class="dashboard-wrapper">
-        
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
-                <h3>RaidSoft</h3>
-            </div>
-            
-            <ul class="sidebar-menu">
-                <li class="menu-label">Principal</li>
-                <li>
-                    <a th:href="${usuario.rol.name() == 'ADMINISTRADOR' ? '/admin/dashboard' : '/vendedor/dashboard'}">
-                        <i class="fas fa-home"></i> Inicio
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mi Perfil - RaidSoft</title>
+
+        <link rel="stylesheet" th:href="@{/css/Admin.css}">
+        <link rel="stylesheet" th:href="@{/css/Profile.css}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+    <body>
+        <div class="dashboard-wrapper">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                    <h3>RaidSoft</h3>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="menu-label">Principal</li>
+                    <li>
+                        <a th:href="${usuario.rol.name() == 'ADMINISTRADOR' ? '/admin/dashboard' : '/vendedor/dashboard'}">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+
+                    <th:block th:if="${usuario.rol.name() == 'ADMINISTRADOR'}">
+                        <li class="menu-label">Gestión</li>
+                        <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                        <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                        <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                        <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+                    </th:block>
+
+                    <li class="menu-label">Cuenta</li>
+                    <li><a th:href="@{/perfil}" class="active"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+
+                    <li class="mt-auto logout-section">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <div class="page-header">
+                    <div>
+                        <h2 style="color: var(--dark);">Mi Perfil</h2>
+                        <p style="color: var(--secondary);">Información personal y estado de cuenta.</p>
+                    </div>
+                </div>
+
+                <div th:if="${success}" class="alert-data" th:data-msg="${success}" th:data-type="success"></div>
+                <div th:if="${error}" class="alert-data" th:data-msg="${error}" th:data-type="error"></div>
+
+                <div class="profile-card">
+
+                    <a th:href="@{/perfil/editar}" class="btn-floating-edit" title="Modificar datos">
+                        <i class="fas fa-pen"></i>
                     </a>
-                </li>
-                
-                <th:block th:if="${usuario.rol.name() == 'ADMINISTRADOR'}">
-                    <li class="menu-label">Gestión</li>
-                    <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
-                    <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
-                    <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
-                    <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
-                </th:block>
 
-                <li class="menu-label">Cuenta</li>
-                <li><a th:href="@{/perfil}" class="active"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                
-                <li class="mt-auto logout-section">
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
+                    <div class="profile-header">
+                        <img th:if="${perfil != null and perfil.avatarUrl != null}" 
+                             th:src="@{${perfil.avatarUrl}}" class="profile-avatar">
 
-        <main class="main-content">
-            
-            <div class="page-header">
-                <div>
-                    <h2 style="color: var(--dark);">Mi Perfil</h2>
-                    <p style="color: var(--secondary);">Información personal y estado de cuenta.</p>
-                </div>
-            </div>
-            
-            <div th:if="${success}" class="alert-data" th:data-msg="${success}" th:data-type="success"></div>
-            <div th:if="${error}" class="alert-data" th:data-msg="${error}" th:data-type="error"></div>
+                        <img th:if="${perfil == null or perfil.avatarUrl == null}" 
+                             th:src="|https://ui-avatars.com/api/?background=4e73df&color=fff&size=150&font-size=0.5&name=${perfil != null ? perfil.nombre + '+' + perfil.apellido : usuario.username}|" 
+                             class="profile-avatar" alt="Avatar Generado">
 
-            <div class="profile-card">
-                
-                <a th:href="@{/perfil/editar}" class="btn-floating-edit" title="Modificar datos">
-                    <i class="fas fa-pen"></i>
-                </a>
+                        <h1 class="profile-name" 
+                            th:text="${perfil != null ? (perfil.nombre + ' ' + perfil.apellido) : usuario.username}">
+                            Nombre Usuario
+                        </h1>
 
-                <div class="profile-header">
-                    <img th:if="${perfil != null and perfil.avatarUrl != null}" 
-                         th:src="@{${perfil.avatarUrl}}" class="profile-avatar">
-                         
-                    <img th:if="${perfil == null or perfil.avatarUrl == null}" 
-                         th:src="|https://ui-avatars.com/api/?background=4e73df&color=fff&size=150&font-size=0.5&name=${perfil != null ? perfil.nombre + '+' + perfil.apellido : usuario.username}|" 
-                         class="profile-avatar" alt="Avatar Generado">
-
-                    <h1 class="profile-name" 
-                        th:text="${perfil != null ? (perfil.nombre + ' ' + perfil.apellido) : usuario.username}">
-                        Nombre Usuario
-                    </h1>
-                    
-                    <span class="profile-role" 
-                          th:classappend="${usuario.rol.name() == 'ADMINISTRADOR' ? 'role-admin' : 'role-vendedor'}"
-                          th:text="${usuario.rol}">
-                        ROL
-                    </span>
-                </div>
-
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-user-tag me-1"></i> Usuario</span>
-                        <div class="info-value" th:text="${'@' + usuario.username}">@user</div>
+                        <span class="profile-role" 
+                              th:classappend="${usuario.rol.name() == 'ADMINISTRADOR' ? 'role-admin' : 'role-vendedor'}"
+                              th:text="${usuario.rol}">
+                            ROL
+                        </span>
                     </div>
 
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-envelope me-1"></i> Email</span>
-                        <div class="info-value" th:text="${perfil != null ? perfil.email : 'No registrado'}">email@example.com</div>
-                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-user-tag me-1"></i> Usuario</span>
+                            <div class="info-value" th:text="${'@' + usuario.username}">@user</div>
+                        </div>
 
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-birthday-cake me-1"></i> Cumpleaños</span>
-                        <div class="info-value" 
-                             th:text="${perfil != null and perfil.fechaNacimiento != null ? #temporals.format(perfil.fechaNacimiento, 'dd MMMM yyyy') : 'No definida / No registrada'}">
-                            No definida / No registrada
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-envelope me-1"></i> Email</span>
+                            <div class="info-value" th:text="${perfil != null ? perfil.email : 'No registrado'}">email@example.com</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-clock me-1"></i> Miembro desde</span>
+                            <div class="info-value" 
+                                 th:text="${usuario.createdAt != null ? #temporals.format(usuario.createdAt, 'dd MMMM yyyy') : 'Desconocido'}">
+                                Fecha Registro
+                            </div>
+                        </div>
+
+                        <div class="info-item" style="border-left-color: #1cc88a;">
+                            <span class="info-label"><i class="fas fa-calendar-alt me-1"></i> Fecha Nacimiento</span>
+                            <div class="info-value" 
+                                 th:text="${perfil != null and perfil.fechaNacimiento != null ? #temporals.format(perfil.fechaNacimiento, 'dd/MM/yyyy') : 'No registrada'}">
+                                No registrada
+                            </div>
                         </div>
                     </div>
 
-                    <div class="info-item" style="border-left-color: #1cc88a;">
-                        <span class="info-label"><i class="fas fa-calendar-alt me-1"></i> Fecha Nacimiento</span>
-                        <div class="info-value" 
-                             th:text="${perfil != null and perfil.fechaNacimiento != null ? #temporals.format(perfil.fechaNacimiento, 'dd/MM/yyyy') : 'No registrada'}">
-                            No registrada
-                        </div>
-                    </div>
                 </div>
+            </main>
+        </div>
 
-            </div>
-        </main>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert-data');
-            alerts.forEach(alert => {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-                
-                Toast.fire({
-                    icon: alert.getAttribute('data-type'),
-                    title: alert.getAttribute('data-msg')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const alerts = document.querySelectorAll('.alert-data');
+                alerts.forEach(alert => {
+                    const Toast = Swal.mixin({
+                        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true
+                    });
+                    Toast.fire({icon: alert.getAttribute('data-type'), title: alert.getAttribute('data-msg')});
                 });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>

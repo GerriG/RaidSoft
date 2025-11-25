@@ -1,10 +1,13 @@
 package com.raidsoft.controller;
 
+// ... (imports anteriores se mantienen)
 import com.raidsoft.dto.VentaVendedorDTO;
+import com.raidsoft.model.Perfil;
 import com.raidsoft.model.Usuario;
 import com.raidsoft.repository.UsuarioRepository;
 import com.raidsoft.service.ProductoService;
 import com.raidsoft.service.VentaService;
+import jakarta.validation.ConstraintViolationException; // <--- Agregado
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +26,10 @@ public class AdminController {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private ProductoService productoService; // Para contadores del dashboard
+    private ProductoService productoService;
 
     @Autowired
-    private VentaService ventaService; // Para el reporte de ventas
+    private VentaService ventaService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -36,11 +39,9 @@ public class AdminController {
     // =======================================================
     @GetMapping("/dashboard")
     public String adminPanel(Model model, Authentication auth) {
-        // Usuario para sidebar
         Usuario usuario = usuarioRepository.findByUsername(auth.getName()).orElse(null);
         model.addAttribute("usuario", usuario);
 
-        // Estadísticas en Tiempo Real
         model.addAttribute("totalProductos", productoService.contarTotalProductos());
         model.addAttribute("alertasStock", productoService.contarAlertasStock());
         model.addAttribute("stockTotal", productoService.obtenerStockTotal());
@@ -49,82 +50,123 @@ public class AdminController {
     }
 
     // =======================================================
-    // 2. GESTIÓN DE USUARIOS (Equipo)
+    // 2. GESTIÓN DE USUARIOS
     // =======================================================
     @GetMapping("/usuarios")
     public String listarUsuarios(Model model, Authentication auth) {
         Usuario usuario = usuarioRepository.findByUsername(auth.getName()).orElse(null);
         model.addAttribute("usuario", usuario);
-        
-        // Lista completa para la tabla
+
         model.addAttribute("listaUsuarios", usuarioRepository.findAll());
-        
-        return "admin_usuarios"; // Contiene el Modal de creación
+
+        return "admin_usuarios";
     }
 
-    // Guardar Usuario (Funciona con el Modal)
+    // =======================================================
+    // GUARDAR USUARIO + PERFIL (versión combinada, mejorada)
+    // =======================================================
     @PostMapping("/usuarios/guardar")
-    public String guardarUsuario(@ModelAttribute Usuario usuarioNuevo, RedirectAttributes redirectAttributes) {
+    public String guardarUsuario(@ModelAttribute Usuario usuarioNuevo,
+            @ModelAttribute Perfil perfilNuevo,
+            RedirectAttributes redirectAttributes,
+            Model model) {
         try {
-            // Validación: Usuario duplicado
+            // 1. Validación manual: Usuario duplicado
             if (usuarioRepository.findByUsername(usuarioNuevo.getUsername()).isPresent()) {
-                redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya existe.");
-                return "redirect:/admin/usuarios";
+                throw new RuntimeException("El nombre de usuario ya existe.");
             }
-            
-            // Configuración por defecto
+
+            // Configuración
             usuarioNuevo.setPassword(passwordEncoder.encode(usuarioNuevo.getPassword()));
-            usuarioNuevo.setEstado(true); // Activo al crear
-            
+            usuarioNuevo.setEstado(true);
+            usuarioNuevo.setPerfil(perfilNuevo);
+            perfilNuevo.setUsuario(usuarioNuevo);
+
+            // Guardar
             usuarioRepository.save(usuarioNuevo);
-            
-            redirectAttributes.addFlashAttribute("success", "Usuario registrado correctamente.");
+
+            redirectAttributes.addFlashAttribute("success", "Usuario y perfil registrados correctamente.");
             return "redirect:/admin/usuarios";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al registrar: " + e.getMessage());
-            return "redirect:/admin/usuarios";
+
+            String mensajeError = "Error desconocido al registrar.";
+
+            // ======================================================
+            // BUSCAR CAUSA RAÍZ Y EXTRAER MENSAJE LIMPIO
+            // ======================================================
+            Throwable causa = e;
+            boolean esValidacion = false;
+
+            while (causa != null) {
+                if (causa instanceof ConstraintViolationException) {
+                    ConstraintViolationException cvEx = (ConstraintViolationException) causa;
+                    if (!cvEx.getConstraintViolations().isEmpty()) {
+                        mensajeError = cvEx.getConstraintViolations().iterator().next().getMessage();
+                        esValidacion = true;
+                    }
+                    break;
+                }
+                causa = causa.getCause();
+            }
+
+            if (!esValidacion) {
+                mensajeError = e.getMessage();
+            }
+
+            // Mantener datos cargados
+            model.addAttribute("error", mensajeError);
+            model.addAttribute("usuarioNuevo", usuarioNuevo);
+            model.addAttribute("perfilNuevo", perfilNuevo);
+
+            // Recargar lista
+            model.addAttribute("listaUsuarios", usuarioRepository.findAll());
+
+            return "admin_usuarios";
         }
     }
 
-    // Bloquear / Desbloquear Usuario
+    // =======================================================
+    // ACTIVAR / DESACTIVAR USUARIO
+    // =======================================================
     @GetMapping("/usuarios/toggle/{id}")
     public String toggleUsuario(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, Authentication auth) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        
-        // Seguridad: No bloquearse a uno mismo
+
         if (usuario != null && usuario.getUsername().equals(auth.getName())) {
             redirectAttributes.addFlashAttribute("error", "No puedes desactivar tu propia cuenta.");
             return "redirect:/admin/usuarios";
         }
-        
+
         if (usuario != null) {
             usuario.setEstado(!usuario.getEstado());
             usuarioRepository.save(usuario);
             String estado = usuario.getEstado() ? "activado" : "desactivado";
             redirectAttributes.addFlashAttribute("success", "Usuario " + estado + " correctamente.");
         }
+
         return "redirect:/admin/usuarios";
     }
 
-    // Eliminar Usuario
+    // =======================================================
+    // ELIMINAR USUARIO
+    // =======================================================
     @GetMapping("/usuarios/eliminar/{id}")
     public String eliminarUsuario(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, Authentication auth) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        
-        // Seguridad: No eliminarse a uno mismo
+
         if (usuario != null && usuario.getUsername().equals(auth.getName())) {
             redirectAttributes.addFlashAttribute("error", "No puedes eliminar tu propia cuenta.");
             return "redirect:/admin/usuarios";
         }
-        
+
         try {
             usuarioRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Usuario eliminado permanentemente.");
         } catch (Exception e) {
-            // Error común: Integridad referencial (tiene ventas asociadas)
             redirectAttributes.addFlashAttribute("error", "No se puede eliminar: El usuario tiene historial de ventas.");
         }
+
         return "redirect:/admin/usuarios";
     }
 
@@ -133,16 +175,12 @@ public class AdminController {
     // =======================================================
     @GetMapping("/ventas/reporte-vendedores")
     public String verReporteVentas(Model model, Authentication auth) {
-        // Usuario para sidebar
         Usuario usuario = usuarioRepository.findByUsername(auth.getName()).orElse(null);
         model.addAttribute("usuario", usuario);
 
-        // Obtener datos del Ranking (DTO)
         List<VentaVendedorDTO> reporte = ventaService.obtenerReporteVendedores();
         model.addAttribute("listaVendedores", reporte);
 
         return "admin_reporte_ventas";
     }
-    
-    // Nota: La gestión de Productos y Stock está en ProductoController.java
 }

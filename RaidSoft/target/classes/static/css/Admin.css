@@ -603,3 +603,69 @@ a { text-decoration: none; color: inherit; }
     background: black;
     transform: translateY(-2px);
 }
+
+/* ============================================================ */
+/* MEDIA QUERY: AJUSTES PARA LAPTOPS (1366x768)                 */
+/* ============================================================ */
+@media screen and (max-width: 1366px) {
+
+    /* 1. Ajuste de Layout General */
+    .sidebar {
+        width: 250px; /* Un poco más estrecha */
+        padding: 20px 15px;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        padding: 25px 30px; /* Menos relleno para ganar espacio */
+    }
+
+    /* 2. Reducción de Espacios Verticales */
+    .sidebar-header { margin-bottom: 30px; }
+    .top-bar { margin-bottom: 25px; }
+    .page-header { margin-bottom: 20px; }
+    .recent-section { margin-top: 30px; }
+    
+    /* 3. Tarjetas del Dashboard Compactas */
+    .cards-grid {
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .dashboard-card {
+        height: 150px; /* Reducción de 200px a 150px */
+        padding: 20px;
+    }
+
+    .card-info h3 { font-size: 13px; }
+    .card-info .number { 
+        font-size: 32px; /* Números más pequeños */
+        margin: 5px 0; 
+    }
+    .card-icon { font-size: 60px; top: -5px; right: -5px; }
+
+    /* 4. Tablas más densas (Para ver más filas) */
+    .custom-table thead th { padding: 12px 15px; }
+    .custom-table tbody td { padding: 12px 15px; }
+    
+    .product-thumb, .no-img-placeholder {
+        width: 40px; height: 40px; /* Miniaturas más pequeñas */
+    }
+
+    /* 5. Modal Ajustado para Altura 768px */
+    .modal-content {
+        padding: 25px;
+        max-width: 450px;
+        max-height: 85vh; /* Evita que se salga de la pantalla */
+        overflow-y: auto; /* Scroll interno si es necesario */
+    }
+
+    .modal-header { margin-bottom: 20px; }
+    .modal-header h3 { font-size: 18px; }
+
+    .modal-form-group { margin-bottom: 12px; }
+    .modal-form-group label { margin-bottom: 5px; font-size: 12px; }
+    
+    .modal-input { padding: 10px; font-size: 13px; }
+    .btn-modal-save { padding: 12px; }
+}

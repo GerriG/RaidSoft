@@ -113,7 +113,12 @@
 
                     <div class="info-item editable">
                         <label class="info-label"><i class="fas fa-birthday-cake me-1"></i> Fecha de Nacimiento</label>
-                        <input type="date" th:field="*{fechaNacimiento}" class="form-control">
+                        <input type="date" 
+                               id="fechaNacimiento" 
+                               name="fechaNacimiento" 
+                               class="form-control"
+                               th:value="${perfil.fechaNacimiento != null ? #temporals.format(perfil.fechaNacimiento, 'yyyy-MM-dd') : ''}"
+                               th:max="${#temporals.format(#temporals.createNow().minusYears(10), 'yyyy-MM-dd')}">
                     </div>
 
                     <div class="info-item editable" style="border-left-color: var(--danger);">
