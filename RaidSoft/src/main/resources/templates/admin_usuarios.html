@@ -196,12 +196,36 @@
 
         const deleteUrlTemplate = /*[[@{/admin/usuarios/eliminar/}]]*/ '';
         const successMsg = /*[[${success}]]*/ null;
+        const globalErrorMsg = /*[[${globalError}]]*/ null;
         
+        // --- NUEVO: Obtener el ID del usuario actual para validación local ---
+        const currentUserId = /*[[${usuario.idUsuario}]]*/ 0; 
+
         if (successMsg) {
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: successMsg, showConfirmButton: false, timer: 3000, timerProgressBar: true });
         }
         
+        if (globalErrorMsg) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: globalErrorMsg, showConfirmButton: false, timer: 3000, timerProgressBar: true });
+        }
+
         function confirmDelete(id) {
+            // --- NUEVO: Verificación en cliente ---
+            // Si el ID que intentamos borrar es igual al ID del usuario logueado
+            if (id === currentUserId) {
+                Swal.fire({ 
+                    toast: true, 
+                    position: 'top-end', 
+                    icon: 'error', 
+                    title: 'No puedes eliminar tu propia cuenta.', 
+                    showConfirmButton: false, 
+                    timer: 3000, 
+                    timerProgressBar: true 
+                });
+                return; // IMPORTANTE: Detenemos la ejecución aquí, no se muestra el diálogo de confirmación
+            }
+
+            // Si no es el propio usuario, procedemos normal
             Swal.fire({
                 title: '¿Eliminar usuario?',
                 text: "Se borrará el usuario y su historial.",

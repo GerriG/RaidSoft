@@ -1,13 +1,12 @@
 package com.raidsoft.controller;
 
-// ... (imports anteriores se mantienen)
 import com.raidsoft.dto.VentaVendedorDTO;
 import com.raidsoft.model.Perfil;
 import com.raidsoft.model.Usuario;
 import com.raidsoft.repository.UsuarioRepository;
 import com.raidsoft.service.ProductoService;
 import com.raidsoft.service.VentaService;
-import jakarta.validation.ConstraintViolationException; // <--- Agregado
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -115,6 +114,7 @@ public class AdminController {
             }
 
             // Mantener datos cargados
+            // Aquí seguimos usando "error" para que se abra el modal automáticamente en la vista
             model.addAttribute("error", mensajeError);
             model.addAttribute("usuarioNuevo", usuarioNuevo);
             model.addAttribute("perfilNuevo", perfilNuevo);
@@ -127,14 +127,15 @@ public class AdminController {
     }
 
     // =======================================================
-    // ACTIVAR / DESACTIVAR USUARIO
+    // ACTIVAR / DESACTIVAR USUARIO (CORREGIDO)
     // =======================================================
     @GetMapping("/usuarios/toggle/{id}")
     public String toggleUsuario(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, Authentication auth) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
         if (usuario != null && usuario.getUsername().equals(auth.getName())) {
-            redirectAttributes.addFlashAttribute("error", "No puedes desactivar tu propia cuenta.");
+            // CAMBIO: Usamos "globalError" para evitar abrir el modal del formulario
+            redirectAttributes.addFlashAttribute("globalError", "No puedes desactivar tu propia cuenta.");
             return "redirect:/admin/usuarios";
         }
 
@@ -149,14 +150,15 @@ public class AdminController {
     }
 
     // =======================================================
-    // ELIMINAR USUARIO
+    // ELIMINAR USUARIO (CORREGIDO)
     // =======================================================
     @GetMapping("/usuarios/eliminar/{id}")
     public String eliminarUsuario(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, Authentication auth) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
         if (usuario != null && usuario.getUsername().equals(auth.getName())) {
-            redirectAttributes.addFlashAttribute("error", "No puedes eliminar tu propia cuenta.");
+            // CAMBIO: Usamos "globalError"
+            redirectAttributes.addFlashAttribute("globalError", "No puedes eliminar tu propia cuenta.");
             return "redirect:/admin/usuarios";
         }
 
@@ -164,7 +166,8 @@ public class AdminController {
             usuarioRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Usuario eliminado permanentemente.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "No se puede eliminar: El usuario tiene historial de ventas.");
+            // CAMBIO: Usamos "globalError"
+            redirectAttributes.addFlashAttribute("globalError", "No se puede eliminar: El usuario tiene historial de ventas.");
         }
 
         return "redirect:/admin/usuarios";
