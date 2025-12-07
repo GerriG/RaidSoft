@@ -5,6 +5,10 @@ import com.raidsoft.model.Usuario;
 import com.raidsoft.repository.ProductoRepository;
 import com.raidsoft.repository.UsuarioRepository;
 import com.raidsoft.service.ProductoService;
+
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -69,8 +73,23 @@ public class ProductoController {
         return "form_producto";
     }
 
+    // Controlador actualizado con validación
     @PostMapping("/productos/guardar")
-    public String guardarProducto(@ModelAttribute Producto producto, @RequestParam("file") MultipartFile imagen, RedirectAttributes attr) {
+    public String guardarProducto(@Valid @ModelAttribute Producto producto,
+                                  BindingResult result,
+                                  @RequestParam("file") MultipartFile imagen,
+                                  Model model,
+                                  RedirectAttributes attr,
+                                  Authentication auth) {
+
+        if (result.hasErrors()) {
+            Usuario usuario = usuarioRepository.findByUsername(auth.getName()).orElse(null);
+            model.addAttribute("usuario", usuario);
+            model.addAttribute("accion", producto.getIdProducto() == null ? "Crear" : "Editar");
+            model.addAttribute("error", "Verifique los campos. No se permiten valores negativos.");
+            return "form_producto";
+        }
+
         try {
             boolean isNew = producto.getIdProducto() == null;
             productoService.guardarProducto(producto, imagen);

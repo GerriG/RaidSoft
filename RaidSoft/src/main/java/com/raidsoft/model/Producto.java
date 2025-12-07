@@ -1,6 +1,9 @@
 package com.raidsoft.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -22,15 +25,20 @@ public class Producto {
     private String descripcion;
 
     @Column(name = "precio_compra")
+    @DecimalMin(value = "0.0", message = "El costo no puede ser negativo")
     private BigDecimal precioCompra;
 
     @Column(name = "precio_venta")
+    @DecimalMin(value = "0.0", message = "El precio de venta no puede ser negativo")
     private BigDecimal precioVenta;
 
     @Column(nullable = false)
+    @NotNull(message = "El stock es obligatorio")
+    @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
 
     @Column(name = "stock_minimo")
+    @Min(value = 0, message = "El stock mínimo no puede ser negativo")
     private Integer stockMinimo;
 
     @Column(name = "imagen_url")
@@ -46,11 +54,9 @@ public class Producto {
         this.createdAt = LocalDateTime.now();
     }
 
-    // --- Constructor Vacío ---
     public Producto() {
     }
 
-    // --- Getters y Setters ---
     public Long getIdProducto() {
         return idProducto;
     }
@@ -139,8 +145,6 @@ public class Producto {
         this.createdAt = createdAt;
     }
 
-    // --- LÓGICA PARA EL ESTADO DEL STOCK EN LA VISTA ---
-    // Este método permite usar ${p.estadoStock} en Thymeleaf
     public String getEstadoStock() {
         if (this.stock == null) {
             return "No definido";
