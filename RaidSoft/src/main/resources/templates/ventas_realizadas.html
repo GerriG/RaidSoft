@@ -62,8 +62,10 @@
                         <th class="text-center">Cantidad</th>
                         <th class="text-end">Total ($)</th>
                         <th class="text-center">Estado</th>
+                        <th class="text-center">Recibo</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <tr th:each="venta : ${ventas}">
                         
@@ -106,6 +108,16 @@
                                 <i class="fas fa-check"></i> Completado
                             </span>
                         </td>
+
+                        <td class="text-center">
+                            <a th:href="@{/vendedor/venta/{id}/recibo(id=${venta.id})}" 
+                               target="_blank" 
+                               class="btn-print"
+                               title="Imprimir Comprobante">
+                               <i class="fas fa-print"></i> Imprimir
+                            </a>
+                        </td>
+
                     </tr>
                 </tbody>
             </table>

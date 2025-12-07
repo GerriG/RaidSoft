@@ -52,29 +52,39 @@
         <!-- MAIN -->
         <main class="main-content">
             
+            <!-- Encabezado con botones integrados -->
             <div class="page-header">
                 <div>
                     <h2 style="color: var(--dark);">Ranking de Vendedores</h2>
                     <p style="color: var(--secondary);">Actualización en tiempo real (auto-refresco cada 30s).</p>
                 </div>
 
-                <a th:href="@{/admin/dashboard}" 
-                   class="btn-new" 
-                   style="background-color: var(--secondary);">
-                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
-                </a>
+                <div style="display: flex; gap: 10px;">
+                    <a th:href="@{/ventas/reporte-vendedores/pdf}" 
+                       class="btn-new" 
+                       target="_blank"
+                       style="background-color: #e74a3b; color:white;">
+                        <i class="fas fa-file-pdf"></i> Descargar Reporte
+                    </a>
+
+                    <a th:href="@{/admin/dashboard}" 
+                       class="btn-new" 
+                       style="background-color: var(--secondary);">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
             </div>
 
             <div class="leaderboard-container">
 
-                <!-- Mensaje vacío -->
+                <!-- Mensaje si no hay vendedores -->
                 <div th:if="${#lists.isEmpty(listaVendedores)}" 
                      style="text-align: center; padding: 50px; color: #b7b9cc;">
                     <i class="fas fa-trophy fa-3x mb-3" style="opacity: 0.3;"></i>
                     <p>Aún no hay vendedores registrados en el sistema.</p>
                 </div>
 
-                <!-- Tarjetas -->
+                <!-- Cards ranking -->
                 <div th:each="vendedor, iterStat : ${listaVendedores}" 
                      class="seller-card"
                      th:classappend="${iterStat.index == 0 ? 'rank-1' : (iterStat.index == 1 ? 'rank-2' : (iterStat.index == 2 ? 'rank-3' : ''))}">

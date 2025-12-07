@@ -42,14 +42,27 @@
 
         <main class="main-content">
             
+            <!-- Encabezado reemplazado con PDF + Nuevo Producto -->
             <div class="page-header">
                 <div>
-                    <h2 style="color: var(--dark);">Catálogo de Productos</h2>
-                    <p style="color: var(--secondary);">Gestiona tu inventario, precios y stock.</p>
+                    <h2 style="color: var(--dark);">Gestión de Productos</h2>
+                    <p style="color: var(--secondary);">Administra el catálogo y stock de la tienda.</p>
                 </div>
-                <a th:href="@{/admin/productos/nuevo}" class="btn-new">
-                    <i class="fas fa-plus"></i> Nuevo Producto
-                </a>
+
+                <div style="display: flex; gap: 10px;">
+                    
+                    <a th:href="@{/admin/productos/pdf}" 
+                       target="_blank" 
+                       class="btn-new" 
+                       style="background-color: #e74a3b; color: white; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-file-pdf"></i> Reporte PDF
+                    </a>
+
+                    <a th:href="@{/admin/productos/nuevo}" class="btn-new">
+                        <i class="fas fa-plus"></i> Nuevo Producto
+                    </a>
+                    
+                </div>
             </div>
 
             <div class="table-card">
@@ -142,7 +155,6 @@
         const deleteUrlTemplate = /*[[@{/admin/productos/eliminar/}]]*/ '';
         const toggleUrlTemplate = /*[[@{/admin/productos/toggle/}]]*/ '';
 
-        // Estilos modernos para SweetAlert (Bootstrap theme colors)
         const swalColors = {
             confirm: '#4e73df',
             cancel: '#858796',
@@ -177,7 +189,6 @@
             });
         }
 
-        // Mensajes flash del controlador
         const successMsg = /*[[${success}]]*/ null;
         const errorMsg = /*[[${error}]]*/ null;
 

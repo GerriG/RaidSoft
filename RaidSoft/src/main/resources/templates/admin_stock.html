@@ -42,15 +42,28 @@
 
         <main class="main-content">
             
+            <!-- Bloque solicitado reemplazando el anterior -->
             <div class="page-header">
                 <div>
-                    <h2 style="color: var(--dark);">Gestión de Stock</h2>
-                    <p style="color: var(--secondary);">Monitoreo de productos con existencias bajas.</p>
+                    <h2 style="color: var(--dark);">Control de Inventario</h2>
+                    <p style="color: var(--secondary);">Supervisa las existencias y movimientos.</p>
                 </div>
-                
-                <a th:href="@{/admin/productos}" class="btn-new" style="background-color: var(--secondary);">
-                    <i class="fas fa-arrow-left"></i> Volver a Productos
-                </a>
+
+                <div style="display: flex; gap: 10px;">
+                    
+                    <a th:href="@{/admin/stock/reabastecimiento/pdf}" 
+                       target="_blank" 
+                       class="btn-new" 
+                       style="background-color: #f6c23e; color: #fff; border: none; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-clipboard-list"></i> Orden de Compra
+                    </a>
+
+                    <a th:href="@{/admin/dashboard}" 
+                       class="btn-new" 
+                       style="background-color: var(--secondary);">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
             </div>
 
             <div class="alert-banner" th:if="${!productosFaltantes.empty}">

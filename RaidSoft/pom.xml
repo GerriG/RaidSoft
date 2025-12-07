@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.raidsoft</groupId>
     <artifactId>raidsoft</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <name>RaidSoft</name>
     <description>Sistema de Gestion de Stock RaidSoft</description>
     <url/>
@@ -83,6 +83,12 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+    <groupId>com.github.librepdf</groupId>
+    <artifactId>openpdf</artifactId>
+    <version>1.3.30</version>
+</dependency>
     </dependencies>
 
     <build>

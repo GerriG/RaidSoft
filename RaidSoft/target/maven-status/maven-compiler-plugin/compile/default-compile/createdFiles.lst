@@ -1,6 +1,7 @@
 com\raidsoft\repository\UsuarioRepository.class
 com\raidsoft\config\CustomAuthFailureHandler.class
 com\raidsoft\dto\VentaVendedorDTO.class
+com\raidsoft\service\PdfService.class
 com\raidsoft\config\CustomAuthSuccessHandler.class
 com\raidsoft\controller\AdminController.class
 com\raidsoft\service\ProductoService.class

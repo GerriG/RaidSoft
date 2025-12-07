@@ -225,3 +225,48 @@ body {
 .action-card.history:hover { border-bottom: 5px solid var(--warning); }
 .action-card.history:hover .icon-wrapper { background: var(--warning); color: white; transform: rotate(10deg); }
 
+/* ============================================================ */
+/* BOTÓN DE IMPRESIÓN (Estilo Modern POS)                       */
+/* ============================================================ */
+
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre icono y texto */
+    text-decoration: none;
+    
+    /* Fondo sutil azulado usando tu paleta */
+    background-color: #eef2ff; 
+    color: var(--primary);
+    
+    /* Forma de píldora */
+    padding: 8px 16px;
+    border-radius: 50px; 
+    
+    /* Tipografía */
+    font-size: 13px;
+    font-weight: 600;
+    
+    /* Transiciones suaves */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid transparent;
+}
+
+/* Efecto al pasar el mouse: Se llena de azul y se eleva */
+.btn-print:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3); /* Sombra azul suave */
+}
+
+/* Efecto al hacer clic */
+.btn-print:active {
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+/* Icono dentro del botón */
+.btn-print i {
+    font-size: 14px;
+}
