@@ -39,8 +39,8 @@ Por otro lado, habilita al **Vendedor** con una interfaz de punto de venta ágil
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **Lenguaje:** Java 17/21
-* **Framework:** Spring Boot 3.x (Spring Security, Spring Data JPA, Spring Web)
+* **Lenguaje:** Java 24
+* **Framework:** Spring Boot 3.5.7 (Spring Security, Spring Data JPA, Spring Web)
 * **Frontend:** Thymeleaf, HTML5, CSS3 (Diseño personalizado), JavaScript
 * **Base de Datos:** MySQL
 * **Librerías Adicionales:**
