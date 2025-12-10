@@ -1,6 +1,6 @@
 # 🛒 RaidSoft: Sistema de Punto de Venta y Gestión de Inventario
 
-![Java](https://img.shields.io/badge/Java-24-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Java](https://img.shields.io/badge/Java-24+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.7-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
 ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white)
@@ -39,7 +39,7 @@ Por otro lado, habilita al **Vendedor** con una interfaz de punto de venta ágil
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **Lenguaje:** Java 24
+* **Lenguaje:** Java 24+
 * **Framework:** Spring Boot 3.5.7 (Spring Security, Spring Data JPA, Spring Web)
 * **Frontend:** Thymeleaf, HTML5, CSS3 (Diseño personalizado), JavaScript
 * **Base de Datos:** MySQL
