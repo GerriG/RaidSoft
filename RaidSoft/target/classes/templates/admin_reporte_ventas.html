@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="30">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking de Ventas | RaidSoft</title>
+    
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" th:href="@{/css/Leaderboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
+                <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+
+                <li class="menu-label">Gestión</li>
+                <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}" class="active">
+                    <i class="fas fa-chart-pie"></i> Reporte Ventas
+                </a></li>
+
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+        <!-- FIN SIDEBAR -->
+
+        <!-- MAIN -->
+        <main class="main-content">
+            
+            <!-- Encabezado con botones integrados -->
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);">Ranking de Vendedores</h2>
+                    <p style="color: var(--secondary);">Actualización en tiempo real (auto-refresco cada 30s).</p>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <a th:href="@{/ventas/reporte-vendedores/pdf}" 
+                       class="btn-new" 
+                       target="_blank"
+                       style="background-color: #e74a3b; color:white;">
+                        <i class="fas fa-file-pdf"></i> Descargar Reporte
+                    </a>
+
+                    <a th:href="@{/admin/dashboard}" 
+                       class="btn-new" 
+                       style="background-color: var(--secondary);">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <div class="leaderboard-container">
+
+                <!-- Mensaje si no hay vendedores -->
+                <div th:if="${#lists.isEmpty(listaVendedores)}" 
+                     style="text-align: center; padding: 50px; color: #b7b9cc;">
+                    <i class="fas fa-trophy fa-3x mb-3" style="opacity: 0.3;"></i>
+                    <p>Aún no hay vendedores registrados en el sistema.</p>
+                </div>
+
+                <!-- Cards ranking -->
+                <div th:each="vendedor, iterStat : ${listaVendedores}" 
+                     class="seller-card"
+                     th:classappend="${iterStat.index == 0 ? 'rank-1' : (iterStat.index == 1 ? 'rank-2' : (iterStat.index == 2 ? 'rank-3' : ''))}">
+                    
+                    <div class="rank-badge" th:text="${'#' + (iterStat.index + 1)}">#1</div>
+
+                    <div class="seller-info">
+                        <img th:src="'https://ui-avatars.com/api/?background=random&color=fff&name=' + ${vendedor.username}" 
+                             class="seller-avatar">
+                        <div class="seller-names">
+                            <h4 th:text="${vendedor.nombreCompleto}">Nombre Apellido</h4>
+                            <span th:text="${'@' + vendedor.username}">@usuario</span>
+                        </div>
+                    </div>
+
+                    <div class="seller-stats">
+                        <div class="stat-row">
+                            <span>
+                                <i class="fas fa-receipt"></i> 
+                                <span th:text="${vendedor.cantidadVentas}">0</span> ventas
+                            </span>
+
+                            <span class="stat-total" 
+                                  th:text="${'$' + #numbers.formatDecimal(vendedor.totalVendido, 1, 'COMMA', 2, 'POINT')}">
+                                $0.00
+                            </span>
+                        </div>
+
+                        <div class="progress-track">
+                            <div class="progress-fill"
+                                 th:style="'width: ' + (${listaVendedores[0].totalVendido} > 0 ? (${vendedor.totalVendido} * 100.0 / ${listaVendedores[0].totalVendido}) : 0) + '%'">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rank-icon">
+                        <i th:if="${iterStat.index == 0}" class="fas fa-crown"></i>
+                        <i th:if="${iterStat.index == 1}" class="fas fa-medal"></i>
+                        <i th:if="${iterStat.index == 2}" class="fas fa-medal"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+        <!-- FIN MAIN -->
+
+    </div>
+</body>
+</html>

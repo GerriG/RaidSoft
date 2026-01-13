@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - RaidSoft</title>
+    
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
+                <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                
+                <li class="menu-label">Gestión</li>
+                <li><a th:href="@{/admin/productos}" class="active"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            
+            <!-- Encabezado reemplazado con PDF + Nuevo Producto -->
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);">Gestión de Productos</h2>
+                    <p style="color: var(--secondary);">Administra el catálogo y stock de la tienda.</p>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    
+                    <a th:href="@{/admin/productos/pdf}" 
+                       target="_blank" 
+                       class="btn-new" 
+                       style="background-color: #e74a3b; color: white; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-file-pdf"></i> Reporte PDF
+                    </a>
+
+                    <a th:href="@{/admin/productos/nuevo}" class="btn-new">
+                        <i class="fas fa-plus"></i> Nuevo Producto
+                    </a>
+                    
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th> <th>Código</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prod : ${listaProductos}">
+                            
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <img th:if="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
+                                         th:src="@{${prod.imagenUrl}}" class="product-thumb" alt="Img">
+                                    
+                                    <div th:unless="${prod.imagenUrl != null && !prod.imagenUrl.isEmpty()}" 
+                                         class="no-img-placeholder">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+
+                                    <div>
+                                        <div style="font-weight: 600;" th:text="${prod.nombre}">Laptop HP</div>
+                                        <small style="color: #a0aec0;" th:text="'ID: #' + ${prod.idProducto}">#1</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td th:text="${prod.codigoBarras}" style="font-family: monospace;">CODE123</td>
+
+                            <td th:text="'$ ' + ${#numbers.formatDecimal(prod.precioVenta, 1, 'COMMA', 2, 'POINT')}" 
+                                style="font-weight: 600; color: var(--dark);">
+                                $0.00
+                            </td>
+                            
+                            <td>
+                                <span th:if="${prod.stock > prod.stockMinimo}" class="badge badge-success" th:text="${prod.stock} + ' un.'">10</span>
+                                <span th:if="${prod.stock <= prod.stockMinimo && prod.stock > 0}" class="badge badge-warning" th:text="${prod.stock} + ' un.'">2</span>
+                                <span th:if="${prod.stock == 0}" class="badge badge-danger">Agotado</span>
+                            </td>
+
+                            <td>
+                                <span th:if="${prod.estado}" class="badge badge-success"><i class="fas fa-check"></i> Activo</span>
+                                <span th:unless="${prod.estado}" class="badge badge-secondary"><i class="fas fa-ban"></i> Inactivo</span>
+                            </td>
+
+                            <td>
+                                <div class="actions-cell">
+                                    <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" 
+                                       class="btn-action btn-edit" title="Editar">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+
+                                    <a href="javascript:void(0);" 
+                                       th:onclick="|confirmToggle(${prod.idProducto}, ${prod.estado})|"
+                                       class="btn-action btn-toggle"
+                                       th:title="${prod.estado} ? 'Desactivar' : 'Activar'">
+                                        <i class="fas" th:classappend="${prod.estado} ? 'fa-power-off' : 'fa-check'"></i>
+                                    </a>
+
+                                    <a href="javascript:void(0);" 
+                                       th:onclick="|confirmDelete(${prod.idProducto})|"
+                                       class="btn-action btn-delete" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr th:if="${#lists.isEmpty(listaProductos)}">
+                            <td colspan="6" style="text-align: center; padding: 30px; color: var(--secondary);">
+                                <i class="fas fa-box-open fa-2x mb-2"></i><br>
+                                No hay productos registrados.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        const deleteUrlTemplate = /*[[@{/admin/productos/eliminar/}]]*/ '';
+        const toggleUrlTemplate = /*[[@{/admin/productos/toggle/}]]*/ '';
+
+        const swalColors = {
+            confirm: '#4e73df',
+            cancel: '#858796',
+            danger: '#e74a3b'
+        };
+
+        function confirmToggle(id, isActive) {
+            Swal.fire({
+                title: isActive ? '¿Desactivar producto?' : '¿Reactivar producto?',
+                text: isActive ? "No aparecerá en nuevas ventas." : "Volverá a estar visible.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: isActive ? swalColors.danger : swalColors.confirm,
+                cancelButtonColor: swalColors.cancel,
+                confirmButtonText: isActive ? 'Sí, desactivar' : 'Sí, activar'
+            }).then((result) => {
+                if (result.isConfirmed) window.location.href = toggleUrlTemplate + id;
+            });
+        }
+
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Eliminar definitivamente?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: swalColors.danger,
+                cancelButtonColor: swalColors.cancel,
+                confirmButtonText: 'Sí, eliminar'
+            }).then((result) => {
+                if (result.isConfirmed) window.location.href = deleteUrlTemplate + id;
+            });
+        }
+
+        const successMsg = /*[[${success}]]*/ null;
+        const errorMsg = /*[[${error}]]*/ null;
+
+        if (successMsg) Swal.fire({ title: '¡Hecho!', text: successMsg, icon: 'success', confirmButtonColor: swalColors.confirm });
+        if (errorMsg) Swal.fire({ title: 'Error', text: errorMsg, icon: 'error', confirmButtonColor: swalColors.confirm });
+    </script>
+</body>
+</html>

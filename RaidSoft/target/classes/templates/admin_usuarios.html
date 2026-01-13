@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestión de Usuarios - RaidSoft</title>
+
+        <link rel="stylesheet" th:href="@{/css/Admin.css}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+    <body>
+        <div class="dashboard-wrapper">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                    <h3>RaidSoft</h3>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="menu-label">Principal</li>
+                    <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li class="menu-label">Gestión</li>
+                    <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                    <li><a th:href="@{/admin/usuarios}" class="active"><i class="fas fa-users"></i> Usuarios</a></li>
+                    <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                    <li class="menu-label">Finanzas</li>
+                    <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+                    <li class="mt-auto logout-section">
+                        <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+
+                <!-- ENCABEZADO NUEVO INTEGRADO -->
+                <div class="page-header">
+                    <div>
+                        <h2 style="color: var(--dark);">Gestión de Usuarios</h2>
+                        <p style="color: var(--secondary);">Administra el acceso y roles del personal.</p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+
+                        <a th:href="@{/admin/usuarios/pdf}" 
+                           target="_blank" 
+                           class="btn-new" 
+                           style="background-color: #e74a3b; color: white; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-file-pdf"></i> Lista de Usuarios
+                        </a>
+
+                        <button onclick="openModal()" class="btn-new" style="cursor: pointer; border: none;">
+                            <i class="fas fa-user-plus"></i> Nuevo Usuario
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Colaborador</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="u : ${listaUsuarios}">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+
+                                        <img th:if="${u.perfil != null and u.perfil.avatarUrl != null}" 
+                                             th:src="@{${u.perfil.avatarUrl}}" class="product-thumb" 
+                                             style="border-radius: 50%; width: 45px; height: 45px; object-fit: cover;">
+
+                                        <img th:if="${u.perfil == null or u.perfil.avatarUrl == null}" 
+                                             th:src="|https://ui-avatars.com/api/?background=random&color=fff&name=${u.perfil != null ? (u.perfil.nombre + '+' + u.perfil.apellido) : u.username}|" 
+                                             class="product-thumb" style="border-radius: 50%; width: 45px; height: 45px;">
+
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 14px; color: var(--dark);" 
+                                                 th:text="${u.perfil != null ? (u.perfil.nombre + ' ' + u.perfil.apellido) : u.username}">
+                                                Nombre Apellido
+                                            </div>
+                                            <small style="color: var(--secondary); font-weight: 500;" th:text="${'@' + u.username}">
+                                                @usuario
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${u.rol.name() == 'ADMINISTRADOR' ? 'badge-primary' : 'badge-success'}"
+                                          th:text="${u.rol}">ROL</span>
+                                </td>
+                                <td>
+                                    <span th:if="${u.estado}" class="badge badge-success">Activo</span>
+                                    <span th:unless="${u.estado}" class="badge badge-secondary">Inactivo</span>
+                                </td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a th:href="@{/admin/usuarios/toggle/{id}(id=${u.idUsuario})}" 
+                                           class="btn-action btn-toggle" th:title="${u.estado ? 'Bloquear acceso' : 'Reactivar acceso'}">
+                                            <i class="fas" th:classappend="${u.estado ? 'fa-lock' : 'fa-unlock'}"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" th:onclick="|confirmDelete(${u.idUsuario})|" 
+                                           class="btn-action btn-delete" title="Eliminar usuario">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <div class="modal-overlay" id="userModal" th:classappend="${error != null} ? 'active'">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Nuevo Colaborador</h3>
+                    <a th:href="@{/admin/usuarios}" class="btn-close" style="text-decoration:none;"><i class="fas fa-times"></i></a>
+                </div>
+
+                <form th:action="@{/admin/usuarios/guardar}" method="post">
+
+                    <div th:if="${error}" style="background-color: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:text="${error}">Mensaje de error aquí</span>
+                    </div>
+
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Datos de Acceso</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="modal-form-group">
+                            <label>Usuario</label>
+                            <input type="text" name="username" class="modal-input" 
+                                   th:value="${usuarioNuevo != null ? usuarioNuevo.username : ''}" 
+                                   placeholder="Ej: admin_juan" required>
+                        </div>
+                        <div class="modal-form-group">
+                            <label>Contraseña</label>
+                            <input type="password" name="password" class="modal-input" placeholder="******" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label>Rol del Sistema</label>
+                        <div style="position: relative;">
+                            <select name="rol" class="modal-input" style="appearance: none; background: white; cursor: pointer;">
+                                <option value="VENDEDOR" th:selected="${usuarioNuevo != null and usuarioNuevo.rol != null and usuarioNuevo.rol.name() == 'VENDEDOR'}">Vendedor</option>
+                                <option value="ADMINISTRADOR" th:selected="${usuarioNuevo != null and usuarioNuevo.rol != null and usuarioNuevo.rol.name() == 'ADMINISTRADOR'}">Administrador</option>
+                            </select>
+                            <i class="fas fa-chevron-down" style="position: absolute; right: 15px; top: 15px; color: #aaa; pointer-events: none;"></i>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 15px 0 10px 0; color: var(--primary);">Información Personal</h4>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="modal-form-group">
+                            <label>Nombre</label>
+                            <input type="text" name="nombre" class="modal-input" 
+                                   th:value="${perfilNuevo != null ? perfilNuevo.nombre : ''}"
+                                   placeholder="Juan" required>
+                        </div>
+                        <div class="modal-form-group">
+                            <label>Apellido</label>
+                            <input type="text" name="apellido" class="modal-input" 
+                                   th:value="${perfilNuevo != null ? perfilNuevo.apellido : ''}"
+                                   placeholder="Pérez" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label>Email Corporativo</label>
+                        <input type="email" name="email" class="modal-input" 
+                               th:value="${perfilNuevo != null ? perfilNuevo.email : ''}"
+                               placeholder="juan@raidsoft.com" required>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label>Fecha de Nacimiento</label>
+                        <input type="date" name="fechaNacimiento" class="modal-input" 
+                               th:value="${perfilNuevo != null ? perfilNuevo.fechaNacimiento : ''}" 
+                               th:max="${#temporals.format(#temporals.createNow().minusYears(10), 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <button type="submit" class="btn-modal-save" style="margin-top: 15px;">
+                        Crear Cuenta y Perfil
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            const modal = document.getElementById('userModal');
+            function openModal() {
+                modal.classList.add('active');
+            }
+            function closeModal() {
+                window.location.href = /*[[@{/admin/usuarios}]]*/ '';
+            }
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal)
+                    modal.classList.remove('active');
+            });
+
+            const deleteUrlTemplate = /*[[@{/admin/usuarios/eliminar/}]]*/ '';
+            const successMsg = /*[[${success}]]*/ null;
+            const globalErrorMsg = /*[[${globalError}]]*/ null;
+
+            const currentUserId = /*[[${usuario.idUsuario}]]*/ 0;
+
+            if (successMsg) {
+                Swal.fire({toast: true, position: 'top-end', icon: 'success', title: successMsg, showConfirmButton: false, timer: 3000, timerProgressBar: true});
+            }
+
+            if (globalErrorMsg) {
+                Swal.fire({toast: true, position: 'top-end', icon: 'error', title: globalErrorMsg, showConfirmButton: false, timer: 3000, timerProgressBar: true});
+            }
+
+            function confirmDelete(id) {
+                if (id === currentUserId) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'No puedes eliminar tu propia cuenta.',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: '¿Eliminar usuario?',
+                    text: "Se borrará el usuario y su historial.",
+                    icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef233c', cancelButtonColor: '#858796', confirmButtonText: 'Sí, eliminar'
+                }).then((result) => {
+                    if (result.isConfirmed)
+                        window.location.href = deleteUrlTemplate + id;
+                });
+            }
+        </script>
+    </body>
+</html>

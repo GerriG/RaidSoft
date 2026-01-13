@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Stock Mínimo - RaidSoft</title>
+    
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
+                <li><a th:href="@{/admin/dashboard}"><i class="fas fa-home"></i> Inicio</a></li>
+                
+                <li class="menu-label">Gestión</li>
+                <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a th:href="@{/admin/stock}" class="active"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                
+                <li class="menu-label">Finanzas</li>
+                <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+
+                <li class="mt-auto logout-section">
+                    <a th:href="@{/perfil}" class="profile-link"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            
+            <!-- Bloque solicitado reemplazando el anterior -->
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);">Control de Inventario</h2>
+                    <p style="color: var(--secondary);">Supervisa las existencias y movimientos.</p>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    
+                    <a th:href="@{/admin/stock/reabastecimiento/pdf}" 
+                       target="_blank" 
+                       class="btn-new" 
+                       style="background-color: #f6c23e; color: #fff; border: none; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-clipboard-list"></i> Orden de Compra
+                    </a>
+
+                    <a th:href="@{/admin/dashboard}" 
+                       class="btn-new" 
+                       style="background-color: var(--secondary);">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <div class="alert-banner" th:if="${!productosFaltantes.empty}">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="alert-content">
+                    <h3>Atención Requerida</h3>
+                    <p>Se han detectado productos por debajo del nivel mínimo de inventario. Se recomienda reabastecer pronto.</p>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Código</th>
+                            <th>Stock Actual</th>
+                            <th>Mínimo Requerido</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prod : ${productosFaltantes}">
+                            <td>
+                                <div style="font-weight: 600; color: var(--dark);" th:text="${prod.nombre}">
+                                    Producto Faltante
+                                </div>
+                                <small style="color: var(--secondary);" th:text="'ID: #' + ${prod.idProducto}">#1</small>
+                            </td>
+                            
+                            <td th:text="${prod.codigoBarras}" style="font-family: monospace;">CODE123</td>
+                            
+                            <td>
+                                <span class="badge badge-danger" style="font-size: 14px;">
+                                    <i class="fas fa-arrow-down"></i> <span th:text="${prod.stock}">10</span> un.
+                                </span>
+                            </td>
+                            
+                            <td style="font-weight: 600; color: var(--dark);" th:text="${prod.stockMinimo} + ' un.'">5 un.</td>
+                            
+                            <td>
+                                <a th:href="@{/admin/productos/editar/{id}(id=${prod.idProducto})}" 
+                                   class="btn-new" 
+                                   style="padding: 6px 15px; font-size: 13px; background-color: var(--warning); color: #333;">
+                                    <i class="fas fa-dolly"></i> Reabastecer
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${productosFaltantes.empty}">
+                            <td colspan="5">
+                                <div class="empty-state-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <h4>¡Todo en orden!</h4>
+                                    <p style="color: var(--secondary);">No hay productos con stock crítico en este momento.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+/* ============================================================ */
+/* ESTILOS DE LEADERBOARD (REPORTE DE VENTAS)                   */
+/* ============================================================ */
+
+.leaderboard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* --- Títulos con personalidad --- */
+.leaderboard-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.leaderboard-title h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #2b2d42, #4361ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+.leaderboard-title p {
+    color: var(--secondary);
+    font-size: 1.1rem;
+}
+
+/* --- Tarjetas de Vendedor (Filas) --- */
+.seller-card {
+    display: flex;
+    align-items: center;
+    background: white;
+    margin-bottom: 15px;
+    padding: 20px 30px;
+    border-radius: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.seller-card:hover {
+    transform: scale(1.02) translateY(-3px);
+    box-shadow: 0 15px 30px rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.2);
+    z-index: 10;
+}
+
+/* --- Columna 1: Rango (#1, #2...) --- */
+.rank-badge {
+    font-size: 18px;
+    font-weight: 900;
+    color: #b7b9cc;
+    width: 40px;
+    text-align: center;
+    margin-right: 20px;
+}
+
+/* --- Columna 2: Perfil --- */
+.seller-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1; /* Ocupa el espacio disponible */
+    width: 30%;
+}
+
+.seller-avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f8f9fc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.seller-names h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dark);
+}
+.seller-names span {
+    font-size: 13px;
+    color: var(--secondary);
+}
+
+/* --- Columna 3: Estadísticas (Ventas y Barra) --- */
+.seller-stats {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--secondary);
+    margin-bottom: 5px;
+}
+
+.stat-total {
+    font-weight: 800;
+    color: var(--success); /* Verde dinero */
+    font-size: 18px;
+}
+
+/* Barra de Progreso */
+.progress-track {
+    background: #f1f3f9;
+    height: 8px;
+    border-radius: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 10px;
+    width: 0%; /* Se llenará con inline style en HTML */
+    transition: width 1s ease-out;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary));
+}
+
+/* --- Columna 4: Medalla (Solo top 3) --- */
+.rank-icon {
+    width: 40px;
+    text-align: center;
+    font-size: 24px;
+}
+
+/* ======================================= */
+/* ESTILOS ESPECIALES PARA EL TOP 3        */
+/* ======================================= */
+
+/* ORO (#1) */
+.seller-card.rank-1 {
+    border: 2px solid #ffd700;
+    background: linear-gradient(to right, #fffcf2, #fff);
+}
+.seller-card.rank-1 .rank-badge { color: #e1b12c; font-size: 24px; }
+.seller-card.rank-1 .progress-fill { background: linear-gradient(90deg, #f1c40f, #f39c12); }
+.seller-card.rank-1 .rank-icon { color: #f1c40f; text-shadow: 0 2px 5px rgba(241, 196, 15, 0.4); }
+
+/* PLATA (#2) */
+.seller-card.rank-2 { border-left: 5px solid #bdc3c7; }
+.seller-card.rank-2 .rank-badge { color: #7f8c8d; }
+.seller-card.rank-2 .rank-icon { color: #bdc3c7; }
+.seller-card.rank-2 .progress-fill { background: linear-gradient(90deg, #bdc3c7, #95a5a6); }
+
+/* BRONCE (#3) */
+.seller-card.rank-3 { border-left: 5px solid #cd7f32; }
+.seller-card.rank-3 .rank-badge { color: #cd7f32; }
+.seller-card.rank-3 .rank-icon { color: #cd7f32; }
+.seller-card.rank-3 .progress-fill { background: linear-gradient(90deg, #e67e22, #d35400); }

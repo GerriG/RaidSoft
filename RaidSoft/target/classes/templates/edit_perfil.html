@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - RaidSoft</title>
+    
+    <link rel="stylesheet" th:href="@{/css/Admin.css}">
+    <link rel="stylesheet" th:href="@{/css/Profile.css}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <h3>RaidSoft</h3>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-label">Principal</li>
+                <li>
+                    <a th:href="${usuario.rol.name() == 'ADMINISTRADOR' ? '/admin/dashboard' : '/vendedor/dashboard'}">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                
+                <th:block th:if="${usuario.rol.name() == 'ADMINISTRADOR'}">
+                    <li class="menu-label">Gestión</li>
+                    <li><a th:href="@{/admin/productos}"><i class="fas fa-box"></i> Productos</a></li>
+                    <li><a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a></li>
+                    <li><a th:href="@{/admin/stock}"><i class="fas fa-clipboard-check"></i> Inventario</a></li>
+                    <li><a th:href="@{/ventas/reporte-vendedores}"><i class="fas fa-chart-pie"></i> Reporte Ventas</a></li>
+                </th:block>
+
+                <li class="menu-label">Cuenta</li>
+                <li><a th:href="@{/perfil}" class="active"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+
+                <li class="mt-auto logout-section">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            
+            <div class="page-header">
+                <div>
+                    <h2 style="color: var(--dark);">Editando Perfil</h2>
+                    <p style="color: var(--secondary);">Actualiza tus datos personales y foto.</p>
+                </div>
+                <a th:href="@{/perfil}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+
+            <div th:if="${error}" style="background: #fff5f5; border-left: 4px solid var(--danger); padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+                <strong style="color: var(--danger);"><i class="fas fa-exclamation-circle"></i> Error:</strong>
+                <span th:text="${error}" style="color: #5a5c69;"></span>
+            </div>
+
+            <form th:action="@{/perfil/guardar}" method="post" enctype="multipart/form-data" th:object="${perfil}" class="profile-card">
+                
+                <button type="submit" class="btn-floating-edit" title="Guardar Cambios" 
+                        style="background-color: var(--success); color: white; border: none; cursor: pointer;">
+                    <i class="fas fa-save"></i>
+                </button>
+
+                <div class="profile-header">
+                    
+                    <label class="avatar-upload-container" title="Haz clic para cambiar la foto">
+                        
+                        <img th:if="${perfil.avatarUrl != null}" 
+                             th:src="@{${perfil.avatarUrl}}" id="previewImg">
+                        
+                        <img th:if="${perfil == null or perfil.avatarUrl == null}" 
+                             th:src="|https://ui-avatars.com/api/?background=4e73df&color=fff&size=200&name=${perfil != null ? perfil.nombre + '+' + perfil.apellido : usuario.username}|" 
+                             id="previewImg">
+
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+
+                        <input type="file" name="file" class="file-input-hidden" accept="image/*" onchange="previewFile()">
+                    </label>
+
+                    <h1 class="profile-name" th:text="${usuario.username}">Usuario</h1>
+                    <p class="text-muted small"><i class="fas fa-arrow-up"></i> Toca la imagen para cambiarla</p>
+                </div>
+
+                <div class="info-grid">
+                    
+                    <div class="info-item editable">
+                        <label class="info-label"><i class="fas fa-user me-1"></i> Nombre</label>
+                        <input type="text" th:field="*{nombre}" class="form-control" required placeholder="Tu nombre">
+                    </div>
+
+                    <div class="info-item editable">
+                        <label class="info-label"><i class="fas fa-user me-1"></i> Apellido</label>
+                        <input type="text" th:field="*{apellido}" class="form-control" required placeholder="Tu apellido">
+                    </div>
+
+                    <div class="info-item editable">
+                        <label class="info-label"><i class="fas fa-envelope me-1"></i> Correo Electrónico</label>
+                        <input type="email" th:field="*{email}" class="form-control" placeholder="correo@ejemplo.com">
+                    </div>
+
+                    <div class="info-item editable">
+                        <label class="info-label"><i class="fas fa-birthday-cake me-1"></i> Fecha de Nacimiento</label>
+                        <input type="date" 
+                               id="fechaNacimiento" 
+                               name="fechaNacimiento" 
+                               class="form-control"
+                               th:value="${perfil.fechaNacimiento != null ? #temporals.format(perfil.fechaNacimiento, 'yyyy-MM-dd') : ''}"
+                               th:max="${#temporals.format(#temporals.createNow().minusYears(10), 'yyyy-MM-dd')}">
+                    </div>
+
+                    <div class="info-item editable" style="border-left-color: var(--danger);">
+                        <label class="info-label" style="color: var(--danger);"><i class="fas fa-lock me-1"></i> Nueva Contraseña</label>
+                        <input type="password" name="newPassword" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                    </div>
+
+                </div>
+
+                <div class="text-end mt-5 pt-3 border-top">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-check"></i> Confirmar Cambios
+                    </button>
+                </div>
+
+            </form>
+        </main>
+    </div>
+
+    <script>
+        function previewFile() {
+            const preview = document.getElementById('previewImg');
+            const file = document.querySelector('input[type=file]').files[0];
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+                // Reemplaza la fuente de la imagen con el archivo cargado
+                preview.src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

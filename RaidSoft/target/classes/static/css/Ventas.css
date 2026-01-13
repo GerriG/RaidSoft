@@ -1,0 +1,185 @@
+/* ============================================================ */
+/* ESTILOS DE CATÁLOGO POS (GRID VISUAL)                        */
+/* Agrega al final de Ventas.css                                */
+/* ============================================================ */
+
+/* Contenedor Grid */
+.pos-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    padding-bottom: 40px;
+}
+
+/* Tarjeta de Producto Individual */
+.product-card-pos {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-card-pos:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.3);
+}
+
+/* Imagen del Producto */
+.pos-img-container {
+    height: 160px;
+    width: 100%;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+}
+
+.pos-product-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply; /* Hace que el fondo blanco de la imagen se fusione */
+}
+
+/* Badge de Stock Flotante */
+.stock-badge-pos {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.stock-low { color: #e74a3b; border: 1px solid #e74a3b; }
+.stock-ok { color: #1cc88a; border: 1px solid #1cc88a; }
+
+/* Cuerpo de la Tarjeta */
+.pos-card-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pos-product-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2e3646;
+    margin-bottom: 5px;
+    line-height: 1.3;
+    /* Truncar texto largo */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.pos-product-code {
+    font-size: 12px;
+    color: #858796;
+    margin-bottom: 10px;
+}
+
+.pos-product-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #4361ee;
+    margin-top: auto; /* Empuja el precio al fondo si hay espacio */
+    margin-bottom: 15px;
+}
+
+/* Controles de Cantidad y Botón */
+.pos-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-qty-pos {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #d1d3e2;
+    border-radius: 8px;
+    padding: 8px;
+    font-weight: 600;
+}
+
+.btn-add-pos {
+    flex-grow: 1;
+    background: #2b2d42;
+    color: white;
+    border: none;
+    padding: 9px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btn-add-pos:hover {
+    background: #4361ee;
+}
+
+.search-container-hero {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 35px;
+}
+
+.search-box-hero {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+}
+
+.search-box-hero i {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #858796; /* Gris secundario */
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.search-box-hero input {
+    width: 100%;
+    padding: 18px 25px 18px 60px; /* Mucho padding para que se vea alto */
+    border-radius: 50px; /* Borde completamente redondo */
+    border: 2px solid rgba(0,0,0,0.05); /* Borde sutil */
+    background: white;
+    font-size: 1.1rem; /* Letra más grande */
+    color: var(--dark);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04); /* Sombra flotante */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    outline: none;
+}
+
+.search-box-hero input::placeholder {
+    color: #b7b9cc;
+}
+
+.search-box-hero input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.2); /* Glow azul */
+    transform: translateY(-2px);
+}
+
+.search-box-hero input:focus + i {
+    color: var(--primary);
+}

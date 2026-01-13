@@ -1,0 +1,272 @@
+/* ============================================================ */
+/* ESTILOS DEL DASHBOARD VENDEDOR (Modern POS Style)            */
+/* Archivo: static/css/Vendedor.css                             */
+/* ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #4e73df;
+    --secondary: #858796;
+    --success: #1cc88a;
+    --info: #36b9cc;
+    --warning: #f6c23e;
+    --danger: #e74a3b;
+    --dark: #2e3646;
+    --light: #f8f9fc;
+    --white: #ffffff;
+    --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-hover: 0 10px 20px rgba(0,0,0,0.1);
+    --radius: 15px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f2f5;
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark);
+    min-height: 100vh;
+}
+
+/* --- BARRA SUPERIOR (Navbar) --- */
+.top-nav {
+    background: var(--white);
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-brand i {
+    font-size: 24px;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-welcome {
+    font-size: 14px;
+    color: var(--secondary);
+    display: none; /* Oculto en móviles, visible en desktop */
+}
+@media (min-width: 768px) {
+    .user-welcome { display: block; }
+}
+
+.user-welcome strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* --- Botones del Header --- */
+.btn-nav {
+    text-decoration: none;
+    color: var(--secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+.btn-nav:hover {
+    background: #f1f3f9;
+    color: var(--primary);
+}
+
+.logout-btn {
+    background: transparent;
+    border: 1px solid #e3e6f0;
+    padding: 6px 15px;
+    border-radius: 20px;
+    color: var(--danger);
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.logout-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.content {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.welcome-section h2 {
+    font-size: 28px;
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.welcome-section p {
+    color: var(--secondary);
+    font-size: 16px;
+}
+
+/* --- GRID DE ACCIONES --- */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+/* --- TARJETAS DE ACCIÓN --- */
+.action-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 40px 30px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(0,0,0,0.02);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Iconos circulares grandes */
+.icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.action-card h3 {
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.action-card p {
+    font-size: 14px;
+    color: var(--secondary);
+    line-height: 1.5;
+}
+
+/* Colores Específicos por Tarjeta */
+
+/* 1. Nueva Venta (Verde) */
+.action-card.sale .icon-wrapper {
+    background: #e6fffa;
+    color: var(--success);
+}
+.action-card.sale:hover { border-bottom: 5px solid var(--success); }
+.action-card.sale:hover .icon-wrapper { background: var(--success); color: white; transform: rotate(-10deg); }
+
+/* 2. Stock (Azul) */
+.action-card.stock .icon-wrapper {
+    background: #eef2ff;
+    color: var(--primary);
+}
+.action-card.stock:hover { border-bottom: 5px solid var(--primary); }
+.action-card.stock:hover .icon-wrapper { background: var(--primary); color: white; transform: scale(1.1); }
+
+/* 3. Historial (Naranja/Amarillo) */
+.action-card.history .icon-wrapper {
+    background: #fff8e1;
+    color: var(--warning);
+}
+.action-card.history:hover { border-bottom: 5px solid var(--warning); }
+.action-card.history:hover .icon-wrapper { background: var(--warning); color: white; transform: rotate(10deg); }
+
+/* ============================================================ */
+/* BOTÓN DE IMPRESIÓN (Estilo Modern POS)                       */
+/* ============================================================ */
+
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre icono y texto */
+    text-decoration: none;
+    
+    /* Fondo sutil azulado usando tu paleta */
+    background-color: #eef2ff; 
+    color: var(--primary);
+    
+    /* Forma de píldora */
+    padding: 8px 16px;
+    border-radius: 50px; 
+    
+    /* Tipografía */
+    font-size: 13px;
+    font-weight: 600;
+    
+    /* Transiciones suaves */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid transparent;
+}
+
+/* Efecto al pasar el mouse: Se llena de azul y se eleva */
+.btn-print:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3); /* Sombra azul suave */
+}
+
+/* Efecto al hacer clic */
+.btn-print:active {
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+/* Icono dentro del botón */
+.btn-print i {
+    font-size: 14px;
+}
